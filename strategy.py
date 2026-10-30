@@ -115,7 +115,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 flip_peak = max(flip_peak, pnl)
-                if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS or (flip_peak >= F_TGT_PTS / 2 and pnl <= 0):
+                if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS or (flip_peak >= F_TGT_PTS * 0.8 and pnl <= 0):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
