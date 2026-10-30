@@ -24,6 +24,7 @@ ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
+ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
@@ -61,6 +62,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 sz = 0  # push still at its extreme: momentum, don't fade
         if hot and not agree and abs(onv) < 25 and abs(mv) > 70:
             sz = 0  # flat overnight + violent open push: news momentum, don't fade
+        if hot and not agree and abs(onv) > 200 and hi[idx][:where[0]].max() - lo[idx][:where[0]].min() < ON_RNG_MIN:
+            sz = 0  # big one-way drift in tight overnight range: trend day, don't fade
         md = months[idx[0]] * 100 + mdays[idx[0]]
         if md >= 1210 or md <= 102:  # start 1210-1212 plateau (h1 1.0); 1215 leaves Dec8-9 windows short
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
