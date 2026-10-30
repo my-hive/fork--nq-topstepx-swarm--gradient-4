@@ -1,0 +1,11 @@
+hot tgt 80                         score=1.0062 h1=1.000 h2=1.000 days=11.5 pnl=61765 worst=-1010
+hot tgt 82                         score=0.9419 h1=0.936 h2=1.000 days=11.9 pnl=61093 worst=-1010
+hot tgt 84                         score=0.9420 h1=0.936 h2=1.000 days=11.8 pnl=62250 worst=-1010
+hot tgt 84 shift10                 score=0.9375 h1=0.932 h2=1.000 days=11.9 pnl=57307 worst=-1010
+hot tgt 84 shift25                 score=0.9301 h1=0.924 h2=1.000 days=12.5 pnl=52574 worst=-1010
+hot tgt 84 shift40                 score=0.8679 h1=0.862 h2=1.000 days=12.5 pnl=48902 worst=-1010
+hot tgt 86                         score=0.8395 h1=0.833 h2=1.000 days=11.6 pnl=58992 worst=-1010
+hot tgt 86 shift10                 score=0.8280 h1=0.822 h2=1.000 days=11.7 pnl=53962 worst=-1010
+hot tgt 86 shift25                 score=0.8089 h1=0.803 h2=1.000 days=12.5 pnl=49077 worst=-1010
+hot tgt 86 shift40                 score=0.7300 h1=0.724 h2=1.000 days=12.4 pnl=45320 worst=-1010
+hot tgt 88                         score=0.8395 h1=0.833 h2=1.000 days=11.5 pnl=60316 worst=-1010

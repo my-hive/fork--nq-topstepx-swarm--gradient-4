@@ -1,0 +1,13 @@
+small-ON tgt 82                    score=1.0062 h1=1.000 h2=1.000 days=11.3 pnl=62768 worst=-1010
+small-ON tgt 84                    score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63410 worst=-1010
+small-ON tgt 84 shift10            score=1.0062 h1=1.000 h2=1.000 days=11.3 pnl=58467 worst=-1010
+small-ON tgt 84 shift25            score=1.0061 h1=1.000 h2=1.000 days=11.8 pnl=53890 worst=-1010
+small-ON tgt 84 shift40            score=0.9544 h1=0.948 h2=1.000 days=11.6 pnl=50328 worst=-1010
+small-ON tgt 86                    score=0.9676 h1=0.962 h2=1.000 days=11.9 pnl=62287 worst=-1010
+small-ON tgt 86 shift10            score=0.9649 h1=0.959 h2=1.000 days=12.0 pnl=57256 worst=-1010
+small-ON tgt 86 shift25            score=0.9603 h1=0.955 h2=1.000 days=12.7 pnl=52528 worst=-1010
+small-ON tgt 86 shift40            score=0.9023 h1=0.897 h2=1.000 days=12.7 pnl=48910 worst=-1010
+small-ON tgt 88                    score=0.9676 h1=0.962 h2=1.000 days=11.9 pnl=62975 worst=-1010
+small-ON tgt 90                    score=0.9676 h1=0.962 h2=1.000 days=11.9 pnl=61735 worst=-1010
+big-ON tgt 84                      score=1.0062 h1=1.000 h2=1.000 days=11.5 pnl=62718 worst=-1010
+big-ON tgt 88                      score=1.0062 h1=1.000 h2=1.000 days=11.4 pnl=63161 worst=-1010
