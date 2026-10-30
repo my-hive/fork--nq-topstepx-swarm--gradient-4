@@ -61,7 +61,8 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
           f_add_agree_big, vol_min, push_ext, lh_mv, cd_ext_max, cd_lh_max, ab_fstop,
           prev_pnl, loss_boost, dow, thu_ha_skip, mf_ba_half, thu_scope, lh_gate, lh_max,
           skip_dow_bucket, cd_tstop, cd_prev_loss_skip, dll_cap, ext_pts, p835, ext_skip,
-          retr, retr_hd, retr_ha, retr_cd, retr_min, cold_flip_add, f_exit, trig, hi, lo, side_skip):
+          retr, retr_hd, retr_ha, retr_cd, retr_min, cold_flip_add, f_exit, trig, hi, lo, side_skip,
+          hd_flat_onv, hd_big_mv, scale_pts):
     out = np.zeros(len(c), dtype=np.int64)
     for s in range(len(bounds) - 1):
         o_, m_, im_ = onv[s], mv[s], imb[s]
@@ -89,6 +90,8 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
         if ext_skip > -1e9 and push_ext[s] > ext_skip:
             continue  # push at/beyond overnight extreme
         if retr_hd and hot and not agree and retr[s] < retr_min:
+            continue
+        if hd_flat_onv > 0 and hot and not agree and abs(o_) < hd_flat_onv and abs(m_) > hd_big_mv:
             continue
         if retr_ha and hot and agree and retr[s] < retr_min:
             continue
@@ -140,8 +143,15 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
                 if ext_pts > 0 and (-side) * (c[k] - p835[s]) < ext_pts:
                     pass                        # wait for push extension (better fade entry)
                 else:
-                    pos, entry, state = side * sz, c[k], 1
+                    h0 = (sz + 1) // 2 if scale_pts > 0 else sz   # scale-in: half first
+                    pos, entry, state = side * h0, c[k], 1
                     t_ent = t[k]
+            elif pos != 0 and state == 1 and scale_pts > 0 and abs(pos) < sz:
+                adv = (c[k] - entry) * (1.0 if pos > 0 else -1.0)     # adverse move
+                if adv <= -scale_pts:                                  # price extended: add
+                    add = sz - abs(pos)
+                    entry = (entry * abs(pos) + c[k] * add) / sz
+                    pos = side * sz
             elif pos != 0 and state == 1:
                 pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
                 bad = (lo[k] - entry) if pos > 0 else (entry - hi[k])
@@ -267,7 +277,8 @@ def ev(name="BASE", **kw):
              thu_ha_skip=True, mf_ba_half=True, thu_scope=0, lh_gate=0, lh_max=200.0,   # BASE = 0.8539
              skip_dow_bucket=np.zeros(20, dtype=np.int64), cd_tstop=0, cd_prev_loss_skip=False, dll_cap=0,
              ext_pts=0, ext_skip=-1e9, retr_hd=True, retr_ha=False, retr_cd=False, retr_min=5.0,
-             cold_flip_add=3, f_exit=0, trig=0, side_skip=0)   # BASE = 0.8904
+             cold_flip_add=3, f_exit=0, trig=0, side_skip=0,
+             hd_flat_onv=25.0, hd_big_mv=70.0, scale_pts=0)   # BASE = 0.8908 HEAD
     d.update(kw)
     tgt_arr = build(T, C, SESS, bounds, ONV, MV, IMB, VOL, d["start"], d["exit_"],
                     d["sz_hot_dis"], d["sz_hot_agree"], d["sz_cold_dis"], d["sz_cold_agree"],
@@ -283,7 +294,7 @@ def ev(name="BASE", **kw):
                     d["skip_dow_bucket"], d["cd_tstop"], d["cd_prev_loss_skip"], d["dll_cap"],
                     d["ext_pts"], P835, d["ext_skip"],
                     RETR, d["retr_hd"], d["retr_ha"], d["retr_cd"], d["retr_min"], d["cold_flip_add"],
-                    d["f_exit"], d["trig"], H, L, d["side_skip"])
+                    d["f_exit"], d["trig"], H, L, d["side_skip"], d["hd_flat_onv"], d["hd_big_mv"], d["scale_pts"])
     dp, dm, tr = run_days(SESS, T, O, H, L, C, tgt_arr, NS)
     sc, rates, passed = score(dp, dm)
     print(f"{name:44s} score={sc:.4f} h1={rates[0]:.3f} h2={rates[1]:.3f} "
