@@ -116,8 +116,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
-        p = np.where(out[idx] * side > 0, out[idx], 0).astype(float)
-        # gu-1: completed initial-fade risk uses next-open fills and round-trip costs, in point-contracts.
+        p = out[idx].astype(float)
+        # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
         oo = df.open.values[idx]
         increments = np.r_[0.0, p[:-2] * np.diff(oo[1:]), p[-2] * (cc[-1] - oo[-1])]
         increments -= 0.5 * np.abs(np.diff(np.r_[0.0, p]))
