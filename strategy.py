@@ -6,22 +6,18 @@ Gates, validated across train halves:
 3. Aggressor imbalance along the push: if buy/sell aggressor volume during 8:30-8:35
    is strongly one-sided IN the push direction (>=0.05), the push is real momentum ->
    fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
+Sizes: hot+disagree 7, hot+agree 8, cold+disagree 6, cold+agree skipped.
 4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
    fade still stops out, the push was real momentum -> flip to the push direction
-   one contract larger, 40/60 brackets, then done for the day.
-5. Hot+disagree push ladder (round12 mining): small push (<24 pts) fades best (+1),
-   mid push (24-50) fades worst (-2).
-6. Big overnight (>200 pts): tighter brackets 30/60 - reversal comes fast or not at all.
-Sizes: hot+disagree 7, hot+agree 8, cold+disagree 6, cold+agree skipped."""
+   one contract larger, 40/60 brackets, then done for the day."""
 import numpy as np
 import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
-STOP_PTS, TGT_PTS = 40.0, 80.0
+STOP_PTS, TGT_PTS, stop, tgt = 40.0, 80.0, 40.0, 80.0
 ON_LO, ON_HI = 50.0, 225.0
 IMB_TH = 0.05
 F_STOP_PTS, F_TGT_PTS = 40.0, 60.0
-BIG_ONV, B_STOP, B_TGT = 200.0, 30.0, 60.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -47,10 +43,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
             sz = max(1, sz - 2)
-        push = abs(mv)
-        if hot and not agree:                       # hot+disagree push ladder
-            sz = max(1, sz + 1) if push < 24 else max(1, sz - 2) if push < 50 else sz
-        stop, tgt = STOP_PTS, TGT_PTS
+        stop, tgt = (30.0, 60.0) if abs(onv) > 200 else (STOP_PTS, TGT_PTS)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
