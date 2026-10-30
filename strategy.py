@@ -70,7 +70,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0  # big one-way drift in tight overnight range: trend day, don't fade
         md = months[idx[0]] * 100 + mdays[idx[0]]
         if md >= 1210 or md <= 102:  # start 1210-1212 plateau (h1 1.0); 1215 leaves Dec8-9 windows short
-            sz //= 2  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
+            sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
@@ -82,7 +82,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
-            hist.append(0.0)
             continue
         stop, tgt = (29.0, 77.0) if abs(onv) > 200 else (39.0, 84.0) if hot else (39.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
@@ -100,7 +99,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if (md >= 1210 or md <= 102) or (agree and abs(onv) <= 200):   # moderate agree: stand aside after stop
+                    if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
