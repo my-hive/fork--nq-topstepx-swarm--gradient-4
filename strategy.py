@@ -105,7 +105,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl >= tgt:
+                elif pnl >= tgt or (tt[k] >= 9 * 3600 + 30 * 60 and pnl <= 0):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
