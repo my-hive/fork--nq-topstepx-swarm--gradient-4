@@ -76,7 +76,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
             sz = int(round(sz * 0.5))
         elif big_agree and dow == 0:                # gu-1: Monday retains three-quarter risk
-            sz = int(round(sz * 0.75))
+            sz = int(sz * 0.75)
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if min((sum(hist[-k:]) for k in range(1, min(LOSS_K, len(hist)) + 1)), default=0.0) < LOSS_TH:
