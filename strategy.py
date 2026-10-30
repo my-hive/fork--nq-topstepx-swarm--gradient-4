@@ -27,7 +27,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 2, -900.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+LOSS_K, LOSS_TH = 2, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -79,7 +79,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if min(sum(hist[-k:]) for k in range(1, 6)) < LOSS_TH:
+        if min(sum(hist[-k:]) for k in range(1, 8)) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
             continue
@@ -126,9 +126,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
 if __name__ == '__main__':
     # gu-1: suffix loss equals drawdown from highest recent completed-session balance.
     from itertools import product
-    for history in product((-600.0, 0.0, 700.0), repeat=6):
-        recent = history[-5:]
+    for history in product((-600.0, 0.0, 700.0), repeat=8):
+        recent = history[-7:]
         balance = np.r_[0.0, np.cumsum(recent)]
-        suffix = min(sum(history[-k:]) for k in range(1, 6))
+        suffix = min(sum(history[-k:]) for k in range(1, 8))
         assert min(0.0, suffix) == balance[-1] - balance.max()
-    print('gu-1: weekly completed-session drawdown check passed')
+    print('gu-1: seven-session completed-session drawdown check passed')
