@@ -106,7 +106,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl >= 2 * stop:
                     protected = True
-                if pnl <= (0.0 if protected else -stop):
+                if pnl <= (stop if protected else -stop):
                     if skip_flip or protected:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
