@@ -25,7 +25,7 @@ IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
-F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
+F_STOP_PTS, F_TGT_PTS = 45.0, 70.0  # plateau 60-70 (stop 40-55), cliff 75
 
 LOSS_K, LOSS_TH = 2, -700.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
