@@ -49,7 +49,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if mv == 0:
             continue
         hot = not (ON_LO <= abs(onv) <= ON_HI)
-        agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
+        agree = np.sign(mv) == np.sign(onv)
         if hot:
             sz = 10 if agree else 7
         else:
