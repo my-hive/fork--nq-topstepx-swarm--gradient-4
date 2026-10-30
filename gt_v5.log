@@ -1,0 +1,15 @@
+== re-entry after fade win ==
+max_re 1                                             score=0.3596 h1=0.423 h2=0.354 days=14.6 pnl=20931 win=0.405 worst=-1009
+max_re 2                                             score=0.2078 h1=0.526 h2=0.203 days=14.3 pnl=18740 win=0.405 worst=-1009
+max_re 3                                             score=0.2072 h1=0.526 h2=0.203 days=15.9 pnl=19318 win=0.405 worst=-1009
+== cold+agree momentum follow ==
+cam 4                                                score=0.5252 h1=0.615 h2=0.519 days=11.4 pnl=22318 win=0.544 worst=-1009
+cam 5                                                score=0.4622 h1=0.577 h2=0.456 days=10.5 pnl=21842 win=0.544 worst=-1009
+cam 6                                                score=0.4622 h1=0.577 h2=0.456 days=10.3 pnl=21368 win=0.544 worst=-1009
+cam 7                                                score=0.3490 h1=0.500 h2=0.342 days=8.3 pnl=20892 win=0.544 worst=-1009
+cam 4 + re                                           score=0.2592 h1=0.423 h2=0.253 days=11.8 pnl=18199 win=0.484 worst=-1009
+cam 5 + re                                           score=0.2973 h1=0.397 h2=0.291 days=11.5 pnl=17420 win=0.484 worst=-1009
+cam 6 + re                                           score=0.2343 h1=0.410 h2=0.228 days=10.6 pnl=16641 win=0.484 worst=-1009
+== combined best guesses ==
+re1                                                  score=0.3596 h1=0.423 h2=0.354 days=14.6 pnl=20931 win=0.405 worst=-1009
+re2                                                  score=0.2078 h1=0.526 h2=0.203 days=14.3 pnl=18740 win=0.405 worst=-1009

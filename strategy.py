@@ -7,9 +7,12 @@ Gates, validated across train halves:
    is strongly one-sided IN the push direction (>=0.05), the push is real momentum ->
    fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
 Sizes: hot+disagree 7, hot+agree 8, cold+disagree 6, cold+agree skipped.
-4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
-   fade still stops out, the push was real momentum -> flip to the push direction
-   one contract larger, 30/50 brackets, then done for the day."""
+4. Momentum flip (HOT disagree days only): when the push COUNTERS the overnight drift
+   on a hot day and the fade still stops out, the push was real momentum -> flip to
+   the push direction one contract larger, 30/50 brackets, then done for the day.
+   Cold-day flips generate DLL-bust days that kill combine attempts, so cold
+   disagree days stand aside after the stop instead.
+   Big overnight (|onv|>200) AGREE days flip too (reversal overshoot)."""
 import numpy as np
 import pandas as pd
 
@@ -54,9 +57,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if agree and abs(onv) <= 200:  # big+agree: flip too (reversal overshoot)                   # trend day: stand aside after stop
-                        pos, state = 0, 4
-                    else:                       # counters drift + stopped: real momentum
+                    if (agree and abs(onv) <= 200) or (not agree and not hot):
+                        pos, state = 0, 4      # trend day / cold disagree: stand aside
+                    else:                       # hot counters-drift or big+agree: flip
                         pos, entry, state = -side * (sz + 1), cc[k], 3
                 elif pnl >= tgt:
                     pos, state = 0, 4

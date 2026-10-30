@@ -1,0 +1,19 @@
+BASE                                         score=0.6893 h1=0.744 h2=0.684 days=12.9 pnl=24172 win=0.465 worst=-1009
+== cold+dis fade brackets (H2 busts concentrate here) ==
+cd 30/60                                     score=0.3352 h1=0.538 h2=0.329 days=11.7 pnl=14122 win=0.433 worst=-1009
+cd 35/70                                     score=0.4492 h1=0.654 h2=0.443 days=11.5 pnl=16318 win=0.442 worst=-1009
+cd 40/70                                     score=0.6851 h1=0.679 h2=0.684 days=13.2 pnl=21708 win=0.465 worst=-1009
+cd 35/80                                     score=0.4493 h1=0.679 h2=0.443 days=11.1 pnl=18055 win=0.442 worst=-1009
+cd 40/60                                     score=0.6511 h1=0.679 h2=0.646 days=13.3 pnl=19872 win=0.465 worst=-1009
+cd 30/70                                     score=0.3732 h1=0.551 h2=0.367 days=11.7 pnl=15422 win=0.433 worst=-1009
+cd 25/50                                     score=0.3352 h1=0.526 h2=0.329 days=11.8 pnl=14391 win=0.428 worst=-1009
+cd 30/50                                     score=0.3860 h1=0.538 h2=0.380 days=11.2 pnl=15280 win=0.442 worst=-1009
+cd 45/90                                     score=0.4741 h1=0.538 h2=0.468 days=12.8 pnl=23232 win=0.456 worst=-1009
+== cold flip off ==
+cold_flip off                                score=0.7229 h1=0.718 h2=0.747 days=15.2 pnl=22118 win=0.395 worst=-1009
+cold_flip off + cd 35/70                     score=0.4864 h1=0.654 h2=0.481 days=13.8 pnl=16186 win=0.372 worst=-1009
+== hotbig sizes (|onv|>225) ==
+hotbig d6 a7                                 score=0.6638 h1=0.744 h2=0.658 days=13.3 pnl=24034 win=0.470 worst=-1008
+hotbig d5 a6                                 score=0.6637 h1=0.744 h2=0.658 days=13.5 pnl=22688 win=0.470 worst=-1008
+hotbig d6 a8                                 score=0.6765 h1=0.744 h2=0.671 days=13.0 pnl=23466 win=0.465 worst=-1009
+hotbig d7 a7                                 score=0.6765 h1=0.744 h2=0.671 days=13.2 pnl=24742 win=0.470 worst=-1008

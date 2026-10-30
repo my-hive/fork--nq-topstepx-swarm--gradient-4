@@ -1,0 +1,9 @@
+score 0.6892526371308016 [np.float64(0.7435897435897436), np.float64(0.6835443037974683)]
+fade_tgt     n= 64 pnl=  62669 mean=  979.2 win=1.00
+flip         n=  2 pnl=  -1092 mean= -546.0 win=0.00
+flip_stop    n= 38 pnl= -34326 mean= -903.3 win=0.00
+flip_tgt     n= 34 pnl=   7772 mean=  228.6 win=0.97
+notrade      n=  1 pnl=      0 mean=    0.0 win=0.00
+skip         n= 58 pnl=   1173 mean=   20.2 win=0.05
+stop_out     n= 18 pnl= -12023 mean= -667.9 win=0.00
+flip days: 74 pnl -27646.5

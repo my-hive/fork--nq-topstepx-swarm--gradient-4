@@ -1,0 +1,16 @@
+H1: attempts=78 pass=58 rate=0.744
+  bust-failures: 17; target-not-reached: 3
+   bustday ('COLD_D', 'DLL') 2
+   bustday ('COLD_D', 'pnl191') 3
+   bustday ('COLD_D', 'pnl264') 3
+   bustday ('COLD_D', 'pnl658') 1
+   bustday ('HOT_A', 'pnl-672') 4
+   bustday ('HOT_D', 'pnl-494') 1
+   bustday ('HOT_D', 'pnl179') 3
+H2: attempts=79 pass=54 rate=0.684
+  bust-failures: 25; target-not-reached: 0
+   bustday ('COLD_D', 'DLL') 15
+   bustday ('COLD_D', 'pnl199') 2
+   bustday ('HOT_A_BIG', 'pnl-850') 1
+   bustday ('HOT_D', 'pnl160') 1
+   bustday ('HOT_D_BIG', 'pnl847') 6

@@ -1,0 +1,39 @@
+--- H1 ---
+COLD_A       skip       n= 29 pnl=      0 mean=    0.0
+COLD_D       fade_tgt   n=  9 pnl=   8139 mean=  904.3
+COLD_D       flip       n=  1 pnl=   -598 mean= -597.5
+COLD_D       flip_stop  n=  9 pnl=  -7709 mean= -856.6
+COLD_D       flip_tgt   n=  7 pnl=   1459 mean=  208.4
+COLD_D_BIG   flip_stop  n=  3 pnl=  -2040 mean= -680.2
+COLD_D_BIG   flip_tgt   n=  1 pnl=    316 mean=  316.0
+HOT_A        ?          n=  2 pnl=   1088 mean=  544.0
+HOT_A        fade_tgt   n= 11 pnl=  12774 mean= 1161.3
+HOT_A        stop_out   n= 12 pnl=  -7715 mean= -642.9
+HOT_A_BIG    fade_tgt   n=  3 pnl=   2936 mean=  978.7
+HOT_A_BIG    flip_tgt   n=  2 pnl=    881 mean=  440.5
+HOT_D        ?          n=  1 pnl=     85 mean=   85.0
+HOT_D        fade_tgt   n=  5 pnl=   5520 mean= 1103.9
+HOT_D        flip       n=  1 pnl=   -494 mean= -494.5
+HOT_D        flip_stop  n=  3 pnl=  -2598 mean= -866.2
+HOT_D        flip_tgt   n=  3 pnl=    610 mean=  203.3
+HOT_D_BIG    fade_tgt   n=  1 pnl=    875 mean=  875.0
+HOT_D_BIG    flip_stop  n=  3 pnl=  -2880 mean= -960.2
+HOT_D_BIG    flip_tgt   n=  1 pnl=    367 mean=  367.0
+--- H2 ---
+-            notrade    n=  1 pnl=      0 mean=    0.0
+COLD_A       skip       n= 24 pnl=      0 mean=    0.0
+COLD_A_BIG   skip       n=  2 pnl=      0 mean=    0.0
+COLD_D       fade_tgt   n= 10 pnl=   8414 mean=  841.4
+COLD_D       flip_stop  n=  7 pnl=  -6548 mean= -935.5
+COLD_D       flip_tgt   n=  7 pnl=   1438 mean=  205.5
+HOT_A        fade_tgt   n=  6 pnl=   6374 mean= 1062.3
+HOT_A        stop_out   n=  6 pnl=  -4308 mean= -718.0
+HOT_A_BIG    fade_tgt   n=  4 pnl=   4088 mean= 1022.0
+HOT_A_BIG    flip_stop  n=  4 pnl=  -3878 mean= -969.4
+HOT_A_BIG    flip_tgt   n=  4 pnl=    116 mean=   29.1
+HOT_D        fade_tgt   n=  6 pnl=   6129 mean= 1021.5
+HOT_D        flip_stop  n=  6 pnl=  -6048 mean=-1008.0
+HOT_D        flip_tgt   n=  3 pnl=    500 mean=  166.7
+HOT_D_BIG    fade_tgt   n=  9 pnl=   7420 mean=  824.5
+HOT_D_BIG    flip_stop  n=  3 pnl=  -2624 mean= -874.7
+HOT_D_BIG    flip_tgt   n=  6 pnl=   2084 mean=  347.3

@@ -1,0 +1,26 @@
+== mv_max: skip huge pushes ==
+mv_max 60                                    score=0.5112 h1=0.513 h2=0.506 days=15.4 pnl=13480 win=0.312 worst=-1009
+mv_max 80                                    score=0.5442 h1=0.538 h2=0.671 days=12.8 pnl=17035 win=0.363 worst=-1009
+mv_max 100                                   score=0.6466 h1=0.641 h2=0.722 days=13.3 pnl=19872 win=0.419 worst=-1009
+mv_max 130                                   score=0.6467 h1=0.641 h2=0.696 days=12.8 pnl=22470 win=0.447 worst=-1009
+mv_max 200                                   score=0.6893 h1=0.744 h2=0.684 days=12.9 pnl=24172 win=0.465 worst=-1009
+== cold flip brackets (disagree cold days) ==
+cold flip 20/40                              score=0.6509 h1=0.667 h2=0.646 days=14.0 pnl=21550 win=0.451 worst=-1009
+cold flip 25/45                              score=0.6511 h1=0.667 h2=0.646 days=13.3 pnl=21288 win=0.451 worst=-1009
+cold flip 30/50                              score=0.6893 h1=0.744 h2=0.684 days=12.9 pnl=24172 win=0.465 worst=-1009
+cold flip 35/55                              score=0.6893 h1=0.756 h2=0.684 days=12.8 pnl=23342 win=0.460 worst=-1009
+cold flip 20/50                              score=0.6512 h1=0.667 h2=0.646 days=13.2 pnl=23150 win=0.451 worst=-1009
+cold flip 25/50                              score=0.6512 h1=0.667 h2=0.646 days=13.2 pnl=22112 win=0.451 worst=-1009
+cold flip 30/40                              score=0.6890 h1=0.744 h2=0.684 days=13.6 pnl=22137 win=0.465 worst=-1009
+cold flip 35/50                              score=0.6892 h1=0.744 h2=0.684 days=12.9 pnl=23548 win=0.465 worst=-1009
+== flip breakeven after +X ==
+f_be 15                                      score=0.5057 h1=0.500 h2=0.633 days=13.0 pnl=18422 win=0.395 worst=-1009
+f_be 20                                      score=0.5057 h1=0.500 h2=0.633 days=12.9 pnl=17586 win=0.405 worst=-1009
+f_be 25                                      score=0.5056 h1=0.500 h2=0.620 days=13.3 pnl=19568 win=0.423 worst=-1009
+f_be 30                                      score=0.5059 h1=0.500 h2=0.646 days=12.3 pnl=20960 win=0.433 worst=-1009
+== confirm-before-flip (push must extend X pts past stop price) ==
+f_conf 5                                     score=0.5246 h1=0.538 h2=0.519 days=13.0 pnl=19996 win=0.442 worst=-1009
+f_conf 10                                    score=0.4364 h1=0.500 h2=0.430 days=11.8 pnl=17242 win=0.428 worst=-1009
+f_conf 15                                    score=0.5055 h1=0.500 h2=0.519 days=13.6 pnl=19088 win=0.428 worst=-1009
+f_conf 20                                    score=0.4926 h1=0.487 h2=0.519 days=13.8 pnl=18784 win=0.423 worst=-1009
+f_conf 30                                    score=0.5435 h1=0.538 h2=0.570 days=14.7 pnl=14152 win=0.405 worst=-1009
