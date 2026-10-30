@@ -79,7 +79,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        normal_sz = sz
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
@@ -108,10 +107,12 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        flip_sz = min(sz + 2, normal_sz) if sz < normal_sz else sz + 2
-                        assert 0 < flip_sz <= 50
-                        pos, entry, state = -side * flip_sz, cc[k], 3
-                        pending_entry = True
+                        # gu-2: stop-risk budget uses only already observed fade loss.
+                        remaining = max(0.0, 500.0 + pnl * sz - sz * 0.5)
+                        flip_sz = min(sz + 2, int(remaining // (F_STOP_PTS + 0.5)))
+                        assert 0 <= flip_sz <= sz + 2
+                        pos, entry, state = -side * flip_sz, cc[k], 3 if flip_sz else 4
+                        pending_entry = bool(flip_sz)
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
