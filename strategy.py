@@ -98,7 +98,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pos, entry, state = side * sz, cc[k], 1
                 pending_entry = True
             elif pos != 0 and state == 1:
-                pnl = (cc[k] - entry) * np.sign(pos)
+                pnl = (cc[k] - entry) * np.sign(pos) - 0.25  # gu-4: executable liquidation mark after exit slippage
                 if pnl <= -stop:
                     if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
                         pos, state = 0, 4
@@ -108,7 +108,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
-                pnl = (cc[k] - entry) * np.sign(pos)
+                pnl = (cc[k] - entry) * np.sign(pos) - 0.25  # gu-4: executable liquidation mark after exit slippage
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
