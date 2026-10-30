@@ -79,6 +79,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
+        original_sz = sz
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
@@ -119,6 +120,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
         oo = df.open.values[idx]
-        hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
+        hist.append(original_sz / sz * float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
                           - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
