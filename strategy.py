@@ -8,14 +8,14 @@ Gates, validated across train halves:
    fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
 4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
    fade still stops out, the push was real momentum -> flip to the push direction
-   two contracts larger, 45/68 brackets, then done for the day. Big-agree days
+   one contract larger, 40/60 brackets, then done for the day. Big-agree days
    (|onv|>200, push continues overnight) flip too: reversal overshoot.
 5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
    Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
    big-agree days are trend-risk -> halve size.
 6. Skip year-end holiday tape (Dec 15 - Jan 2) and hot+disagree days with flat
    overnight (|onv|<25) but violent open push (|mv|>70): news momentum.
-Sizes before discounts: hot+agree 10, hot+disagree 7, cold+disagree 8, cold+agree skipped."""
+Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
 import numpy as np
 import pandas as pd
 
@@ -86,7 +86,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             continue
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
-        skip_flip = (agree and abs(onv) <= 200) or (not agree and (
+        skip_flip = (imb * np.sign(mv) < 0) or (agree and abs(onv) <= 200) or (not agree and (
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
             or (dow == 4 and abs(onv) < 50)
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
@@ -107,7 +107,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * max(1, min(sz + 2, int(sz * stop / F_STOP_PTS))), cc[k], 3
+                        pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
