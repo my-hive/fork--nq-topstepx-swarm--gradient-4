@@ -116,6 +116,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
+        out[idx] = np.r_[0, out[idx[:-1]]]
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
         oo = df.open.values[idx]
