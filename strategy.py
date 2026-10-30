@@ -74,6 +74,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
+        if agree and abs(onv) < 50 and abs(mv) > 70:
+            sz //= 2  # violent open with little overnight drift: news momentum risk
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
