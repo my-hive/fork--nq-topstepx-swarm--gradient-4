@@ -112,13 +112,14 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
-                elif not trimmed and pnl >= tgt / 2 and abs(pos) > 1:
-                    pos -= int(np.sign(pos))
-                    trimmed = True
+
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
+                elif not trimmed and pnl >= F_TGT_PTS / 2 and abs(pos) > 1:
+                    pos -= int(np.sign(pos))
+                    trimmed = True
             out[idx[k]] = pos
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
