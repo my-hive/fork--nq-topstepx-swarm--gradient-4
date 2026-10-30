@@ -92,7 +92,13 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
+        equity, held = 0.0, 0
         for k in range(len(idx)):
+            executed = out[idx[k - 1]] if k else 0
+            if k:
+                equity += held * (opens[idx[k]] - cc[k - 1])
+            equity += executed * (cc[k] - opens[idx[k]]) - 0.5 * abs(executed - held)
+            held = executed
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
                 pending_entry = False
@@ -115,6 +121,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
+            # gu-1: native consistency boundary, net of planned liquidation costs.
+            if equity - 0.5 * abs(held) >= 750.0:
+                pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
