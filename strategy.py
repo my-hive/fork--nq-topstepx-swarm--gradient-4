@@ -85,6 +85,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             hist.append(0.0)
             continue
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
+        if sum(hist[-LOSS_K:]) < LOSS_TH:
+            tgt = stop  # gu-1: one-risk-unit reward while account defense active.
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
@@ -92,13 +94,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
-        equity, held = 0.0, 0
         for k in range(len(idx)):
-            executed = out[idx[k - 1]] if k else 0
-            if k:
-                equity += held * (opens[idx[k]] - cc[k - 1])
-            equity += executed * (cc[k] - opens[idx[k]]) - 0.5 * abs(executed - held)
-            held = executed
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
                 pending_entry = False
@@ -121,9 +117,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
-            # gu-1: mirror native daily loss lock in point-contract units.
-            if equity - 0.5 * abs(held) <= -500.0:
-                pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
