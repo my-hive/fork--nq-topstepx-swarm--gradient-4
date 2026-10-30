@@ -90,6 +90,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
             or (dow == 4 and abs(onv) < 50)
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
+        opening_ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
+        skip_flip = skip_flip or abs(opening_ext - cc[where[-1]]) < RETR_MIN
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         for k in range(len(idx)):
