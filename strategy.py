@@ -86,7 +86,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow in (0, 1) and not hot)
-            or (dow == 4 and abs(onv) < 50)))
+            or (dow == 4 and abs(onv) < 50)
+            or (abs(onv) < 200 and abs(mv) < 20)))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         for k in range(len(idx)):
