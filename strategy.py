@@ -73,9 +73,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
-        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
-            sz = int(round(sz * 0.5))
-        elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
+        if big_agree and dow in (0, 4):             # Monday/Friday big-agree: trend risk, halve
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
