@@ -100,6 +100,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pos = 0
             elif state == 0:
                 pos, entry, state = side * sz, cc[k], 1
+                fade_start = tt[k]
                 pending_entry = True
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
@@ -107,13 +108,14 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
+                        recovery_deadline = tt[k] + (tt[k] - fade_start)
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= F_TGT_PTS:
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= F_TGT_PTS or tt[k] >= recovery_deadline:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
