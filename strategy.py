@@ -20,10 +20,10 @@ import numpy as np
 import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
-ON_LO, ON_HI = 55.0, 200.0
+ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
 VOL_MIN = 12750.0
-RETR_MIN = 8.0
+RETR_MIN = 8.25
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 44.0, 70.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
