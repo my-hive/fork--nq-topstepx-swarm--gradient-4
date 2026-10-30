@@ -60,14 +60,14 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = max(1, sz - 2)
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
-        if hot and not agree and abs(onv) > 200 and sz > 0:  # gu-3: retain retrace bigON only
+        if hot and not agree and sz > 0:            # hot disagree: require retrace
             ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
             if abs(ext - cc[where[-1]]) < RETR_MIN:
                 sz = 0  # push still at its extreme: momentum, don't fade
         if hot and not agree and abs(onv) < 25 and abs(mv) > 70:
             sz = 0  # flat overnight + violent open push: news momentum, don't fade
         if hot and not agree and abs(onv) > 200 and hi[idx][:where[0]].max() - lo[idx][:where[0]].min() < ON_RNG_MIN:
-            sz = 0  # big one-way drift in tight overnight range: trend day, don't fade
+            sz //= 2  # gu-3: tight overnight trend, reduce confidence exposure
         md = months[idx[0]] * 100 + mdays[idx[0]]
         if md >= 1210 or md <= 102:  # start 1210-1212 plateau (h1 1.0); 1215 leaves Dec8-9 windows short
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
