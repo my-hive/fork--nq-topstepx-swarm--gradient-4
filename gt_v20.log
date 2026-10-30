@@ -1,0 +1,9 @@
+BASE                                         score=0.7872 h1=0.782 h2=0.835 days=14.5 pnl=29400 win=0.381 worst=-1009
+Thu hot+agree skip                           score=0.8405 h1=0.872 h2=0.835 days=14.8 pnl=30690 win=0.377 worst=-1009
+Mon/Fri big-agree halve                      score=0.7615 h1=0.756 h2=0.835 days=14.8 pnl=27938 win=0.381 worst=-1008
+both DOW gates                               score=0.8404 h1=0.872 h2=0.835 days=15.1 pnl=29228 win=0.377 worst=-1008
+== with their other retunes? ha9 / imb .02 / zone 50-200 on top ==
+both + ha9                                   score=0.7489 h1=0.744 h2=0.848 days=14.0 pnl=30914 win=0.377 worst=-1009
+both + imb .02                               score=0.8277 h1=0.846 h2=0.823 days=15.2 pnl=30101 win=0.377 worst=-1008
+both + zone 50-200                           score=0.8385 h1=0.833 h2=0.835 days=14.5 pnl=29413 win=0.386 worst=-1008
+both + all three                             score=0.8407 h1=0.846 h2=0.835 days=14.2 pnl=31610 win=0.386 worst=-1009

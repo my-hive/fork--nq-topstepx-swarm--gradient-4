@@ -21,6 +21,7 @@ bounds[NS] = len(SESS)
 
 ONV = np.zeros(NS); MV = np.zeros(NS); IMB = np.zeros(NS); VOL = np.zeros(NS)
 PUSH_EXT = np.zeros(NS); LH_MV = np.zeros(NS)
+DOW = pd.DatetimeIndex(pd.to_datetime(df.session.unique())).dayofweek.values.astype(np.int64)
 for s in range(NS):
     i0, i1 = bounds[s], bounds[s + 1]
     tt, cc = T[i0:i1], C[i0:i1]
@@ -53,7 +54,7 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
           cam_sz, max_re, f_stop_cold, f_tgt_cold, f_be, f_conf_pts,
           cd_stop, cd_tgt, cold_flip, sz_hotbig_dis, sz_hotbig_agree,
           f_add_agree_big, vol_min, push_ext, lh_mv, cd_ext_max, cd_lh_max, ab_fstop,
-          prev_pnl, loss_boost):
+          prev_pnl, loss_boost, dow, thu_ha_skip, mf_ba_half):
     out = np.zeros(len(c), dtype=np.int64)
     for s in range(len(bounds) - 1):
         o_, m_, im_ = onv[s], mv[s], imb[s]
@@ -63,6 +64,9 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
             continue
         hot = not (on_lo <= abs(o_) <= on_hi)
         agree = np.sign(m_) == np.sign(o_) if o_ != 0 else True
+        if thu_ha_skip and hot and agree and dow[s] == 3:
+            continue
+        ba_gate = (mf_ba_half and agree and abs(o_) > 200 and (dow[s] == 0 or dow[s] == 4))
         if not hot and not agree and np.sign(o_) != 0:
             if cd_ext_max > -1e9 and push_ext[s] > cd_ext_max:
                 continue
@@ -80,6 +84,8 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
             sz = sz_cold_dis if not agree else sz_cold_agree
         if sz > 0 and im_ * np.sign(m_) >= imb_th:
             sz = max(1, sz - imb_shrink)
+        if ba_gate and sz > 1:
+            sz = int(sz * 0.5)  # Mon/Fri big-agree: trend risk, halve
         if sz <= 0:
             continue
         if loss_boost > 0 and s > 0 and prev_pnl[s - 1] < 0:
@@ -198,7 +204,8 @@ def ev(name="BASE", **kw):
              mv_min=0.0, mv_max=0.0, hot_flip=True, big_agree_flip=True, agree_small_flip=False,
              cam_sz=0, max_re=0, f_stop_cold=0.0, f_tgt_cold=0.0, f_be=0.0, f_conf_pts=0.0,
              cd_stop=0.0, cd_tgt=0.0, cold_flip=False,
-             f_add_agree_big=0, cd_ext_max=-1e9, cd_lh_max=-1e9, ab_fstop=0, loss_boost=0)
+             f_add_agree_big=0, cd_ext_max=-1e9, cd_lh_max=-1e9, ab_fstop=0, loss_boost=0,
+             thu_ha_skip=False, mf_ba_half=False)
     d.update(kw)
     tgt_arr = build(T, C, SESS, bounds, ONV, MV, IMB, VOL, d["start"], d["exit_"],
                     d["sz_hot_dis"], d["sz_hot_agree"], d["sz_cold_dis"], d["sz_cold_agree"],
@@ -209,7 +216,8 @@ def ev(name="BASE", **kw):
                     d["cam_sz"], d["max_re"], d["f_stop_cold"], d["f_tgt_cold"], d["f_be"], d["f_conf_pts"],
                     d["cd_stop"], d["cd_tgt"], d["cold_flip"], d["sz_hotbig_dis"], d["sz_hotbig_agree"],
                     d["f_add_agree_big"], d["vol_min"], PUSH_EXT, LH_MV,
-                    d["cd_ext_max"], d["cd_lh_max"], d["ab_fstop"], PREV_PNL, d["loss_boost"])
+                    d["cd_ext_max"], d["cd_lh_max"], d["ab_fstop"], PREV_PNL, d["loss_boost"],
+                    DOW, d["thu_ha_skip"], d["mf_ba_half"])
     dp, dm, tr = run_days(SESS, T, O, H, L, C, tgt_arr, NS)
     sc, rates, passed = score(dp, dm)
     print(f"{name:44s} score={sc:.4f} h1={rates[0]:.3f} h2={rates[1]:.3f} "

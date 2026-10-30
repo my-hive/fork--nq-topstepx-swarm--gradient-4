@@ -1,0 +1,10 @@
+import gt_v1 as g
+g.ev("BASE")
+g.ev("Thu hot+agree skip", thu_ha_skip=True)
+g.ev("Mon/Fri big-agree halve", mf_ba_half=True)
+g.ev("both DOW gates", thu_ha_skip=True, mf_ba_half=True)
+print("== with their other retunes? ha9 / imb .02 / zone 50-200 on top ==")
+g.ev("both + ha9", thu_ha_skip=True, mf_ba_half=True, sz_hot_agree=9)
+g.ev("both + imb .02", thu_ha_skip=True, mf_ba_half=True, imb_th=0.02)
+g.ev("both + zone 50-200", thu_ha_skip=True, mf_ba_half=True, on_hi=200.0)
+g.ev("both + all three", thu_ha_skip=True, mf_ba_half=True, sz_hot_agree=9, imb_th=0.02, on_hi=200.0)
