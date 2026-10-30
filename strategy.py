@@ -22,7 +22,7 @@ import pandas as pd
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
-VOL_MIN = 12750.0
+VOL_MIN = 0.0
 RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
@@ -49,7 +49,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if mv == 0:
             continue
         hot = not (ON_LO <= abs(onv) <= ON_HI)
-        agree = np.sign(mv) == np.sign(onv)
+        agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
             sz = 10 if agree else 7
         else:
