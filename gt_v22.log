@@ -1,0 +1,11 @@
+BASE                                         score=0.8405 h1=0.872 h2=0.835 days=14.8 pnl=30690 win=0.377 worst=-1009
+== Thu scope: 0=hot+agree (base), 1=all buckets, 2=all except cold+dis ==
+thu_scope 1                                  score=0.8278 h1=0.846 h2=0.823 days=15.0 pnl=30530 win=0.335 worst=-1009
+thu_scope 2                                  score=0.8531 h1=0.872 h2=0.848 days=15.1 pnl=31004 win=0.353 worst=-1009
+== claims-style lh gate (skip when 7:30-8:30 move >= X in push dir), all days ==
+lh_gate 150.0                                score=0.6328 h1=0.628 h2=0.684 days=16.2 pnl=24068 win=0.274 worst=-1008
+lh_gate 250.0                                score=0.8023 h1=0.885 h2=0.797 days=15.5 pnl=27436 win=0.312 worst=-1008
+lh_gate 350.0                                score=0.8022 h1=0.846 h2=0.797 days=15.9 pnl=27417 win=0.326 worst=-1008
+== lh gate only Thursdays ==
+lh_gate Thu 150.0                            score=0.6328 h1=0.628 h2=0.684 days=16.2 pnl=24068 win=0.274 worst=-1008
+lh_gate Thu 250.0                            score=0.8023 h1=0.885 h2=0.797 days=15.5 pnl=27436 win=0.312 worst=-1008
