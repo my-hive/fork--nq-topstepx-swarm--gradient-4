@@ -104,7 +104,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if skip_flip:  # opening regime does not support momentum reversal
+                    if skip_flip or tt[k] >= START + 3600:  # gu-3: stale opening impulse cannot authorize recovery
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
