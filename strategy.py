@@ -65,9 +65,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             if abs(ext - cc[where[-1]]) < RETR_MIN:
                 sz = 0  # push still at its extreme: momentum, don't fade
         if hot and not agree and abs(onv) < 25 and abs(mv) > 70:
-            sz //= 2  # gu-3: news momentum confidence penalty
+            sz //= 4  # gu-3: quarter exposure on news momentum
         if hot and not agree and abs(onv) > 200 and hi[idx][:where[0]].max() - lo[idx][:where[0]].min() < ON_RNG_MIN:
-            sz = 0  # big one-way drift in tight overnight range: trend day, don't fade
+            sz //= 4  # gu-3: quarter exposure on tight overnight trend
         md = months[idx[0]] * 100 + mdays[idx[0]]
         if md >= 1210 or md <= 102:  # start 1210-1212 plateau (h1 1.0); 1215 leaves Dec8-9 windows short
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
