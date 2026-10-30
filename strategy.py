@@ -20,7 +20,8 @@ START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 STOP_PTS, TGT_PTS, stop, tgt = 40.0, 80.0, 40.0, 80.0
 ON_LO, ON_HI = 50.0, 225.0
 IMB_TH = 0.05
-F_STOP_PTS, F_TGT_PTS = 30.0, 50.0
+F_STOP_PTS, F_TGT_PTS = 30.0, 56.0
+BIG_STOP_PTS, BIG_TGT_PTS = 30.0, 70.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -39,14 +40,14 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 8 if agree else 7
+            sz = 8 if agree else (6 if abs(onv) > ON_HI else 7)
         else:
             sz = 6 if not agree else 0
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
             sz = max(1, sz - 2)
-        stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (STOP_PTS, TGT_PTS)
+        stop, tgt = (BIG_STOP_PTS, BIG_TGT_PTS) if abs(onv) > 200 else (STOP_PTS, TGT_PTS)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):

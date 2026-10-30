@@ -1,0 +1,20 @@
+BASE morning only                            score=0.7646 h1=0.782 h2=0.759 days=14.7 pnl=25324 win=0.395
+== afternoon fade grid ==
+pm fade 11->12 mm20 sz4 20/40                score=0.4927 h1=0.487 h2=0.582 days=13.6 pnl=21270 win=0.428
+pm fade 11->12 mm30 sz4 20/40                score=0.5565 h1=0.551 h2=0.658 days=14.4 pnl=21284 win=0.423
+pm fade 11->12 mm40 sz4 20/40                score=0.5950 h1=0.590 h2=0.671 days=14.3 pnl=22958 win=0.423
+pm fade 11->13 mm20 sz4 20/40                score=0.4676 h1=0.462 h2=0.646 days=11.7 pnl=21052 win=0.437
+pm fade 11->13 mm30 sz4 20/40                score=0.5060 h1=0.500 h2=0.658 days=12.0 pnl=22216 win=0.437
+pm fade 11->13 mm40 sz4 20/40                score=0.5443 h1=0.538 h2=0.684 days=12.5 pnl=23086 win=0.428
+pm fade 12->13 mm20 sz4 20/40                score=0.5061 h1=0.500 h2=0.734 days=11.7 pnl=25748 win=0.456
+pm fade 12->13 mm30 sz4 20/40                score=0.5185 h1=0.513 h2=0.747 days=12.8 pnl=26050 win=0.423
+pm fade 12->13 mm40 sz4 20/40                score=0.5185 h1=0.513 h2=0.747 days=12.9 pnl=25120 win=0.423
+pm fade 12->14 mm20 sz4 20/40                score=0.6592 h1=0.654 h2=0.772 days=14.0 pnl=23572 win=0.465
+pm fade 12->14 mm30 sz4 20/40                score=0.5953 h1=0.590 h2=0.747 days=13.4 pnl=24922 win=0.456
+pm fade 12->14 mm40 sz4 20/40                score=0.5953 h1=0.590 h2=0.747 days=13.2 pnl=26554 win=0.451
+pm fade 11->14 mm20 sz4 20/40                score=0.6337 h1=0.628 h2=0.747 days=13.5 pnl=24564 win=0.474
+pm fade 11->14 mm30 sz4 20/40                score=0.5953 h1=0.590 h2=0.747 days=13.2 pnl=24592 win=0.460
+pm fade 11->14 mm40 sz4 20/40                score=0.5952 h1=0.590 h2=0.759 days=13.7 pnl=24166 win=0.442
+pm fade 13->14 mm20 sz4 20/40                score=0.6263 h1=0.641 h2=0.620 days=11.9 pnl=27528 win=0.479
+pm fade 13->14 mm30 sz4 20/40                score=0.6389 h1=0.667 h2=0.633 days=11.9 pnl=26950 win=0.451
+pm fade 13->14 mm40 sz4 20/40                score=0.6469 h1=0.641 h2=0.734 days=12.5 pnl=28200 win=0.451

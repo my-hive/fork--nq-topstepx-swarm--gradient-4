@@ -1,0 +1,10 @@
+cur best (expect 0.7646)                     score=0.7646 h1=0.782 h2=0.759 days=14.7 pnl=25324 win=0.395 worst=-1009
+== agree-big flip size add ==
+fab -2                                       score=0.7519 h1=0.769 h2=0.747 days=14.7 pnl=24446 win=0.395 worst=-1008
+fab -1                                       score=0.7646 h1=0.782 h2=0.759 days=14.8 pnl=24826 win=0.395 worst=-1008
+fab 0                                        score=0.7646 h1=0.782 h2=0.759 days=14.7 pnl=25324 win=0.395 worst=-1009
+== agree-big flip via tighter flip stop for all (chain cap) ==
+Traceback (most recent call last):
+  File "/home/shawn/PycharmProjects/gradient-test/swarm/nq-topstepx-swarm/gu-2/gt_v15.py", line 9, in <module>
+    g.ev(f"flip {fs}/{ft}", f_stop=float(fs), f_tgt=float(ft), **P)
+TypeError: gt_v1.ev() got multiple values for keyword argument 'f_stop'

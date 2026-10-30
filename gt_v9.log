@@ -1,0 +1,13 @@
+flip 40/50 (expect 0.7393)                   score=0.7393 h1=0.744 h2=0.734 days=14.6 pnl=22508 win=0.400 worst=-1009
+== flip bracket fine grid ==
+flip 35/45                                   score=0.5946 h1=0.590 h2=0.709 days=15.3 pnl=21266 win=0.400 worst=-1009
+flip 38/48                                   score=0.5949 h1=0.590 h2=0.722 days=14.7 pnl=20786 win=0.395 worst=-1009
+flip 40/45                                   score=0.7138 h1=0.744 h2=0.709 days=15.2 pnl=22090 win=0.405 worst=-1009
+flip 42/50                                   score=0.7393 h1=0.744 h2=0.734 days=14.6 pnl=22384 win=0.400 worst=-1009
+flip 45/50                                   score=0.7393 h1=0.744 h2=0.734 days=14.6 pnl=22342 win=0.400 worst=-1009
+flip 40/55                                   score=0.7488 h1=0.744 h2=0.747 days=14.4 pnl=24060 win=0.400 worst=-1009
+flip 45/55                                   score=0.7488 h1=0.744 h2=0.747 days=14.4 pnl=23894 win=0.400 worst=-1009
+flip 40/60                                   score=0.6080 h1=0.603 h2=0.759 days=13.7 pnl=23380 win=0.391 worst=-1009
+flip 45/60                                   score=0.6080 h1=0.603 h2=0.759 days=13.7 pnl=23076 win=0.391 worst=-1009
+flip 38/45                                   score=0.5946 h1=0.590 h2=0.709 days=15.4 pnl=21162 win=0.400 worst=-1009
+flip 42/55                                   score=0.7488 h1=0.744 h2=0.747 days=14.4 pnl=23936 win=0.400 worst=-1009

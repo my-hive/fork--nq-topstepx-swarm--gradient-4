@@ -1,0 +1,16 @@
+BASE 30/50 (expect 0.7229)                   score=0.7229 h1=0.718 h2=0.747 days=15.2 pnl=22118 win=0.395 worst=-1009
+== bigflip (agree+big flip) off ==
+big_agree_flip off                           score=0.5998 h1=0.692 h2=0.595 days=15.4 pnl=20278 win=0.372 worst=-1008
+== hotbig sizes on new base ==
+hotbig d7 a7                                 score=0.7100 h1=0.705 h2=0.722 days=15.4 pnl=22688 win=0.400 worst=-1008
+hotbig d7 a6                                 score=0.6715 h1=0.667 h2=0.722 days=15.5 pnl=22051 win=0.400 worst=-1008
+hotbig d6 a7                                 score=0.7136 h1=0.718 h2=0.709 days=15.7 pnl=21980 win=0.400 worst=-1008
+hotbig d6 a8                                 score=0.7356 h1=0.731 h2=0.734 days=15.5 pnl=21412 win=0.395 worst=-1009
+hotbig d8 a7                                 score=0.6841 h1=0.679 h2=0.684 days=16.1 pnl=22330 win=0.395 worst=-1009
+== big bracket variants (affects agree-big too) ==
+big 30/60                                    score=0.7229 h1=0.718 h2=0.747 days=15.2 pnl=22118 win=0.395 worst=-1009
+big 30/55                                    score=0.7228 h1=0.718 h2=0.734 days=15.4 pnl=21330 win=0.395 worst=-1009
+big 30/65                                    score=0.7230 h1=0.718 h2=0.747 days=14.9 pnl=23128 win=0.395 worst=-1009
+big 30/70                                    score=0.7487 h1=0.744 h2=0.759 days=14.8 pnl=24435 win=0.395 worst=-1009
+big 25/55                                    score=0.5999 h1=0.731 h2=0.595 days=15.1 pnl=19018 win=0.386 worst=-1009
+big 25/60                                    score=0.6253 h1=0.744 h2=0.620 days=15.0 pnl=20105 win=0.386 worst=-1009

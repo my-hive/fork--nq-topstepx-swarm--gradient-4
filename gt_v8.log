@@ -1,0 +1,31 @@
+BASE (expect 0.7229)                         score=0.7229 h1=0.718 h2=0.747 days=15.2 pnl=22118 win=0.395 worst=-1009
+== flip brackets (hot-dis + agree-big only now) ==
+flip 25/45                                   score=0.5869 h1=0.705 h2=0.582 days=16.3 pnl=19364 win=0.386 worst=-1009
+flip 30/40                                   score=0.6969 h1=0.692 h2=0.759 days=16.3 pnl=21564 win=0.400 worst=-1009
+flip 30/45                                   score=0.7100 h1=0.705 h2=0.709 days=15.5 pnl=21766 win=0.400 worst=-1009
+flip 30/55                                   score=0.7230 h1=0.718 h2=0.747 days=15.0 pnl=23604 win=0.395 worst=-1009
+flip 35/50                                   score=0.5949 h1=0.590 h2=0.734 days=14.7 pnl=21618 win=0.395 worst=-1009
+flip 40/50                                   score=0.7393 h1=0.744 h2=0.734 days=14.6 pnl=22508 win=0.400 worst=-1009
+flip 35/55                                   score=0.6077 h1=0.603 h2=0.747 days=14.6 pnl=23104 win=0.395 worst=-1009
+flip 20/40                                   score=0.5617 h1=0.590 h2=0.557 days=15.7 pnl=19760 win=0.386 worst=-1009
+flip 25/50                                   score=0.6501 h1=0.718 h2=0.646 days=16.5 pnl=19479 win=0.381 worst=-1009
+flip 30/50                                   score=0.7229 h1=0.718 h2=0.747 days=15.2 pnl=22118 win=0.395 worst=-1009
+== flip size add ==
+flip add 0                                   score=0.7010 h1=0.718 h2=0.696 days=15.7 pnl=20860 win=0.395 worst=-1008
+flip add 1                                   score=0.7229 h1=0.718 h2=0.747 days=15.2 pnl=22118 win=0.395 worst=-1009
+flip add 2                                   score=0.5438 h1=0.538 h2=0.722 days=14.1 pnl=19346 win=0.381 worst=-1010
+== agree-small flip retry (hot agree |onv|<=200) ==
+agree_small_flip                             score=0.6463 h1=0.641 h2=0.671 days=14.3 pnl=23264 win=0.423 worst=-1009
+== cold+dis size (no flip now) ==
+cd sz 4                                      score=0.6716 h1=0.667 h2=0.684 days=15.2 pnl=21728 win=0.395 worst=-1009
+cd sz 5                                      score=0.6845 h1=0.679 h2=0.709 days=15.1 pnl=21923 win=0.395 worst=-1009
+cd sz 6                                      score=0.7229 h1=0.718 h2=0.747 days=15.2 pnl=22118 win=0.395 worst=-1009
+cd sz 7                                      score=0.6508 h1=0.744 h2=0.646 days=14.2 pnl=22314 win=0.395 worst=-1009
+== hot sizes ==
+hot d7 a8                                    score=0.7229 h1=0.718 h2=0.747 days=15.2 pnl=22118 win=0.395 worst=-1009
+hot d6 a8                                    score=0.7010 h1=0.731 h2=0.696 days=15.6 pnl=20154 win=0.395 worst=-1009
+hot d8 a8                                    score=0.5309 h1=0.526 h2=0.671 days=14.3 pnl=20740 win=0.381 worst=-1009
+hot d7 a7                                    score=0.6839 h1=0.679 h2=0.684 days=16.7 pnl=21386 win=0.400 worst=-1008
+hot d7 a9                                    score=0.5697 h1=0.564 h2=0.734 days=13.2 pnl=22968 win=0.391 worst=-1010
+hot d6 a7                                    score=0.6626 h1=0.679 h2=0.658 days=16.9 pnl=19421 win=0.400 worst=-1008
+hot d8 a9                                    score=0.5057 h1=0.500 h2=0.671 days=12.9 pnl=21590 win=0.377 worst=-1010

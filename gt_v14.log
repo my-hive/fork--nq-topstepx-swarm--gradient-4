@@ -1,0 +1,20 @@
+== combine hotbig d6a8 + big tgt variants ==
+hb d6a8 big 30/60                            score=0.7356 h1=0.731 h2=0.734 days=15.5 pnl=21412 win=0.395 worst=-1009
+hb d6a8 big 30/65                            score=0.7390 h1=0.744 h2=0.734 days=15.5 pnl=22334 win=0.395 worst=-1009
+hb d6a8 big 30/70                            score=0.7486 h1=0.744 h2=0.747 days=14.8 pnl=23532 win=0.395 worst=-1009
+hb d6a8 big 30/75                            score=0.7487 h1=0.744 h2=0.759 days=14.8 pnl=24558 win=0.395 worst=-1009
+hb d6a8 big 30/80                            score=0.7488 h1=0.744 h2=0.759 days=14.3 pnl=25816 win=0.395 worst=-1009
+hb d6a8 big 25/70                            score=0.6506 h1=0.744 h2=0.646 days=14.8 pnl=21672 win=0.386 worst=-1009
+hb d6a8 big 30/70                            score=0.7486 h1=0.744 h2=0.747 days=14.8 pnl=23532 win=0.395 worst=-1009
+hb d6a8 big 35/70                            score=0.5871 h1=0.705 h2=0.582 days=15.5 pnl=17220 win=0.377 worst=-1009
+== flip brackets on top (big 30/70, hb d6a8) ==
+flip 30/50                                   score=0.7486 h1=0.744 h2=0.747 days=14.8 pnl=23532 win=0.395 worst=-1009
+flip 40/55                                   score=0.7520 h1=0.808 h2=0.747 days=14.6 pnl=24926 win=0.400 worst=-1009
+flip 30/56                                   score=0.7646 h1=0.782 h2=0.759 days=14.7 pnl=25324 win=0.395 worst=-1009
+flip 40/56                                   score=0.7520 h1=0.808 h2=0.747 days=14.5 pnl=25294 win=0.400 worst=-1009
+flip 35/55                                   score=0.6718 h1=0.667 h2=0.747 days=14.7 pnl=24296 win=0.395 worst=-1009
+flip 30/55                                   score=0.7487 h1=0.744 h2=0.759 days=14.8 pnl=24962 win=0.395 worst=-1009
+== hotbig more ==
+hb d5 a8 big30/70                            score=0.7265 h1=0.744 h2=0.722 days=15.1 pnl=22627 win=0.395 worst=-1009
+hb d6 a9 big30/70                            score=0.7487 h1=0.744 h2=0.759 days=14.7 pnl=23118 win=0.391 worst=-1010
+hb d6 a8 big30/70                            score=0.7486 h1=0.744 h2=0.747 days=14.8 pnl=23532 win=0.395 worst=-1009

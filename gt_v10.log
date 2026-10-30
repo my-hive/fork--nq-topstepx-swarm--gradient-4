@@ -1,0 +1,20 @@
+flip 40/55 (expect 0.7488)                   score=0.7488 h1=0.744 h2=0.747 days=14.4 pnl=24060 win=0.400 worst=-1009
+== tgt fine ==
+flip 40/52                                   score=0.7229 h1=0.718 h2=0.747 days=15.1 pnl=22917 win=0.395 worst=-1009
+flip 40/54                                   score=0.7230 h1=0.718 h2=0.747 days=15.0 pnl=23331 win=0.395 worst=-1009
+flip 40/56                                   score=0.7614 h1=0.756 h2=0.759 days=15.0 pnl=23982 win=0.395 worst=-1009
+flip 40/58                                   score=0.6462 h1=0.641 h2=0.759 days=14.4 pnl=23544 win=0.391 worst=-1009
+== stop fine at tgt 55 ==
+flip 36/55                                   score=0.5949 h1=0.590 h2=0.734 days=14.7 pnl=21618 win=0.395 worst=-1009
+flip 38/55                                   score=0.5948 h1=0.590 h2=0.734 days=14.7 pnl=21514 win=0.395 worst=-1009
+flip 42/55                                   score=0.7393 h1=0.744 h2=0.734 days=14.6 pnl=22384 win=0.400 worst=-1009
+flip 45/55                                   score=0.7393 h1=0.744 h2=0.734 days=14.6 pnl=22342 win=0.400 worst=-1009
+flip 48/55                                   score=0.7393 h1=0.744 h2=0.734 days=14.7 pnl=22296 win=0.400 worst=-1009
+flip 50/55                                   score=0.7393 h1=0.744 h2=0.734 days=14.7 pnl=22268 win=0.400 worst=-1009
+== big brackets on new base ==
+big 30/60                                    score=0.7229 h1=0.718 h2=0.747 days=15.2 pnl=22118 win=0.395 worst=-1009
+big 30/55                                    score=0.7228 h1=0.718 h2=0.734 days=15.4 pnl=21330 win=0.395 worst=-1009
+big 35/60                                    score=0.4984 h1=0.679 h2=0.494 days=15.7 pnl=17448 win=0.381 worst=-1009
+big 30/65                                    score=0.7230 h1=0.718 h2=0.747 days=14.9 pnl=23128 win=0.395 worst=-1009
+big 25/60                                    score=0.6253 h1=0.744 h2=0.620 days=15.0 pnl=20105 win=0.386 worst=-1009
+big 30/70                                    score=0.7487 h1=0.744 h2=0.759 days=14.8 pnl=24435 win=0.395 worst=-1009

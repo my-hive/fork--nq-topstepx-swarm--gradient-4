@@ -1,6 +1,5 @@
-"""Parametrized copy of current best (0.6893) strategy for fast sweeps.
-BASE (defaults) = strategy.py at 0.6893: fade 8:35, 40/80 (big 30/60), flip 30/50 sz+1,
-dead zone 50-225, sizes hd7/ha8/cd6, imb th .05 shrink 2."""
+"""Parametrized copy of current best strategy for fast sweeps. BASE defaults = 0.7229
+(cold_flip=False). Sweeps pass overrides explicitly."""
 import sys
 import numpy as np
 import pandas as pd
@@ -42,7 +41,8 @@ def build(t, c, sess, bounds, onv, mv, imb,
           f_stop, f_tgt, flip_sz_add,
           mv_min, mv_max, hot_flip, big_agree_flip, agree_small_flip,
           cam_sz, max_re, f_stop_cold, f_tgt_cold, f_be, f_conf_pts,
-          cd_stop, cd_tgt, cold_flip, sz_hotbig_dis, sz_hotbig_agree):
+          cd_stop, cd_tgt, cold_flip, sz_hotbig_dis, sz_hotbig_agree,
+          f_add_agree_big):
     out = np.zeros(len(c), dtype=np.int64)
     for s in range(len(bounds) - 1):
         o_, m_, im_ = onv[s], mv[s], imb[s]
@@ -88,7 +88,8 @@ def build(t, c, sess, bounds, onv, mv, imb,
                     elif f_conf_pts > 0:
                         pos, anchor, state = 0, c[k], 2   # wait for push confirmation
                     else:
-                        pos, entry, state = -side * (sz + flip_sz_add), c[k], 3
+                        fa = flip_sz_add + (f_add_agree_big if (agree and big) else 0)
+                        pos, entry, state = -side * (sz + fa), c[k], 3
                 elif pnl >= tg:
                     if wins < max_re:
                         wins += 1
@@ -98,7 +99,8 @@ def build(t, c, sess, bounds, onv, mv, imb,
             elif state == 2:                              # pending flip: confirm continuation
                 d = -side * (c[k] - anchor)
                 if d >= f_conf_pts:
-                    pos, entry, state = -side * (sz + flip_sz_add), c[k], 3
+                    fa = flip_sz_add + (f_add_agree_big if (agree and big) else 0)
+                    pos, entry, state = -side * (sz + fa), c[k], 3
             elif pos != 0 and state == 3:
                 pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
                 if f_be > 0 and pnl >= f_be:
@@ -115,10 +117,11 @@ def ev(name="BASE", **kw):
              sz_hot_dis=7, sz_hot_agree=8, sz_cold_dis=6, sz_cold_agree=0,
              on_lo=50.0, on_hi=225.0, imb_th=0.05, imb_shrink=2,
              stop_pts=40.0, tgt_pts=80.0, big_onv=200.0, big_stop=30.0, big_tgt=60.0,
-             f_stop=30.0, f_tgt=50.0, flip_sz_add=1,
+             f_stop=30.0, f_tgt=50.0, flip_sz_add=1,   # BASE = 0.7229 (cold_flip=False default)
              mv_min=0.0, mv_max=0.0, hot_flip=True, big_agree_flip=True, agree_small_flip=False,
              cam_sz=0, max_re=0, f_stop_cold=0.0, f_tgt_cold=0.0, f_be=0.0, f_conf_pts=0.0,
-             cd_stop=0.0, cd_tgt=0.0, cold_flip=True, sz_hotbig_dis=0, sz_hotbig_agree=0)
+             cd_stop=0.0, cd_tgt=0.0, cold_flip=False, sz_hotbig_dis=0, sz_hotbig_agree=0,
+             f_add_agree_big=0)
     d.update(kw)
     tgt_arr = build(T, C, SESS, bounds, ONV, MV, IMB, d["start"], d["exit_"],
                     d["sz_hot_dis"], d["sz_hot_agree"], d["sz_cold_dis"], d["sz_cold_agree"],
@@ -127,7 +130,8 @@ def ev(name="BASE", **kw):
                     d["f_stop"], d["f_tgt"], d["flip_sz_add"],
                     d["mv_min"], d["mv_max"], d["hot_flip"], d["big_agree_flip"], d["agree_small_flip"],
                     d["cam_sz"], d["max_re"], d["f_stop_cold"], d["f_tgt_cold"], d["f_be"], d["f_conf_pts"],
-                    d["cd_stop"], d["cd_tgt"], d["cold_flip"], d["sz_hotbig_dis"], d["sz_hotbig_agree"])
+                    d["cd_stop"], d["cd_tgt"], d["cold_flip"], d["sz_hotbig_dis"], d["sz_hotbig_agree"],
+                    d["f_add_agree_big"])
     dp, dm, tr = run_days(SESS, T, O, H, L, C, tgt_arr, NS)
     sc, rates, passed = score(dp, dm)
     print(f"{name:44s} score={sc:.4f} h1={rates[0]:.3f} h2={rates[1]:.3f} "

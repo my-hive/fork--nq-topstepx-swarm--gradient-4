@@ -1,0 +1,14 @@
+== smaller / tighter fade ==
+pm 12->13 mm30 sz2 15/30                     score=0.6720 h1=0.667 h2=0.696 days=14.0 pnl=25392 win=0.419
+pm 12->13 mm30 sz2 20/40                     score=0.5568 h1=0.551 h2=0.759 days=13.5 pnl=25639 win=0.423
+pm 12->13 mm30 sz3 20/30                     score=0.6592 h1=0.654 h2=0.747 days=13.8 pnl=26494 win=0.433
+pm 12->13 mm30 sz2 25/50                     score=0.5441 h1=0.538 h2=0.734 days=13.2 pnl=25664 win=0.423
+== momentum (sz<0 = with move) ==
+pm MOM 12->13 mm30 sz3 20/40                 score=0.5185 h1=0.513 h2=0.747 days=12.9 pnl=25844 win=0.423
+pm MOM 12->13 mm30 sz3 25/50                 score=0.5186 h1=0.513 h2=0.734 days=12.7 pnl=25882 win=0.423
+pm MOM 12->13 mm30 sz4 20/40                 score=0.5185 h1=0.513 h2=0.747 days=12.8 pnl=26050 win=0.423
+pm MOM 12->13 mm30 sz2 15/30                 score=0.6720 h1=0.667 h2=0.696 days=14.0 pnl=25392 win=0.419
+== momentum bigger minmove ==
+pm MOM 12->13 mm50 sz3 25/60                 score=0.5185 h1=0.513 h2=0.633 days=12.9 pnl=24121 win=0.405
+pm MOM 12->13 mm50 sz4 30/60                 score=0.5057 h1=0.500 h2=0.633 days=12.9 pnl=23483 win=0.405
+pm MOM 12->13 mm50 sz3 30/60                 score=0.5056 h1=0.500 h2=0.646 days=13.2 pnl=23888 win=0.405

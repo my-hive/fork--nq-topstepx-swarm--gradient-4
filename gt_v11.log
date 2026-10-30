@@ -1,0 +1,13 @@
+== combine flip 40/56 with big brackets ==
+flip40/56 big 30/60                          score=0.7488 h1=0.744 h2=0.747 days=14.3 pnl=24442 win=0.400 worst=-1009
+flip40/56 big 30/65                          score=0.7489 h1=0.744 h2=0.759 days=14.2 pnl=25452 win=0.400 worst=-1009
+flip40/56 big 30/70                          score=0.7490 h1=0.744 h2=0.759 days=13.9 pnl=26759 win=0.400 worst=-1009
+flip40/56 big 30/75                          score=0.7491 h1=0.744 h2=0.759 days=13.5 pnl=27868 win=0.400 worst=-1009
+flip40/56 big 28/70                          score=0.6258 h1=0.744 h2=0.620 days=13.4 pnl=25104 win=0.395 worst=-1009
+flip40/56 big 32/70                          score=0.7617 h1=0.756 h2=0.759 days=14.0 pnl=24898 win=0.395 worst=-1009
+== flip tgt 56-58 and stop variants ==
+flip 40/57                                   score=0.7488 h1=0.744 h2=0.747 days=14.3 pnl=24720 win=0.400 worst=-1009
+flip 42/56                                   score=0.7488 h1=0.744 h2=0.747 days=14.3 pnl=24318 win=0.400 worst=-1009
+flip 45/56                                   score=0.7488 h1=0.744 h2=0.747 days=14.3 pnl=24276 win=0.400 worst=-1009
+flip 50/56                                   score=0.7488 h1=0.744 h2=0.747 days=14.3 pnl=24203 win=0.400 worst=-1009
+flip 40/56.5                                 score=0.7488 h1=0.744 h2=0.747 days=14.3 pnl=24482 win=0.400 worst=-1009
