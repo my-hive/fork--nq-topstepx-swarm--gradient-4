@@ -2,7 +2,7 @@
 Use 8:30-8:35 CT move, overnight drift and opening aggressor flow at 8:35.
 Moderate overnight drift (50-200pt) trades disagreement only; other days fade
 agreement/disagreement at base sizes10/7, versus8 for moderate disagreement.
-One-sided opening flow reduces size by2; thin volume, poor retracement,
+One-sided opening flow reduces moderate size by3, other sizes by2. Thin volume, poor retracement,
 flat-overnight news pushes, tight-range big drift and year-end tape are gated.
 Thursday agreement skips; Mon/Fri big-agreement fades halve. Recent losses
 halve size using completed-session next-open, fee-aware PnL only.
@@ -24,7 +24,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 2, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+LOSS_K, LOSS_TH = 2, -800.0  # completed-session net point-contract PnL
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -50,7 +50,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot:
             sz = 10 if agree else 7
         else:
-            sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
+            sz = 8 if not agree else 0  # moderate disagreement: balanced8 / one-sided5
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
