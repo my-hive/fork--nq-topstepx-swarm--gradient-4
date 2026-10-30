@@ -82,6 +82,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
+            hist.append(0.0)
             continue
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
@@ -120,5 +121,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         oo = df.open.values[idx]
         increments = np.r_[0.0, p[:-2] * np.diff(oo[1:]), p[-2] * (cc[-1] - oo[-1])]
         increments -= 0.5 * np.abs(np.diff(np.r_[0.0, p]))
-        hist.append(float(min(0.0, np.cumsum(increments).min())))
+        equity = np.cumsum(increments)
+        hist.append(float(equity[-1] + min(0.0, equity.min())))
     return out
