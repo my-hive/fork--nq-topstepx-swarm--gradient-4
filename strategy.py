@@ -38,7 +38,12 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     sd = pd.to_datetime(df.session.values)
     dows, months, mdays = sd.dayofweek, sd.month, sd.day
     hist = []  # per-session gross PnL (pts * contracts), past sessions only
+    prev_week = None
     for _, idx in df.groupby("session", sort=False).indices.items():
+        week = sd[idx[0]].to_period("W")
+        if week != prev_week:
+            hist.clear()
+        prev_week = week
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
         if not m.any():
@@ -113,7 +118,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if pnl <= -F_STOP_PTS or pnl >= tgt * (2.0 / 3.0):
+                if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
