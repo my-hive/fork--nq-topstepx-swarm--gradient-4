@@ -60,8 +60,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = max(1, sz - 2)
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
-        if sz > 0 and agree and abs(onv) > 200 and imb * np.sign(mv) < IMB_TH:
-            sz += 1  # balanced-flow big drift: stronger fade edge
+        if sz > 0 and not hot and not agree and imb * np.sign(mv) < IMB_TH:
+            sz += 1  # balanced-flow cold disagreement: stronger fade edge
         if hot and not agree and sz > 0:            # hot disagree: require retrace
             ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
             if abs(ext - cc[where[-1]]) < RETR_MIN:
