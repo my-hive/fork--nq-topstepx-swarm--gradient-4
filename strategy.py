@@ -109,11 +109,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl >= tgt + 0.75:  # gu-4: target net of exit slippage and round-trip commission
+                elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if pnl <= -(F_STOP_PTS - 0.75) or pnl >= F_TGT_PTS + 0.75:
+                if pnl <= -(F_STOP_PTS - 0.75) or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
