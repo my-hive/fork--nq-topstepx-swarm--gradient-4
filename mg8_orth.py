@@ -72,6 +72,9 @@ def build(t, c, i0, i1, SIDE, ONV, AGRE, IMB,
             continue
         if sz == 0:
             continue
+        fsz = sz + flip_dsz
+        if fsz < 1:
+            fsz = 1
         pos, entry, state = 0, 0.0, 0
         for k in range(i0[s], i1[s] + 1):
             if t[k] < START or t[k] >= EXIT:
@@ -84,23 +87,18 @@ def build(t, c, i0, i1, SIDE, ONV, AGRE, IMB,
                     if AGRE[s] == 1 or (flip_cutoff > 0 and t[k] >= flip_cutoff):
                         pos, state = 0, 4
                     else:
-                        fsz = sz + flip_dsz
-                        if fsz < 1:
-                            fsz = 1
                         pos, entry, state = -side * fsz, c[k], 3
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
                 if pnl >= f_tgt:
-                    if third == 1:
-                        # re-enter same (breakout) direction once more at flip size
-                        pos, entry, state = pos, c[k], 5   # keep pos; new leg
-                    else:
-                        pos, state = 0, 4
+                    pos, state = 0, (5 if third == 1 else 4)
                 elif pnl <= -f_stop:
                     pos, state = 0, 4
-            elif pos != 0 and state == 5:
+            elif state == 5 and pos == 0:
+                pos, entry, state = -side * fsz, c[k], 6
+            elif pos != 0 and state == 6:
                 pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
                 if pnl <= -f_stop or pnl >= f_tgt:
                     pos, state = 0, 4
