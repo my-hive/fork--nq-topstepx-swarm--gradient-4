@@ -46,7 +46,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
             sz = max(1, sz - 2)
-        stop, tgt = (30.0, 60.0) if abs(onv) > 200 else (STOP_PTS, TGT_PTS)
+        stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (STOP_PTS, TGT_PTS)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
