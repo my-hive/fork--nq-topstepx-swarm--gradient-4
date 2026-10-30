@@ -73,14 +73,12 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
-        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
-            sz = int(round(sz * 0.5))
-        elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
-            sz = int(round(sz * 0.5))
-        if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
+        scale = 0.5 if big_agree and dow in (0, 4) else 1.0
+        if hot and agree and dow == 3:
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz //= 2  # gu-1: round reduced risk down
+            scale *= 0.5
+        sz = int(sz * scale)  # gu-3: compose risk before discrete contract rounding
         if sz <= 0:
             hist.append(0.0)
             continue
@@ -92,7 +90,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
-        initial_signal = 0.0
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
@@ -101,12 +98,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pos = 0
             elif state == 0:
                 pos, entry, state = side * sz, cc[k], 1
-                initial_signal = cc[k]
                 pending_entry = True
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if skip_flip or (cc[k] - initial_signal) * -side <= stop:  # gu-3: confirm full signal-price displacement
+                    if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
