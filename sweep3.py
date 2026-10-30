@@ -31,7 +31,7 @@ for s in range(NS):
         continue
     hot = not (ON_LO <= abs(onv) <= ON_HI)
     agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
-    B[s] = (0 if hot else 2) + (1 if agree else 0)
+    B[s] = (0 if hot else 2) + (0 if agree else 1)
     SIDE[s] = -1 if mv >= 0 else 1
 
 def evaluate(target):
