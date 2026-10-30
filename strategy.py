@@ -108,7 +108,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         # gu-4: trim momentum exposure after extreme stop overshoot.
-                        flip_size = sz + 2 - int(-pnl - stop > stop)
+                        flip_size = sz + 2 - int(-pnl - stop > stop / 2)
                         pos, entry, state = -side * flip_size, cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
