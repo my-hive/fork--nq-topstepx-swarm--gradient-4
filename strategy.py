@@ -11,7 +11,7 @@ Gates, validated across train halves:
    one contract larger, 40/60 brackets, then done for the day. Big-agree days
    (|onv|>200, push continues overnight) flip too: reversal overshoot.
 5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
-   Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
+   Fridays): Thursday hot+agree fades lose in both halves -> skip. Friday
    big-agree days are trend-risk -> halve size.
 6. Skip year-end holiday tape (Dec 15 - Jan 2) and hot+disagree days with flat
    overnight (|onv|<25) but violent open push (|mv|>70): news momentum.
@@ -72,9 +72,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
-        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
-            sz = int(round(sz * 0.5))
-        elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
+        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve (Monday rule ablated: no effect)
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
