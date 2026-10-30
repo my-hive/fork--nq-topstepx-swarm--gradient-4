@@ -1,0 +1,47 @@
+/home/shawn/PycharmProjects/gradient-test/.venv/lib/python3.12/site-packages/numpy/_core/fromnumeric.py:3862: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/home/shawn/PycharmProjects/gradient-test/.venv/lib/python3.12/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+traded days: 159
+
+== 8:30-8:35 volume ==
+  [     0,  8000) n=  6 pnl=  -1956 win=0.33 qmean=  +672   -284   -668   -697
+  [  8000, 12000) n=  7 pnl=  -3080 win=0.14 qmean=  +nan   -287   -822   +nan
+  [ 12000, 16000) n= 56 pnl=  15604 win=0.61 qmean=   +85    +40   +365   +519
+  [ 16000, 20000) n= 46 pnl=   6739 win=0.52 qmean=  +551   +157   +128   -103
+  [ 20000, 25000) n= 37 pnl=   5078 win=0.51 qmean=  +148    -77   +335   +143
+  [ 25000, 32000) n=  7 pnl=   2940 win=0.71 qmean= +1128   +592   -277   +nan
+
+== ext (room to onv extreme, drift dir) ==
+  [  -100,     0) n=  7 pnl=   2418 win=0.71 qmean=  +nan   +484   -272   +916
+  [     0,    30) n= 34 pnl=  -1040 win=0.41 qmean=   +36    -96    +19    -10
+  [    30,    60) n= 46 pnl=   3874 win=0.48 qmean=   +82   +219    -50   +122
+  [    60,   100) n= 28 pnl=   9730 win=0.68 qmean=  +599    +48   +781   +225
+  [   100,   150) n= 28 pnl=   8303 win=0.61 qmean=  +336   +252   +493   +149
+  [   150,   250) n= 13 pnl=    714 win=0.46 qmean=  +nan   -119    -26   +196
+  [   250,  1000) n=  3 pnl=   1326 win=0.67 qmean=  +972   +nan   +897   -543
+
+== lh_mv (7:30-8:30 move) ==
+  [     0,    50) n= 23 pnl=    992 win=0.43 qmean=  -151   +148   +225    -90
+  [    50,   100) n= 28 pnl=   3915 win=0.46 qmean=  +139   +130   -148   +391
+  [   100,   150) n= 25 pnl=   3438 win=0.48 qmean=  +744   -314   -136   +104
+  [   150,   250) n= 29 pnl=   9187 win=0.66 qmean=  +412    +79   +716   +126
+  [   250,   400) n= 27 pnl=    824 win=0.48 qmean=  -229   +295    +74   -153
+  [   400,  1000) n= 25 pnl=   6809 win=0.68 qmean= +1100   -108   +161   +382
+
+== |mv| push size ==
+  [     0,    20) n= 43 pnl=  11828 win=0.60 qmean=  +369   +231   +397    +64
+  [    20,    40) n= 39 pnl=   1349 win=0.46 qmean=   +40   -151   +154   +110
+  [    40,    60) n= 30 pnl=   3034 win=0.50 qmean=  +255   -123   +453   -304
+  [    60,    90) n= 26 pnl=   4568 win=0.54 qmean=  +210    +96   -101   +394
+  [    90,   130) n= 15 pnl=   2715 win=0.53 qmean=  -334    -62   -128   +452
+  [   130,   200) n=  6 pnl=   1830 win=0.67 qmean=  +nan   +974  -1008   +297
+
+== |onv| ==
+  [     0,    50) n= 65 pnl=  12878 win=0.57 qmean=  +265   +229   +205    +35
+  [    50,   100) n= 17 pnl=    433 win=0.35 qmean=  +278    -83    +36   -131
+  [   100,   160) n= 18 pnl=    886 win=0.39 qmean=   +91   -120   +470     +8
+  [   160,   225) n= 19 pnl=   -502 win=0.32 qmean=  -120    -99    -77   +367
+  [   225,   300) n= 18 pnl=   3170 win=0.67 qmean=  -183   +226   -180   +299
+  [   300,   450) n= 17 pnl=   5061 win=0.71 qmean= +1114   +151    +86   +287
+  [   450,  2000) n=  5 pnl=   3400 win=1.00 qmean=  +nan   +nan   +555   +867

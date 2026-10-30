@@ -19,7 +19,7 @@ for s in range(NS):
     bounds[s] = np.searchsorted(SESS, s)
 bounds[NS] = len(SESS)
 
-ONV = np.zeros(NS); MV = np.zeros(NS); IMB = np.zeros(NS)
+ONV = np.zeros(NS); MV = np.zeros(NS); IMB = np.zeros(NS); VOL = np.zeros(NS)
 for s in range(NS):
     i0, i1 = bounds[s], bounds[s + 1]
     tt, cc = T[i0:i1], C[i0:i1]
@@ -31,9 +31,10 @@ for s in range(NS):
     MV[s] = cc[w[-1]] - cc[w[0]]
     bt, st = BV[i0:i1][w].sum(), SV[i0:i1][w].sum()
     IMB[s] = (bt - st) / max(bt + st, 1)
+    VOL[s] = bt + st
 
 @njit(cache=True)
-def build(t, c, sess, bounds, onv, mv, imb,
+def build(t, c, sess, bounds, onv, mv, imb, vol,
           start, exit_,
           sz_hot_dis, sz_hot_agree, sz_cold_dis, sz_cold_agree,
           on_lo, on_hi, imb_th, imb_shrink,
@@ -42,11 +43,13 @@ def build(t, c, sess, bounds, onv, mv, imb,
           mv_min, mv_max, hot_flip, big_agree_flip, agree_small_flip,
           cam_sz, max_re, f_stop_cold, f_tgt_cold, f_be, f_conf_pts,
           cd_stop, cd_tgt, cold_flip, sz_hotbig_dis, sz_hotbig_agree,
-          f_add_agree_big):
+          f_add_agree_big, vol_min):
     out = np.zeros(len(c), dtype=np.int64)
     for s in range(len(bounds) - 1):
         o_, m_, im_ = onv[s], mv[s], imb[s]
         if m_ == 0 or abs(m_) < mv_min or (mv_max > 0 and abs(m_) >= mv_max):
+            continue
+        if vol_min > 0 and vol[s] < vol_min:
             continue
         hot = not (on_lo <= abs(o_) <= on_hi)
         agree = np.sign(m_) == np.sign(o_) if o_ != 0 else True
@@ -121,9 +124,9 @@ def ev(name="BASE", **kw):
              mv_min=0.0, mv_max=0.0, hot_flip=True, big_agree_flip=True, agree_small_flip=False,
              cam_sz=0, max_re=0, f_stop_cold=0.0, f_tgt_cold=0.0, f_be=0.0, f_conf_pts=0.0,
              cd_stop=0.0, cd_tgt=0.0, cold_flip=False, sz_hotbig_dis=0, sz_hotbig_agree=0,
-             f_add_agree_big=0)
+             f_add_agree_big=0, vol_min=0)
     d.update(kw)
-    tgt_arr = build(T, C, SESS, bounds, ONV, MV, IMB, d["start"], d["exit_"],
+    tgt_arr = build(T, C, SESS, bounds, ONV, MV, IMB, VOL, d["start"], d["exit_"],
                     d["sz_hot_dis"], d["sz_hot_agree"], d["sz_cold_dis"], d["sz_cold_agree"],
                     d["on_lo"], d["on_hi"], d["imb_th"], d["imb_shrink"],
                     d["stop_pts"], d["tgt_pts"], d["big_onv"], d["big_stop"], d["big_tgt"],
@@ -131,7 +134,7 @@ def ev(name="BASE", **kw):
                     d["mv_min"], d["mv_max"], d["hot_flip"], d["big_agree_flip"], d["agree_small_flip"],
                     d["cam_sz"], d["max_re"], d["f_stop_cold"], d["f_tgt_cold"], d["f_be"], d["f_conf_pts"],
                     d["cd_stop"], d["cd_tgt"], d["cold_flip"], d["sz_hotbig_dis"], d["sz_hotbig_agree"],
-                    d["f_add_agree_big"])
+                    d["f_add_agree_big"], d["vol_min"])
     dp, dm, tr = run_days(SESS, T, O, H, L, C, tgt_arr, NS)
     sc, rates, passed = score(dp, dm)
     print(f"{name:44s} score={sc:.4f} h1={rates[0]:.3f} h2={rates[1]:.3f} "

@@ -1,0 +1,7 @@
+cur best (expect 0.7646)                     score=0.7646 h1=0.782 h2=0.759 days=14.7 pnl=25324 win=0.395 worst=-1009
+== volume gate: skip fade when 8:30-8:35 vol < X ==
+vol_min 8000                                 score=0.7870 h1=0.782 h2=0.835 days=15.1 pnl=27281 win=0.386 worst=-1009
+vol_min 10000                                score=0.7872 h1=0.782 h2=0.835 days=14.5 pnl=29400 win=0.381 worst=-1009
+vol_min 12000                                score=0.7873 h1=0.782 h2=0.835 days=14.2 pnl=30360 win=0.381 worst=-1009
+vol_min 14000                                score=0.5115 h1=0.590 h2=0.506 days=14.6 pnl=22315 win=0.307 worst=-1009
+vol_min 16000                                score=0.1183 h1=0.795 h2=0.114 days=17.0 pnl=14757 win=0.223 worst=-1009
