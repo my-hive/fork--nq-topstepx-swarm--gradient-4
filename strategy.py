@@ -121,6 +121,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         oo = df.open.values[idx]
         increments = np.r_[0.0, p[:-2] * np.diff(oo[1:]), p[-2] * (cc[-1] - oo[-1])]
         increments -= 0.5 * np.abs(np.diff(np.r_[0.0, p]))
-        equity = np.r_[0.0, np.cumsum(increments)]
-        hist.append(float((equity - np.maximum.accumulate(equity)).min()))
+        equity = np.cumsum(increments)
+        hist.append(float(equity[-1] if equity[-1] >= 0.0 else equity.min()))
     return out
