@@ -1,0 +1,80 @@
+h1: 9 fails
+  st=69 (2025-12-05) mdd= -2772 breach=2025-12-16
+  st=70 (2025-12-08) mdd= -2772 breach=2025-12-16
+  st=71 (2025-12-09) mdd= -2772 breach=2025-12-16
+  st=72 (2025-12-10) mdd= -2772 breach=2025-12-16
+  st=73 (2025-12-11) mdd= -2029 breach=2025-12-16
+  st=74 (2025-12-12) mdd= -2029 breach=2025-12-16
+  st=75 (2025-12-15) mdd= -2862 breach=2025-12-29
+  st=76 (2025-12-16) mdd= -2862 breach=2025-12-29
+  st=77 (2025-12-17) mdd= -2771 breach=2025-12-29
+h2: 12 fails
+  st=174 (2026-05-05) mdd= -2140 breach=2026-05-27
+  st=175 (2026-05-06) mdd= -2140 breach=2026-05-27
+  st=176 (2026-05-07) mdd= -2140 breach=2026-05-27
+  st=177 (2026-05-08) mdd= -2140 breach=2026-05-27
+  st=178 (2026-05-11) mdd= -2140 breach=2026-05-27
+  st=179 (2026-05-12) mdd= -2140 breach=2026-05-27
+  st=180 (2026-05-13) mdd= -2140 breach=2026-05-27
+  st=181 (2026-05-14) mdd= -2054 breach=2026-05-27
+  st=182 (2026-05-15) mdd= -2054 breach=2026-05-27
+  st=183 (2026-05-18) mdd= -2054 breach=2026-05-27
+  st=184 (2026-05-19) mdd= -2969 breach=2026-06-03
+  st=185 (2026-05-20) mdd= -2969 breach=2026-06-03
+== losing days < -400 ==
+  2025-09-10 dow=2 cold+dis   onv=    87 push=  30 imb= 0.06 vol=  21040 pnl=  -748
+  2025-09-16 dow=1 cold+dis   onv=    58 push=  19 imb= 0.05 vol=  13614 pnl=  -404
+  2025-09-17 dow=2 hot+agree  onv=   -12 push=  21 imb= 0.04 vol=  12309 pnl=  -574
+  2025-09-26 dow=4 hot+agree  onv=    11 push=  49 imb= 0.03 vol=  21368 pnl=  -581
+  2025-10-06 dow=0 hot+dis    onv=   208 push=  55 imb= 0.05 vol=  15914 pnl=  -801
+  2025-10-08 dow=2 hot+agree  onv=    22 push=  43 imb= 0.03 vol=  14413 pnl=  -742
+  2025-10-10 dow=4 hot+agree  onv=    22 push=  16 imb=-0.02 vol=  15927 pnl=  -756
+  2025-10-15 dow=2 hot+dis    onv=   237 push=  34 imb= 0.03 vol=  15884 pnl=  -824
+  2025-10-20 dow=0 hot+agree  onv=    32 push=  69 imb= 0.07 vol=  14741 pnl=  -581
+  2025-10-21 dow=1 hot+agree  onv=   -25 push=  18 imb= 0.03 vol=  12384 pnl=  -747
+  2025-10-31 dow=4 hot+dis    onv=    22 push=  27 imb= 0.05 vol=  15529 pnl=  -904
+  2025-11-20 dow=3 hot+dis    onv=   260 push=  28 imb= 0.02 vol=  19280 pnl= -1008
+  2025-12-10 dow=2 hot+agree  onv=   -36 push=  30 imb= 0.03 vol=  14475 pnl=  -742
+  2025-12-12 dow=4 cold+dis   onv=  -156 push=  24 imb=-0.03 vol=  21375 pnl= -1007
+  2025-12-16 dow=1 cold+dis   onv=  -131 push=  60 imb=-0.04 vol=  19656 pnl= -1007
+  2025-12-22 dow=0 cold+dis   onv=   132 push=  72 imb= 0.04 vol=  19985 pnl=  -752
+  2025-12-23 dow=1 cold+dis   onv=   -60 push=  63 imb=-0.00 vol=  18890 pnl= -1007
+  2025-12-29 dow=0 cold+dis   onv=  -178 push=  23 imb= 0.03 vol=  12914 pnl= -1007
+  2026-01-02 dow=4 hot+dis    onv=   204 push=   2 imb=-0.01 vol=  18244 pnl= -1008
+  2026-01-05 dow=0 hot+dis    onv=   202 push=  50 imb= 0.06 vol=  25541 pnl=  -787
+  2026-01-07 dow=2 hot+dis    onv=   -40 push=  30 imb= 0.06 vol=  16464 pnl=  -906
+  2026-01-13 dow=1 hot+dis    onv=    -8 push=  40 imb= 0.02 vol=  17825 pnl= -1008
+  2026-01-15 dow=3 hot+dis    onv=   331 push=  40 imb=-0.00 vol=  22976 pnl= -1008
+  2026-01-22 dow=3 cold+dis   onv=   178 push=  46 imb= 0.03 vol=  18917 pnl= -1007
+  2026-01-27 dow=1 cold+dis   onv=   124 push=  17 imb= 0.03 vol=  20317 pnl=  -738
+  2026-01-30 dow=4 cold+dis   onv=  -170 push=  52 imb= 0.04 vol=  21729 pnl=  -762
+  2026-02-02 dow=0 hot+agree  onv=    44 push=  80 imb= 0.05 vol=  23430 pnl=  -588
+  2026-02-17 dow=1 cold+dis   onv=   -80 push=  83 imb= 0.04 vol=  19469 pnl=  -796
+  2026-03-02 dow=0 hot+dis    onv=    -6 push= 186 imb= 0.04 vol=  20860 pnl=  -968
+  2026-03-11 dow=2 hot+agree  onv=    38 push=  25 imb=-0.02 vol=  12322 pnl= -1009
+  2026-03-18 dow=2 cold+dis   onv=   -98 push=  21 imb= 0.02 vol=  12545 pnl= -1007
+  2026-04-13 dow=0 hot+dis    onv=   300 push=   8 imb=-0.00 vol=  15040 pnl= -1008
+  2026-04-16 dow=3 cold+dis   onv=    91 push=  50 imb= 0.05 vol=  15830 pnl=  -759
+  2026-04-17 dow=4 hot+dis    onv=   239 push=  24 imb= 0.05 vol=  19256 pnl=  -866
+  2026-04-27 dow=0 hot+dis    onv=    19 push=  42 imb= 0.04 vol=  14394 pnl=  -958
+  2026-04-30 dow=3 hot+dis    onv=   259 push= 134 imb= 0.07 vol=  19561 pnl=  -811
+  2026-05-13 dow=2 cold+dis   onv=   136 push=  20 imb= 0.04 vol=  16517 pnl=  -812
+  2026-05-18 dow=0 cold+dis   onv=   195 push=  35 imb=-0.01 vol=  20422 pnl= -1007
+  2026-05-21 dow=3 hot+dis    onv=   -47 push=  53 imb= 0.03 vol=  17702 pnl=  -916
+  2026-06-01 dow=0 hot+dis    onv=   -40 push=  20 imb= 0.04 vol=  20135 pnl=  -953
+  2026-06-02 dow=1 hot+dis    onv=    18 push=  87 imb= 0.03 vol=  17513 pnl= -1008
+  2026-06-03 dow=2 hot+dis    onv=    29 push=  57 imb= 0.01 vol=  21017 pnl= -1008
+  2026-06-15 dow=0 hot+agree  onv=   440 push=  24 imb=-0.00 vol=  13351 pnl=  -655
+  2026-06-18 dow=3 hot+dis    onv=   416 push=  83 imb= 0.11 vol=  18714 pnl=  -796
+  2026-06-30 dow=1 hot+agree  onv=    48 push= 124 imb= 0.03 vol=  15879 pnl=  -592
+== month pnl ==
+  m1: mean=   -69 win=0.33
+  m2: mean=   297 win=0.55
+  m3: mean=   245 win=0.50
+  m4: mean=   114 win=0.45
+  m5: mean=   176 win=0.48
+  m6: mean=   232 win=0.64
+  m9: mean=   275 win=0.45
+  m10: mean=    93 win=0.35
+  m11: mean=   327 win=0.50
+  m12: mean=   -34 win=0.27

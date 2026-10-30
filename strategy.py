@@ -21,12 +21,14 @@ START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.03
 VOL_MIN = 12000.0
+RETR_MIN = 5.0
 F_STOP_PTS, F_TGT_PTS = 40.0, 60.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
     bv, sv = df.buy_vol.values, df.sell_vol.values
+    hi, lo = df.high.values, df.low.values
     dows = pd.to_datetime(df.session.values).dayofweek
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
@@ -50,6 +52,10 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = max(1, sz - 2)
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
+        if hot and not agree and sz > 0:            # hot disagree: require retrace
+            ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
+            if abs(ext - cc[where[-1]]) < RETR_MIN:
+                sz = 0  # push still at its extreme: momentum, don't fade
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve

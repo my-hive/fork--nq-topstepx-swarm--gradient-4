@@ -1,5 +1,5 @@
-"""Corrected management sweep on true 0.4686 config.
-Bucket order: 0=hot+agree(9) 1=hot+dis(8) 2=cold+agree(0) 3=cold+dis(6)."""
+"""Sweep harness matching d6eb227 (0.8131): DOW conditioning, zone 50-200, ha9, imb .02,
+flip 40/60, cold+dis flips, no vol gate. Then layer: per-bucket shrink, VOL_MIN, combos."""
 import sys
 import numpy as np
 import pandas as pd
@@ -11,77 +11,123 @@ from eval.sim import run_days, score
 df = pd.read_parquet("/home/shawn/hive-data/nq/train.parquet")
 sess = pd.factorize(df.session, sort=True)[0]
 t, o, h, l, c = (df[k].values for k in ("ct_sec", "open", "high", "low", "close"))
+bv, sv = df.buy_vol.values, df.sell_vol.values
 NS = sess.max() + 1
+srt = np.where(np.r_[True, sess[1:] != sess[:-1]])[0]
+end = np.r_[srt[1:] - 1, len(sess) - 1]
+START = 8 * 3600 + 35 * 60
 
-ON_LO, ON_HI = 50.0, 175.0
-SIZES = np.array([9, 8, 0, 6], dtype=np.int64)  # hot+agree, hot+dis, cold+agree, cold+dis
+dates = pd.to_datetime(df.session.unique())
+DOW = np.array([d.dayofweek for d in dates])
 
-i0 = np.zeros(NS, dtype=np.int64); i1 = np.zeros(NS, dtype=np.int64)
-SIDE = np.zeros(NS, dtype=np.int64); B = np.full(NS, 4, dtype=np.int64)
+SIDE = np.zeros(NS, dtype=np.int64)
+ONV = np.zeros(NS)
+PUSH = np.zeros(NS)
+AGREE = np.zeros(NS, dtype=np.int64)
+IA = np.zeros(NS)
+PVOL = np.zeros(NS)  # push window volume
 for s in range(NS):
-    idx = np.where(sess == s)[0]
-    i0[s], i1[s] = idx[0], idx[-1]
-    tt, cc = t[idx], c[idx]
-    w = np.where((tt >= 8*3600+30*60) & (tt < 8*3600+35*60))[0]
+    i0, i1 = srt[s], end[s]
+    tt, cc = t[i0:i1 + 1], c[i0:i1 + 1]
+    w = np.where((tt >= 8 * 3600 + 30 * 60) & (tt < START))[0]
     if len(w) == 0:
         continue
     onv = cc[w[0]] - cc[0]
     mv = cc[w[-1]] - cc[w[0]]
     if mv == 0:
         continue
-    hot = not (ON_LO <= abs(onv) <= ON_HI)
-    agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
-    B[s] = (0 if hot else 2) + (0 if agree else 1)
+    ONV[s] = onv; PUSH[s] = abs(mv)
+    AGREE[s] = 1 if (onv == 0 or np.sign(mv) == np.sign(onv)) else 0
+    bsum, ssum = bv[i0 + w].sum(), sv[i0 + w].sum()
+    IA[s] = (bsum - ssum) / max(bsum + ssum, 1.0) * (1 if mv > 0 else -1)
+    PVOL[s] = bsum + ssum
     SIDE[s] = -1 if mv >= 0 else 1
+
+@njit(cache=True)
+def build(t, c, srt, end, SIDE, SZ, ST, TG, FLIP, FSZ, FST, FTG, start, exit_):
+    out = np.zeros(len(c), dtype=np.int64)
+    for s in range(len(srt)):
+        sz = SZ[s]
+        if sz == 0:
+            continue
+        side = SIDE[s]
+        pos, entry, state = 0, 0.0, 0
+        for k in range(srt[s], end[s] + 1):
+            if t[k] < start or t[k] >= exit_:
+                pos = 0
+            elif state == 0:
+                pos, entry, state = side * sz, c[k], 1
+            elif pos != 0 and state == 1:
+                pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
+                if pnl <= -ST[s]:
+                    if FLIP[s]:
+                        pos, entry, state = -side * FSZ[s], c[k], 3
+                    else:
+                        pos, state = 0, 4
+                elif pnl >= TG[s]:
+                    pos, state = 0, 4
+            elif pos != 0 and state == 3:
+                pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
+                if pnl <= -FST or pnl >= FTG:
+                    pos, state = 0, 4
+            out[k] = pos
+    return out
 
 def evaluate(target):
     day_pnl, day_min, trades = run_days(sess, t, o, h, l, c, target, NS)
     sc, rates, passed = score(day_pnl, day_min)
-    return sc, rates, (np.mean(passed) if passed else np.nan), day_pnl.sum(), day_pnl.min()
+    ad = np.mean(passed) if passed else np.nan
+    return sc, rates, ad, day_pnl.sum(), day_pnl.min(), (day_pnl > 0).mean(), trades.sum()
 
-def show(tag, res):
-    sc, r, ad, tp, wd = res
-    print(f"{tag:<34} score={sc:.4f} h1={r[0]:.3f} h2={r[1]:.3f} days={ad:.1f} pnl={tp:.0f} worst={wd:.0f}", flush=True)
+def show(tag, r):
+    sc, rates, ad, tp, wd, wr, ct_ = r
+    print(f"{tag:<44} score={sc:.4f} h1={rates[0]:.3f} h2={rates[1]:.3f} days={ad:.1f} "
+          f"pnl={tp:.0f} worst={wd:.0f} wr={wr:.2f} ct={ct_}", flush=True)
 
-@njit(cache=True)
-def build(t, c, i0, i1, SIDE, B, sizes, start, exit_, stop, tgt, be_trig):
-    out = np.zeros(len(c), dtype=np.int64)
-    for s in range(len(i0)):
-        b = B[s]
-        if b >= 4 or sizes[b] == 0:
+def cfg(ha=9, hd=7, cd=6, on_lo=50.0, on_hi=200.0, imth=0.02, sh_ha=2, sh_hd=2, sh_cd=2,
+        vol_min=0.0, fst=40.0, ftg=60.0, bst=30.0, btgt=60.0, tbr=200.0,
+        thu_skip=True, mf_halve=True, cd_noflip=False):
+    SZ = np.zeros(NS, dtype=np.int64); ST = np.zeros(NS); TG = np.zeros(NS)
+    FLIP = np.zeros(NS, dtype=np.int64); FSZ = np.zeros(NS, dtype=np.int64)
+    for s in range(NS):
+        onv, push = ONV[s], PUSH[s]
+        if push == 0:
             continue
-        side, sz = SIDE[s], sizes[b]
-        pos, entry, done = 0, 0.0, False
-        cur_stop = stop
-        for k in range(i0[s], i1[s] + 1):
-            if t[k] < start or t[k] >= exit_:
-                pos = 0
-            elif pos == 0 and not done:
-                pos, entry, done, cur_stop = side * sz, c[k], True, stop
-            elif pos != 0:
-                pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
-                if be_trig > 0.0 and pnl >= be_trig and cur_stop == stop:
-                    cur_stop = 0.0
-                if pnl <= -cur_stop or pnl >= tgt:
-                    pos = 0
-            out[k] = pos
-    return out
-
-START0 = 8*3600 + 35*60
-EXIT0 = 14*3600 + 30*60
-STOP0, TGT0 = 40.0, 80.0
+        aonv = abs(onv)
+        hot = aonv < on_lo or aonv > on_hi
+        agree = AGREE[s] == 1
+        if hot:
+            sz = (ha if agree else hd)
+        else:
+            sz = cd if not agree else 0
+        if sz > 0 and IA[s] >= imth:
+            sh = sh_ha if (hot and agree) else (sh_hd if hot else sh_cd)
+            sz = max(1, sz - sh)
+        if sz > 0 and vol_min > 0 and PVOL[s] < vol_min:
+            sz = 0
+        dow = DOW[s]
+        big_agree = agree and aonv > 200
+        if mf_halve and big_agree and dow in (0, 4):
+            sz = int(round(sz * 0.5))
+        if thu_skip and hot and agree and dow == 3:
+            sz = 0
+        SZ[s] = sz
+        if sz == 0:
+            continue
+        ST[s], TG[s] = (bst, btgt) if aonv > tbr else (40.0, 80.0)
+        flip = (not agree) or (agree and aonv > tbr)
+        if cd_noflip and not agree and not hot:
+            flip = 0
+        FLIP[s] = 1 if flip else 0
+        FSZ[s] = sz + 1
+    return build(t, c, srt, end, SIDE, SZ, ST, TG, FLIP, FSZ, fst, ftg, START, 14 * 3600 + 30 * 60)
 
 if __name__ == "__main__":
-    which = sys.argv[1] if len(sys.argv) > 1 else "all"
-    if which in ("all", "base"):
-        show("BASE (expect ~0.4686)", evaluate(build(t, c, i0, i1, SIDE, B, SIZES, START0, EXIT0, STOP0, TGT0, 0.0)))
-    if which in ("all", "exit"):
-        for hh, mm in ((11,0),(11,30),(12,0),(12,30),(13,0),(13,30),(14,0),(15,0),(15,5)):
-            ex = hh*3600 + mm*60
-            show(f"exit {hh}:{mm:02d}", evaluate(build(t, c, i0, i1, SIDE, B, SIZES, START0, ex, STOP0, TGT0, 0.0)))
-    if which in ("all", "stgrid"):
-        for stop, tgt in ((30,60),(30,80),(30,100),(35,70),(40,60),(40,80),(40,100),(40,120),(50,80),(50,100),(50,120),(60,120),(60,160),(70,140),(25,50),(20,40)):
-            show(f"stop/tgt {stop}/{tgt}", evaluate(build(t, c, i0, i1, SIDE, B, SIZES, START0, EXIT0, stop, tgt, 0.0)))
-    if which in ("all", "be"):
-        for be in (30.0, 40.0, 50.0, 60.0, 70.0):
-            show(f"BE after +{be:.0f}", evaluate(build(t, c, i0, i1, SIDE, B, SIZES, START0, EXIT0, STOP0, TGT0, be)))
+    show("BASE expect 0.8131", evaluate(cfg()))
+    show("+hd sh3", evaluate(cfg(sh_hd=3)))
+    show("+cd sh3", evaluate(cfg(sh_cd=3)))
+    show("+hd/cd sh3", evaluate(cfg(sh_hd=3, sh_cd=3)))
+    show("+vol10k", evaluate(cfg(vol_min=10000.0)))
+    show("+vol10k+sh3", evaluate(cfg(sh_hd=3, sh_cd=3, vol_min=10000.0)))
+    show("+vol8k", evaluate(cfg(vol_min=8000.0)))
+    show("+vol12k", evaluate(cfg(vol_min=12000.0)))
