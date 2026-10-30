@@ -92,9 +92,14 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
+        fade_entry = 0.0
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
+                if state == 1:
+                    fade_entry = entry
+                elif state == 3 and (opens[idx[k]] - fade_entry) * np.sign(pos) <= 0:
+                    pos, state = 0, 4  # gu-2: observed gap invalidates recovery breakout.
                 pending_entry = False
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
