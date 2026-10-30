@@ -108,7 +108,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         beyond_open = cc[k] > hi[idx][where].max() if mv > 0 else cc[k] < lo[idx][where].min()
-                        pos, entry, state = -side * (sz + 2 - int(beyond_open)), cc[k], 3
+                        pos, entry, state = -side * (sz + 2 - int(not beyond_open)), cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
