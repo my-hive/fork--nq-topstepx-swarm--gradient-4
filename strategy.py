@@ -107,7 +107,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 if (cc[k] - cc[where[0]]) * side >= 0:
                     fade_stop = 1.0
                 if pnl <= fade_stop:
-                    if skip_flip:  # opening regime does not support momentum reversal
+                    if skip_flip or pnl > -stop:  # protective exits do not imply failed fade
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
