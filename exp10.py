@@ -1,42 +1,71 @@
-"""Failure-mode analysis of current strategy: why do attempts fail?"""
-import numpy as np, pandas as pd, sys
-sys.path.insert(0, ".")
-from strategy import signals
-from harness import DF, SESS
+"""Flip-leg conditioning experiments on 0.6018 base (87cbe4a).
+Diag insight: 100% of attempt failures are MLL breaches; -1008 DLL days come from
+fade-stop + flip-stop double losses. Test: gate/shrink the flip leg."""
+import sys
+import numpy as np, pandas as pd
+sys.path.insert(0, "eval")
 import sim
+from harness import score_signals, DF, SESS
 
-target = np.nan_to_num(np.asarray(signals(DF), dtype=float)).astype(np.int64)
-day_pnl, day_min, trades = sim.run_days(SESS, DF.ct_sec.values, DF.open.values, DF.high.values,
-                                        DF.low.values, DF.close.values, target, SESS.max() + 1)
-n, mid, W = len(day_pnl), len(day_pnl) // 2, 30
-print("day_pnl: mean %.0f  p25 %.0f  p50 %.0f  p75 %.0f  min %.0f  win %.3f" % (
-    day_pnl.mean(), *np.percentile(day_pnl, [25, 50, 75]), day_pnl.min(), (day_pnl > 0).mean()))
-print("day_min: min %.0f  frac < -900: %.3f" % (day_min.min(), (day_min < -900).mean()))
+START, EXIT = 8*3600+35*60, 14*3600+30*60
+STOP_PTS, TGT_PTS = 40.0, 80.0
+ON_LO, ON_HI = 50.0, 175.0
+IMB_TH = 0.05
+F_STOP, F_TGT = 40.0, 60.0
 
-for name, lo, hi in (("h1", 0, mid), ("h2", mid, n)):
-    modes = {}
-    for st in range(lo, hi - W + 1):
-        bal, peak_eod, best, days = 50000.0, 50000.0, 0.0, 0
-        mode = "timeout"
-        for s in range(st, st + W):
-            thr = min(peak_eod - 2000.0, 50000.0)
-            if bal + day_min[s] <= thr:
-                mode = "MLL_bust"; break
-            bal += day_pnl[s]; days += 1
-            best, peak_eod = max(best, day_pnl[s]), max(peak_eod, bal)
-            profit = bal - 50000.0
-            if profit >= 3000.0:
-                if days >= 2 and best < 0.5 * profit:
-                    mode = "PASS"; break
-                elif best >= 0.5 * profit:
-                    mode = "consistency"; break
-        modes[mode] = modes.get(mode, 0) + 1
-    print(name, modes, "rate", modes.get("PASS", 0) / sum(modes.values()))
+def build(flip_mode="all", flip_sz_delta=1, flip_imb_gate=None, flip_imb_sign=1):
+    """flip_mode: all | hot | cold | none. flip_imb_gate: None or threshold on imb*sign(mv)."""
+    t, c = DF.ct_sec.values, DF.close.values
+    bv, sv = DF.buy_vol.values, DF.sell_vol.values
+    out = np.zeros(len(DF), dtype=np.int64)
+    for _, idx in DF.groupby("session", sort=False).indices.items():
+        tt, cc = t[idx], c[idx]
+        m = (tt >= 8*3600+30*60) & (tt < START)
+        if not m.any(): continue
+        where = np.where(m)[0]
+        onv = cc[where[0]] - cc[0]
+        mv = cc[where[-1]] - cc[where[0]]
+        if mv == 0: continue
+        hot = not (ON_LO <= abs(onv) <= ON_HI)
+        agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
+        if hot: sz = 9 if agree else 7
+        else:   sz = 6 if not agree else 0
+        imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(bv[idx][where].sum() + sv[idx][where].sum(), 1)
+        oneway = imb * np.sign(mv) >= IMB_TH
+        if sz > 0 and oneway: sz = max(1, sz - 2)
+        side = -1 if mv >= 0 else 1
+        do_flip = {"all": True, "none": False, "hot": hot, "cold": not hot}[flip_mode]
+        if flip_imb_gate is not None:
+            do_flip = do_flip and (imb * np.sign(mv) * flip_imb_sign >= flip_imb_gate)
+        pos, entry, state = 0, 0.0, 0
+        for k in range(len(idx)):
+            if tt[k] < START or tt[k] >= EXIT:
+                pos = 0
+            elif state == 0:
+                pos, entry, state = side * sz, cc[k], 1
+            elif pos != 0 and state == 1:
+                pnl = (cc[k] - entry) * np.sign(pos)
+                if pnl <= -STOP_PTS:
+                    if agree or not do_flip:
+                        pos, state = 0, 4
+                    else:
+                        pos, entry, state = -side * max(1, sz + flip_sz_delta), cc[k], 3
+                elif pnl >= TGT_PTS:
+                    pos, state = 0, 4
+            elif pos != 0 and state == 3:
+                pnl = (cc[k] - entry) * np.sign(pos)
+                if pnl <= -F_STOP or pnl >= F_TGT:
+                    pos, state = 0, 4
+            out[idx[k]] = pos
+    return out
 
-# day_pnl autocorrelation: do wins cluster?
-dp = day_pnl - day_pnl.mean()
-print("\nlag1 corr %.3f  lag2 %.3f" % (np.corrcoef(dp[:-1], dp[1:])[0, 1],
-                                        np.corrcoef(dp[:-2], dp[2:])[0, 1]))
-# histogram of day_pnl
-print(pd.Series(day_pnl).describe())
-print((day_pnl > 1400).sum(), "days > 1400;", (day_pnl < -600).sum(), "days < -600")
+if __name__ == "__main__":
+    score_signals(lambda df: build(), "base repro (flip all, +1, 40/60)")
+    score_signals(lambda df: build(flip_mode="none"), "no flip (fade only)")
+    score_signals(lambda df: build(flip_mode="hot"), "flip hot only")
+    score_signals(lambda df: build(flip_mode="cold"), "flip cold only")
+    score_signals(lambda df: build(flip_sz_delta=0), "flip same size")
+    score_signals(lambda df: build(flip_sz_delta=2), "flip sz+2")
+    score_signals(lambda df: build(flip_sz_delta=-2), "flip sz-2")
+    score_signals(lambda df: build(flip_imb_gate=0.05, flip_imb_sign=1), "flip only if push one-sided")
+    score_signals(lambda df: build(flip_imb_gate=0.05, flip_imb_sign=-1), "flip only if push balanced")
