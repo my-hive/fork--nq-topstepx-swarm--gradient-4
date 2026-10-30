@@ -96,6 +96,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
                 pending_entry = False
+                if state == 1:
+                    tgt = max(tgt, (cc[where[0]] - entry) * np.sign(pos))
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
             elif state == 0:
