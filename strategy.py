@@ -16,6 +16,9 @@ START, EXIT = 8 * 3600 + 30 * 60, 14 * 3600 + 30 * 60
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
+    OR_START = 8 * 3600 + 30 * 60
+    OR_END = OR_START + P["ORM"] * 60
+    sign = 1 if P["MODE"] == "brk" else -1
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
         s = np.nonzero(tt >= START)[0]
