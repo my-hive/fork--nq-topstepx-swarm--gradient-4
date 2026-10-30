@@ -108,8 +108,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        size = max(1, flip_size // 2) if (bv[idx[k]] - sv[idx[k]]) * np.sign(mv) < 0 else flip_size
-                        pos, entry, state = -side * size, cc[k], 3
+                        pos, entry, state = -side * flip_size, cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
