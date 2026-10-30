@@ -1,0 +1,48 @@
+h1: attempts=78 pass=53 mll=25 target=0 consist=0
+  top MLL-break sessions (sess_idx: count, day_pnl, day_min):
+   s 44 brk=11 pnl=   -904 min=   -904 trades= 22 half=h1
+   s 29 brk= 4 pnl=   -672 min=   -672 trades= 16 half=h1
+   s 75 brk= 3 pnl=    286 min=   -624 trades= 18 half=h1
+   s 77 brk= 3 pnl=    393 min=   -615 trades= 26 half=h1
+   s 81 brk= 3 pnl=  -1007 min=  -1048 trades= 26 half=h1
+   s 30 brk= 1 pnl=    658 min=   -322 trades=  8 half=h1
+h2: attempts=79 pass=55 mll=24 target=0 consist=0
+  top MLL-break sessions (sess_idx: count, day_pnl, day_min):
+   s183 brk= 9 pnl=  -1007 min=  -1038 trades= 26 half=h2
+   s140 brk= 5 pnl=  -1007 min=  -1012 trades= 26 half=h2
+   s119 brk= 4 pnl=  -1007 min=  -1085 trades= 26 half=h2
+   s190 brk= 2 pnl=    304 min=   -540 trades= 26 half=h2
+   s143 brk= 1 pnl=    847 min=   -441 trades= 14 half=h2
+   s109 brk= 1 pnl=    640 min=   -584 trades= 22 half=h2
+   s188 brk= 1 pnl=   -973 min=   -973 trades= 26 half=h2
+   s184 brk= 1 pnl=    408 min=   -576 trades= 30 half=h2
+
+per-bucket pnl by half:
+                  n      tot    avg  dll
+bucket     half                         
+cold_agree h1    29      0.0    0.0    0
+           h2    26      0.0    0.0    0
+cold_dis   h1    30   -744.0  -25.0    7
+           h2    24   4046.0  169.0    6
+hot_agree  h1    30  10238.0  341.0    0
+           h2    24   2742.0  114.0    4
+hot_dis    h1    18   1714.0   95.0    4
+           h2    33   7870.0  238.0    8
+
+worst 15 days:
+  s    bucket     onv     mv  imb_along     pnl    dmin half
+112 hot_agree  324.25 112.00   0.010073 -1009.0 -1099.5   h2
+138 hot_agree  375.50  34.50  -0.018927 -1009.0 -1023.0   h2
+182 hot_agree -419.00 -20.50  -0.012125 -1009.0 -1075.0   h2
+203 hot_agree  440.50  24.00  -0.002172 -1009.0 -1082.5   h2
+ 32   hot_dis  237.25 -33.50   0.034626 -1008.0 -1032.0   h1
+ 58   hot_dis  260.00 -28.25   0.018776 -1008.0 -1030.5   h1
+ 94   hot_dis   -7.75  40.50   0.019467 -1008.0 -1008.0   h1
+ 96   hot_dis  331.25 -40.25  -0.004526 -1008.0 -1068.5   h1
+128   hot_dis   -5.75 185.75   0.038063 -1008.0 -1068.5   h2
+158   hot_dis  299.50  -8.50  -0.003324 -1008.0 -1162.0   h2
+162   hot_dis  239.25 -23.75   0.049024 -1008.0 -1098.5   h2
+168   hot_dis   19.00 -42.00   0.038766 -1008.0 -1011.5   h2
+186   hot_dis  -46.75  52.75   0.034685 -1008.0 -1017.5   h2
+193   hot_dis  -40.25  19.50   0.041073 -1008.0 -1036.0   h2
+194   hot_dis   17.75 -87.25   0.025067 -1008.0 -1018.0   h2

@@ -1,34 +1,32 @@
 """Fade the 8:30-8:35 open move at 8:35, 40/80 stop/target, flat 14:30.
 Gates, validated across train halves:
-1. Overnight (0:00->8:30 CT) move size: moderate drift 50-225 pts is a dead zone.
+1. Overnight (0:00->8:30 CT) move size: moderate drift 50-200 pts is a dead zone.
 2. Agreement of the 8:30-8:35 move with overnight direction: fade the push when it
    continues the overnight drift, or on dead-zone days when it counters the drift.
 3. Aggressor imbalance along the push: if buy/sell aggressor volume during 8:30-8:35
-   is strongly one-sided IN the push direction (>=0.05), the push is real momentum ->
+   is one-sided IN the push direction (>=0.02), the push is real momentum ->
    fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
-   Low total volume (<10k) = illiquid noise push -> skip the fade entirely.
-Sizes: hot+disagree 7, hot+agree 8, cold+disagree 6, cold+agree skipped.
-4. Momentum flip (HOT disagree days only): when the push COUNTERS the overnight drift
-   on a hot day and the fade still stops out, the push was real momentum -> flip to
-   the push direction one contract larger, 30/50 brackets, then done for the day.
-   Cold-day flips generate DLL-bust days that kill combine attempts, so cold
-   disagree days stand aside after the stop instead.
-   Big overnight (|onv|>200) AGREE days flip too (reversal overshoot)."""
+4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
+   fade still stops out, the push was real momentum -> flip to the push direction
+   one contract larger, 40/60 brackets, then done for the day. Big-agree days
+   (|onv|>200, push continues overnight) flip too: reversal overshoot.
+5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
+   Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
+   big-agree days are trend-risk -> halve size.
+Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
 import numpy as np
 import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
-STOP_PTS, TGT_PTS, stop, tgt = 40.0, 80.0, 40.0, 80.0
-ON_LO, ON_HI = 50.0, 225.0
-IMB_TH = 0.05
-VOL_MIN = 10000.0
-F_STOP_PTS, F_TGT_PTS = 30.0, 56.0
-BIG_STOP_PTS, BIG_TGT_PTS = 30.0, 70.0
+ON_LO, ON_HI = 50.0, 200.0
+IMB_TH = 0.02
+F_STOP_PTS, F_TGT_PTS = 40.0, 60.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
     bv, sv = df.buy_vol.values, df.sell_vol.values
+    dows = pd.to_datetime(df.session.values).dayofweek
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
@@ -42,16 +40,24 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 8 if agree else (6 if abs(onv) > ON_HI else 7)
+            sz = 9 if agree else 7
         else:
             sz = 6 if not agree else 0
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
             sz = max(1, sz - 2)
-        if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
-            sz = 0  # illiquid open push: skip the fade
-        stop, tgt = (BIG_STOP_PTS, BIG_TGT_PTS) if abs(onv) > 200 else (STOP_PTS, TGT_PTS)
+        dow = dows[idx[0]]
+        big_agree = agree and abs(onv) > 200
+        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
+            sz = int(round(sz * 0.5))
+        elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
+            sz = int(round(sz * 0.5))
+        if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
+            sz = 0
+        if sz <= 0:
+            continue
+        stop, tgt = (30.0, 60.0) if abs(onv) > 200 else (40.0, 80.0)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
@@ -62,9 +68,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if (agree and abs(onv) <= 200) or (not agree and not hot):
-                        pos, state = 0, 4      # trend day / cold disagree: stand aside
-                    else:                       # hot counters-drift or big+agree: flip
+                    if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
+                        pos, state = 0, 4
+                    else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 1), cc[k], 3
                 elif pnl >= tgt:
                     pos, state = 0, 4
