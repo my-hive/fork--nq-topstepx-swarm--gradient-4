@@ -80,7 +80,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        fz = sz + (3 if not hot else 2)   # cold-dis flip 1 bigger
+                        pos, entry, state = -side * fz, cc[k], 3
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
