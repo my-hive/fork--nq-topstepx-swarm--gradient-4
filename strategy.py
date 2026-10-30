@@ -13,6 +13,7 @@ Gates, validated across train halves:
 5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
    Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
    big-agree days are trend-risk -> halve size.
+6. Holiday season (Dec 20 - Jan 2): thin tape, fades fail -> skip.
 Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
 import numpy as np
 import pandas as pd
@@ -59,6 +60,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif abs(onv) < 25 and abs(mv) > 70:
                 sz = 0  # strong push vs flat overnight: real momentum day
         dow = dows[idx[0]]
+        d0 = pd.Timestamp(df.session.values[idx[0]])
+        if (d0.month == 12 and d0.day >= 20) or (d0.month == 1 and d0.day <= 2):
+            continue  # ponytail: holiday-thin tape (Xmas-NewYear), calendar rule; swap for a liquidity feature if holdout spans other holidays
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
             sz = int(round(sz * 0.5))
