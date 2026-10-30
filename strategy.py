@@ -24,9 +24,9 @@ ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
-RNG_MIN = 62.0  # 8:30-35 high-low; plateau 60-66 (gu-1 e57831a)
+RNG_MIN = 58.0  # 8:30-35 high-low; plateau 60-66 (gu-1 e57831a)
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
-F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # gu-4 6b84e7d; 66-72 plateau
+F_STOP_PTS, F_TGT_PTS = 45.0, 70.0  # gu-4 6b84e7d; 66-72 plateau
 
 DD_W, DD_TH = 20, -250.0  # gross pts*ct below 20-session equity peak; plateau -100..-250, W 20-40
 
@@ -51,7 +51,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 10 if agree else 7
+            sz = 10 if agree else 9  # hot-dis plateau 8-10; 10+ cliff on tail cuts
         else:
             sz = 6 if not agree else 0
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
