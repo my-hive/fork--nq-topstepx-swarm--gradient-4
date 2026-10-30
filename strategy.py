@@ -27,7 +27,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 70.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 4, -700.0  # gu-1: causal point-contract PnL; K4/K5 exact plateau, K1 fails, K3/K6 slower
+LOSS_K, LOSS_TH = 4, -600.0  # gu-1: causal point-contract PnL; K4/K5 exact plateau, K1 fails, K3/K6 slower
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -79,7 +79,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if sum(v * (j + 1) * 2 / (len(hist[-LOSS_K:]) + 1) for j, v in enumerate(hist[-LOSS_K:])) < LOSS_TH:
+        if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
             hist.append(0.0)
