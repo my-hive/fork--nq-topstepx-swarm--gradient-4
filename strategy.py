@@ -79,7 +79,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if min(sum(hist[-k:]) for k in range(1, 8)) < LOSS_TH:
+        if min(sum(hist[-k:]) for k in range(1, 6)) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
             continue
@@ -126,9 +126,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
 if __name__ == '__main__':
     # gu-1: suffix loss equals drawdown from highest recent completed-session balance.
     from itertools import product
-    for history in product((-600.0, 0.0, 700.0), repeat=8):
-        recent = history[-7:]
+    for history in product((-600.0, 0.0, 700.0), repeat=6):
+        recent = history[-5:]
         balance = np.r_[0.0, np.cumsum(recent)]
-        suffix = min(sum(history[-k:]) for k in range(1, 8))
+        suffix = min(sum(history[-k:]) for k in range(1, 6))
         assert min(0.0, suffix) == balance[-1] - balance.max()
-    print('gu-1: seven-session completed-session drawdown check passed')
+    print('gu-1: weekly completed-session drawdown check passed')
