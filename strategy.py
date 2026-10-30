@@ -104,8 +104,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pending_entry = True
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                # gu-2: invalidate fade after completed close breaks opening-push extreme.
-                if pnl <= -stop or (cc[k] - fade_extreme) * side < 0:
+                if pnl <= -max(stop, (entry - fade_extreme) * side):
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
