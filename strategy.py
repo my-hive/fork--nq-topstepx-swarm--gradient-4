@@ -19,13 +19,13 @@ Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
 import numpy as np
 import pandas as pd
 
-START, EXIT = 8 * 3600 + 35 * 60, 15 * 3600
+START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
-F_STOP_PTS, F_TGT_PTS = 40.0, 68.0  # stop plateau 40-50 (40 fastest, shift-robust); tgt plateau 66-72, cliff 75
+F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
 LOSS_K, LOSS_TH = 2, -700.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
@@ -52,7 +52,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot:
             sz = 10 if agree else 7
         else:
-            sz = 7 if not agree else 0  # cold-dis: 7 robust to half-shift; 8 scores 1.0062 but min-rate .90 off-split
+            sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
@@ -83,7 +83,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sz <= 0:
             hist.append(0.0)
             continue
-        stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, 80.0)
+        stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 80.0)  # gu-1: target plateau 74-85; preserve stop widths
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
