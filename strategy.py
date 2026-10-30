@@ -22,7 +22,7 @@ ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
-F_STOP_PTS, F_TGT_PTS = 40.0, 60.0
+F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)

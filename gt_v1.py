@@ -61,7 +61,7 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
           f_add_agree_big, vol_min, push_ext, lh_mv, cd_ext_max, cd_lh_max, ab_fstop,
           prev_pnl, loss_boost, dow, thu_ha_skip, mf_ba_half, thu_scope, lh_gate, lh_max,
           skip_dow_bucket, cd_tstop, cd_prev_loss_skip, dll_cap, ext_pts, p835, ext_skip,
-          retr, retr_hd, retr_ha, retr_cd, retr_min, cold_flip_add, f_exit):
+          retr, retr_hd, retr_ha, retr_cd, retr_min, cold_flip_add, f_exit, trig, hi, lo, side_skip):
     out = np.zeros(len(c), dtype=np.int64)
     for s in range(len(bounds) - 1):
         o_, m_, im_ = onv[s], mv[s], imb[s]
@@ -122,6 +122,10 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
         if not hot and not agree and cd_stop > 0:
             stp, tg = cd_stop, cd_tgt
         side = (1 if m_ >= 0 else -1) if mom else (-1 if m_ >= 0 else 1)
+        if side_skip == 1 and side < 0:
+            continue   # skip short fades
+        if side_skip == 2 and side > 0:
+            continue   # skip long fades
         # flip brackets: cold days can differ
         f_stp = f_stop_cold if (f_stop_cold > 0 and not hot and not big) else f_stop
         f_tg = f_tgt_cold if (f_stop_cold > 0 and not hot and not big) else f_tgt
@@ -140,6 +144,14 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
                     t_ent = t[k]
             elif pos != 0 and state == 1:
                 pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
+                bad = (lo[k] - entry) if pos > 0 else (entry - hi[k])
+                good = (hi[k] - entry) if pos > 0 else (entry - lo[k])
+                if trig == 1 and bad <= -stp:
+                    dpnl += pnl * 2 * abs(pos); pos, state = 0, 4
+                if trig == 2 and good >= tg and bad <= -stp:
+                    dpnl += pnl * 2 * abs(pos); pos, state = 0, 4
+                if trig == 2 and good >= tg and bad > -stp:
+                    dpnl += pnl * 2 * abs(pos); pos, state = 0, 4
                 if cd_tstop > 0 and not hot and not agree and (t[k] - t_ent) >= cd_tstop:
                     dpnl += pnl * 2 * abs(pos); pos, state = 0, 4
                 if dll_cap > 0 and dpnl + pnl * 2 * abs(pos) <= -dll_cap:
@@ -255,7 +267,7 @@ def ev(name="BASE", **kw):
              thu_ha_skip=True, mf_ba_half=True, thu_scope=0, lh_gate=0, lh_max=200.0,   # BASE = 0.8539
              skip_dow_bucket=np.zeros(20, dtype=np.int64), cd_tstop=0, cd_prev_loss_skip=False, dll_cap=0,
              ext_pts=0, ext_skip=-1e9, retr_hd=True, retr_ha=False, retr_cd=False, retr_min=5.0,
-             cold_flip_add=3, f_exit=0)   # BASE = 0.8904
+             cold_flip_add=3, f_exit=0, trig=0, side_skip=0)   # BASE = 0.8904
     d.update(kw)
     tgt_arr = build(T, C, SESS, bounds, ONV, MV, IMB, VOL, d["start"], d["exit_"],
                     d["sz_hot_dis"], d["sz_hot_agree"], d["sz_cold_dis"], d["sz_cold_agree"],
@@ -271,7 +283,7 @@ def ev(name="BASE", **kw):
                     d["skip_dow_bucket"], d["cd_tstop"], d["cd_prev_loss_skip"], d["dll_cap"],
                     d["ext_pts"], P835, d["ext_skip"],
                     RETR, d["retr_hd"], d["retr_ha"], d["retr_cd"], d["retr_min"], d["cold_flip_add"],
-                    d["f_exit"])
+                    d["f_exit"], d["trig"], H, L, d["side_skip"])
     dp, dm, tr = run_days(SESS, T, O, H, L, C, tgt_arr, NS)
     sc, rates, passed = score(dp, dm)
     print(f"{name:44s} score={sc:.4f} h1={rates[0]:.3f} h2={rates[1]:.3f} "
