@@ -27,6 +27,8 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
 
+LOSS_K, LOSS_TH = 2, -700.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
@@ -34,6 +36,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     hi, lo = df.high.values, df.low.values
     sd = pd.to_datetime(df.session.values)
     dows, months, mdays = sd.dayofweek, sd.month, sd.day
+    hist = []  # per-session gross PnL (pts * contracts), past sessions only
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
@@ -75,7 +78,10 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
+        if sum(hist[-LOSS_K:]) < LOSS_TH:
+            sz = int(round(sz * 0.5))  # drawdown streak: halve size to survive trailing MLL
         if sz <= 0:
+            hist.append(0.0)
             continue
         stop, tgt = (30.0, 70.0) if abs(onv) > 200 else (40.0, 80.0)
         side = -1 if mv >= 0 else 1
@@ -99,4 +105,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
+        p = out[idx].astype(float)
+        hist.append(float((p[:-1] * np.diff(cc)).sum()))
     return out

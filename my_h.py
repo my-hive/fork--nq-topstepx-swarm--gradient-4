@@ -13,3 +13,8 @@ mid = len(dp) // 2
 for st, (p, d) in list(enumerate(sim.attempts(dp, dm, 0, mid))) + [(mid+i, r) for i, r in enumerate(sim.attempts(dp, dm, mid, len(dp)))]:
     if not p:
         print(st, names[st], d, np.round(dp[st:st+30]).astype(int).tolist())
+st=107; bal=0; pk=0
+for s in range(st, st+30):
+    thr=min(pk-2000,0); print(s, int(dp[s]), int(dm[s]), int(bal), int(thr), 'BUST' if bal+dm[s]<=thr else ''); 
+    if bal+dm[s]<=thr: break
+    bal+=dp[s]; pk=max(pk,bal)
