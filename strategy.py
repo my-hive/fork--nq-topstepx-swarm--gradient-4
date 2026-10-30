@@ -92,6 +92,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
+        recovery_floor = -F_STOP_PTS
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
@@ -113,8 +114,10 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
+                if pnl <= recovery_floor or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
+                elif pnl >= F_STOP_PTS:
+                    recovery_floor = sz * stop / (sz + 2)
             out[idx[k]] = pos
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
