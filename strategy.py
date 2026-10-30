@@ -28,7 +28,7 @@ RNG_MIN = 62.0  # 8:30-35 high-low; plateau 60-66 (gu-1 e57831a)
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
 
-LOSS_K, LOSS_TH = 2, -700.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+DD_W, DD_TH = 20, -200.0  # gross pts*ct below 20-session equity peak; plateau -100..-250, W 20-40
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -81,8 +81,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0
         if hi[idx][where].max() - lo[idx][where].min() < RNG_MIN:
             sz = sz // 2  # quiet open: weak exhaustion signal, half size
-        if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz = int(round(sz * 0.5))  # drawdown streak: halve size to survive trailing MLL
+        eq = np.cumsum([0.0] + hist)
+        if eq[-1] - eq[-DD_W:].max() < DD_TH:
+            sz = int(round(sz * 0.6))  # in drawdown vs recent peak: 60% size to survive trailing MLL
         if sz <= 0:
             hist.append(0.0)
             continue
