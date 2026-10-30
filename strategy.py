@@ -102,7 +102,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pos, entry, state = side * sz, cc[k], 1
                 pending_entry = True
             elif pos != 0 and state == 1:
-                pnl = (cc[k] - entry) * np.sign(pos)
+                pnl = (cc[k] - entry) * np.sign(pos) - 0.5  # gu-4: liquidation costs in MNQ points
                 if pnl <= -stop:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
@@ -112,7 +112,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
-                pnl = (cc[k] - entry) * np.sign(pos)
+                pnl = (cc[k] - entry) * np.sign(pos) - 0.5  # gu-4: liquidation costs in MNQ points
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
