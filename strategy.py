@@ -85,7 +85,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 1 and not hot)
-            or (dow == 4 and abs(onv) < 50)
+           
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
@@ -116,6 +116,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
         oo = df.open.values[idx]
-        hist.append(max(-500.0, float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
-                          - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum())))
+        hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
+                          - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
