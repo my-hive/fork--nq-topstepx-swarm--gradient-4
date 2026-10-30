@@ -1,0 +1,6 @@
+BASE 0.8904                                  score=0.8904 h1=0.885 h2=0.886 days=12.5 pnl=39859 win=0.433 worst=-1010
+== flip leg early exit ==
+f_exit 10:00                                 score=0.6982 h1=0.692 h2=0.886 days=12.5 pnl=37541 win=0.414 worst=-1010
+f_exit 11:00                                 score=0.8904 h1=0.885 h2=0.886 days=12.7 pnl=38807 win=0.428 worst=-1010
+f_exit 12:00                                 score=0.8904 h1=0.885 h2=0.886 days=12.6 pnl=39483 win=0.428 worst=-1010
+f_exit 13:00                                 score=0.8904 h1=0.885 h2=0.886 days=12.5 pnl=39923 win=0.433 worst=-1010

@@ -1,0 +1,8 @@
+their 0.8905                                 score=0.8036 h1=0.885 h2=0.797 days=11.6 pnl=41418 win=0.414 worst=-1012
+== their + my cold-specific bigger flip ==
+their + cfa1                                 score=0.8905 h1=0.885 h2=0.886 days=12.5 pnl=40790 win=0.419 worst=-1012
+their + cfa2                                 score=0.7909 h1=0.885 h2=0.785 days=11.8 pnl=41752 win=0.419 worst=-1012
+their + cfa3                                 score=0.8036 h1=0.885 h2=0.797 days=11.6 pnl=41418 win=0.414 worst=-1012
+== their + f_tgt 65/70 (bigger flip targets) ==
+their + f65                                  score=0.7530 h1=0.885 h2=0.747 days=11.6 pnl=41854 win=0.409 worst=-1012
+their + f70                                  score=0.7909 h1=0.885 h2=0.785 days=11.7 pnl=42112 win=0.405 worst=-1012

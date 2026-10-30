@@ -1,0 +1,6 @@
+BASE 0.8904                                  score=0.8904 h1=0.885 h2=0.886 days=12.5 pnl=39859 win=0.433 worst=-1010
+== cold+agree fade activation (skipped bucket) ==
+ca sz 3                                      score=0.6605 h1=0.654 h2=0.747 days=10.2 pnl=38132 win=0.502 worst=-1010
+ca sz 4                                      score=0.6476 h1=0.641 h2=0.759 days=10.2 pnl=37457 win=0.502 worst=-1010
+ca sz 5                                      score=0.6477 h1=0.641 h2=0.734 days=10.0 pnl=36782 win=0.502 worst=-1010
+ca sz 6                                      score=0.6477 h1=0.641 h2=0.722 days=10.0 pnl=36106 win=0.502 worst=-1010

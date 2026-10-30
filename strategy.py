@@ -43,7 +43,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 9 if agree else 7
+            sz = 10 if agree else 7
         else:
             sz = 6 if not agree else 0
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
@@ -66,7 +66,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0
         if sz <= 0:
             continue
-        stop, tgt = (30.0, 60.0) if abs(onv) > 200 else (40.0, 80.0)
+        stop, tgt = (30.0, 70.0) if abs(onv) > 200 else (40.0, 80.0)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
@@ -80,8 +80,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        fz = sz + (4 if not hot else 1)   # cold-dis flip bigger (sz+4)
-                        pos, entry, state = -side * fz, cc[k], 3
+                        pos, entry, state = -side * (sz + 2), cc[k], 3
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
