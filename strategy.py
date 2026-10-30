@@ -26,9 +26,9 @@ VOL_MIN = 12000.0
 RETR_MIN = 8.0
 RNG_MIN = 62.0  # 8:30-35 high-low; plateau 60-66 (gu-1 e57831a)
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
-F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
+F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # gu-4 6b84e7d; 66-72 plateau
 
-DD_W, DD_TH = 20, -200.0  # gross pts*ct below 20-session equity peak; plateau -100..-250, W 20-40
+DD_W, DD_TH = 20, -250.0  # gross pts*ct below 20-session equity peak; plateau -100..-250, W 20-40
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -87,7 +87,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sz <= 0:
             hist.append(0.0)
             continue
-        stop, tgt = (30.0, 70.0) if abs(onv) > 200 else (40.0, 80.0)
+        stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, 80.0)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
