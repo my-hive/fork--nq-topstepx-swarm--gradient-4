@@ -46,7 +46,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         where = np.where(m)[0]
         onv = cc[where[0]] - cc[0]                 # overnight move (signed)
         mv = cc[where[-1]] - cc[where[0]]          # 8:30->8:35 move (signed)
-        if mv == 0:
+        if mv <= 0:
             continue
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
