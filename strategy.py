@@ -105,7 +105,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 fade_best = max(fade_best, pnl)
-                if fade_best >= tgt / 2 and pnl <= 0:
+                if fade_best >= tgt * 0.8 and pnl <= 0:
                     pos, state = 0, 4
                 elif pnl <= -stop:
                     if skip_flip:  # opening regime does not support momentum reversal
