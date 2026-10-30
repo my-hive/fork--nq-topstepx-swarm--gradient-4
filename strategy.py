@@ -81,7 +81,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
-        sz = min(sz, 9)  # gu-2: common initial/recovery exposure ceiling.
         if sz <= 0:
             hist.append(0.0)
             continue
@@ -108,7 +107,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * min(sz + 2, 9), cc[k], 3
+                        pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
