@@ -92,6 +92,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
+        scaled_out = False
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
@@ -111,6 +112,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
+                elif not scaled_out and pnl >= stop:
+                    pos = side * max(1, sz // 2)
+                    scaled_out = True
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
@@ -122,3 +126,10 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
                           - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
+
+
+if __name__ == "__main__":
+    for size in range(1, 13):
+        for direction in (-1, 1):
+            reduced = direction * max(1, size // 2)
+            assert 0 < abs(reduced) <= size and reduced * direction > 0
