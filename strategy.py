@@ -4,7 +4,7 @@ Two gates, both validated across train halves:
 2. Agreement of the 8:30-8:35 move with overnight direction: fade works best when
    the opening push CONTINUES the overnight direction (hot+agree), and even on
    dead-zone days when the opening push counters the overnight drift (cold+disagree).
-Size: hot+agree 10, hot+disagree 8, cold+disagree 6, cold+agree 2."""
+Size: hot+agree 9, hot+disagree 8, cold+disagree 6, cold+agree skipped (0)."""
 import numpy as np
 import pandas as pd
 
@@ -28,9 +28,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 10 if agree else 8
+            sz = 9 if agree else 8
         else:
-            sz = 6 if not agree else 2
+            sz = 6 if not agree else 0
         side = -1 if mv >= 0 else 1
         pos, entry, done = 0, 0.0, False
         for k in range(len(idx)):
