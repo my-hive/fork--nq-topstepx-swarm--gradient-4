@@ -120,7 +120,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             # ponytail: close-based profit cap; next-open exit can overshoot.
-            if cash + filled * cc[k] - 0.5 * abs(filled) >= 750.0:
+            if cash + filled * cc[k] - 0.5 * abs(filled) >= 500.0:
                 pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
