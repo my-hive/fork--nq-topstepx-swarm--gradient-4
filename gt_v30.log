@@ -1,0 +1,7 @@
+BASE 0.8539                                  score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+== global push_ext skip (skip fade when push within X of overnight extreme) ==
+ext_skip -40.0                               score=0.4014 h1=0.397 h2=0.570 days=18.0 pnl=19598 win=0.265 worst=-1008
+ext_skip -20.0                               score=0.5360 h1=0.590 h2=0.532 days=17.1 pnl=22204 win=0.298 worst=-1008
+ext_skip -10.0                               score=0.4406 h1=0.436 h2=0.595 days=15.8 pnl=22257 win=0.326 worst=-1009
+ext_skip 0.0                                 score=0.5177 h1=0.513 h2=0.595 days=15.3 pnl=25568 win=0.340 worst=-1009
+ext_skip 20.0                                score=0.5879 h1=0.603 h2=0.582 days=13.2 pnl=28016 win=0.386 worst=-1009

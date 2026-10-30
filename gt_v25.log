@@ -1,0 +1,14 @@
+BASE 0.8539                                  score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+== cold flip brackets (f_stop_cold/f_tgt_cold) ==
+cold flip 30/60                              score=0.8540 h1=0.885 h2=0.848 days=12.4 pnl=35068 win=0.447 worst=-1009
+cold flip 25/50                              score=0.8537 h1=0.885 h2=0.848 days=13.2 pnl=33500 win=0.442 worst=-1009
+cold flip 20/40                              score=0.8536 h1=0.885 h2=0.848 days=13.4 pnl=32778 win=0.442 worst=-1009
+cold flip 25/60                              score=0.8537 h1=0.885 h2=0.848 days=13.1 pnl=33610 win=0.437 worst=-1009
+cold flip 30/50                              score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34838 win=0.451 worst=-1009
+cold flip 35/60                              score=0.8540 h1=0.885 h2=0.848 days=12.4 pnl=34360 win=0.447 worst=-1009
+== cold fade brackets (cd_stop/cd_tgt) ==
+cd 35/80                                     score=0.7028 h1=0.731 h2=0.696 days=10.3 pnl=29216 win=0.433 worst=-1009
+cd 30/80                                     score=0.6216 h1=0.615 h2=0.785 days=11.4 pnl=29832 win=0.433 worst=-1009
+cd 35/70                                     score=0.7027 h1=0.731 h2=0.696 days=10.6 pnl=27600 win=0.433 worst=-1009
+cd 45/80                                     score=0.8283 h1=0.885 h2=0.823 days=13.5 pnl=32836 win=0.447 worst=-1009
+cd 40/70                                     score=0.8538 h1=0.885 h2=0.848 days=12.9 pnl=32888 win=0.451 worst=-1009

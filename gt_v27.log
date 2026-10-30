@@ -1,0 +1,8 @@
+BASE 0.8539                                  score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+== skip cold+dis after prior losing day ==
+cd_prev_loss_skip -800.0                     score=0.8265 h1=0.821 h2=0.823 days=12.1 pnl=31690 win=0.423 worst=-1009
+cd_prev_loss_skip -500.0                     score=0.8265 h1=0.821 h2=0.823 days=12.1 pnl=31690 win=0.423 worst=-1009
+cd_prev_loss_skip -300.0                     score=0.8265 h1=0.821 h2=0.823 days=12.1 pnl=31690 win=0.423 worst=-1009
+== cold+agree momentum (their zone) ==
+cam 4                                        score=0.7276 h1=0.756 h2=0.722 days=11.7 pnl=33075 win=0.526 worst=-1009
+cam 6                                        score=0.4808 h1=0.474 h2=0.646 days=10.8 pnl=32246 win=0.526 worst=-1009

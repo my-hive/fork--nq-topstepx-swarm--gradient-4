@@ -1,0 +1,22 @@
+BASE 0.8539                                  score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+skip Mon hot_dis                             score=0.8537 h1=0.885 h2=0.848 days=13.2 pnl=34849 win=0.414 worst=-1009
+skip Mon hot_agree                           score=0.5751 h1=0.769 h2=0.570 days=13.5 pnl=29516 win=0.414 worst=-1009
+skip Mon cold_dis                            score=0.8265 h1=0.821 h2=0.848 days=12.2 pnl=36555 win=0.437 worst=-1009
+skip Mon cold_agree                          score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+skip Tue hot_dis                             score=0.8536 h1=0.885 h2=0.848 days=13.5 pnl=31678 win=0.409 worst=-1009
+skip Tue hot_agree                           score=0.7356 h1=0.731 h2=0.759 days=15.4 pnl=24624 win=0.400 worst=-1009
+skip Tue cold_dis                            score=0.8388 h1=0.833 h2=0.835 days=13.5 pnl=34693 win=0.428 worst=-1009
+skip Tue cold_agree                          score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+skip Wed hot_dis                             score=0.8536 h1=0.885 h2=0.848 days=13.4 pnl=32862 win=0.423 worst=-1009
+skip Wed hot_agree                           score=0.7241 h1=0.718 h2=0.848 days=11.6 pnl=34732 win=0.437 worst=-1008
+skip Wed cold_dis                            score=0.7273 h1=0.885 h2=0.722 days=12.6 pnl=31434 win=0.405 worst=-1009
+skip Wed cold_agree                          score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+skip Thu hot_dis                             score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=37269 win=0.433 worst=-1009
+skip Thu hot_agree                           score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+skip Thu cold_dis                            score=0.8004 h1=0.795 h2=0.823 days=13.3 pnl=31734 win=0.409 worst=-1009
+skip Thu cold_agree                          score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+skip Fri hot_dis                             score=0.8263 h1=0.821 h2=0.835 days=12.5 pnl=31520 win=0.419 worst=-1009
+skip Fri hot_agree                           score=0.8003 h1=0.795 h2=0.835 days=13.7 pnl=29962 win=0.409 worst=-1009
+skip Fri cold_dis                            score=0.7623 h1=0.756 h2=0.848 days=12.2 pnl=33480 win=0.428 worst=-1009
+skip Fri cold_agree                          score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+WINNERS: []

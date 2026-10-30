@@ -1,0 +1,13 @@
+BASE 0.8539                                  score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+== cold+dis fade time stop ==
+cd_tstop 60m                                 score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=35494 win=0.451 worst=-1009
+cd_tstop 90m                                 score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+cd_tstop 120m                                score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+cd_tstop 180m                                score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+cd_tstop 240m                                score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+== cold+dis size ==
+cd sz 5                                      score=0.8519 h1=0.846 h2=0.848 days=12.7 pnl=34274 win=0.456 worst=-1009
+cd sz 7                                      score=0.8414 h1=0.885 h2=0.835 days=12.3 pnl=35888 win=0.447 worst=-1009
+== cold flip size add (global flip add) ==
+flip add 0                                   score=0.8410 h1=0.885 h2=0.835 days=13.3 pnl=33844 win=0.456 worst=-1009
+flip add 2                                   score=0.7526 h1=0.885 h2=0.747 days=12.7 pnl=32718 win=0.437 worst=-1011

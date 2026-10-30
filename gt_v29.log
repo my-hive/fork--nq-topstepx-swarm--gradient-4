@@ -1,0 +1,7 @@
+BASE 0.8539                                  score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+== limit entry: fade enters only after push extends X beyond 8:35 close ==
+ext 5                                        score=0.3344 h1=0.679 h2=0.329 days=14.0 pnl=20170 win=0.395 worst=-1010
+ext 10                                       score=0.3340 h1=0.628 h2=0.329 days=15.3 pnl=16800 win=0.377 worst=-1010
+ext 15                                       score=0.3982 h1=0.603 h2=0.392 days=12.5 pnl=24132 win=0.395 worst=-1010
+ext 20                                       score=0.3730 h1=0.577 h2=0.367 days=12.3 pnl=19408 win=0.372 worst=-1010
+ext 30                                       score=0.3848 h1=0.615 h2=0.380 days=15.0 pnl=13427 win=0.358 worst=-1010

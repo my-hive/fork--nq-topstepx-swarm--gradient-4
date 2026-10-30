@@ -1,0 +1,6 @@
+BASE 0.8539                                  score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
+== self-imposed daily loss cap (flatten at -X) ==
+dll_cap 600                                  score=0.5371 h1=0.641 h2=0.532 days=13.6 pnl=26697 win=0.372 worst=-694
+dll_cap 700                                  score=0.5371 h1=0.705 h2=0.532 days=13.7 pnl=29606 win=0.409 worst=-1009
+dll_cap 800                                  score=0.6975 h1=0.692 h2=0.759 days=14.3 pnl=30056 win=0.423 worst=-1009
+dll_cap 900                                  score=0.7650 h1=0.885 h2=0.759 days=13.3 pnl=31464 win=0.437 worst=-1009
