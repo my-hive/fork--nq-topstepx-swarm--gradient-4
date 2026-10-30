@@ -79,8 +79,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz //= 2  # gu-1: round reduced risk down
+        if len(hist) >= 2 and all(pnl < 0 for pnl in hist[-2:]):
+            sz = (sz + 1) // 2  # gu-1: test upper half-risk rounding
         if sz <= 0:
             hist.append(0.0)
             continue
