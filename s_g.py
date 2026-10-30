@@ -1,3 +1,5 @@
+import os
+E=lambda k,d: type(d)(os.environ.get(k,d))
 """Fade the 8:30-8:35 open move at 8:35, 40/80 stop/target, flat 14:30.
 Gates, validated across train halves:
 1. Overnight (0:00->8:30 CT) move size: moderate drift 50-200 pts is a dead zone.
@@ -24,12 +26,13 @@ ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
+RNG_MIN = E('RG',58.0)  # 8:30-35 high-low; plateau 60-66 (gu-1 e57831a)
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
-F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
+F_STOP_PTS, F_TGT_PTS = 45.0, E('FT',70.0)  # gu-4 6b84e7d; 66-72 plateau
 
-LOSS_K, LOSS_TH = 2, -700.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+DD_W, DD_TH = E('W',20), E('DD',-250.0)  # gross pts*ct below 20-session equity peak; plateau -100..-250, W 20-40
 
-def signals(df: pd.DataFrame, BT=80.0, FT=F_TGT_PTS) -> np.ndarray:
+def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
     bv, sv = df.buy_vol.values, df.sell_vol.values
@@ -50,9 +53,9 @@ def signals(df: pd.DataFrame, BT=80.0, FT=F_TGT_PTS) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 10 if agree else 7
+            sz = E('HA',10) if agree else E('HDS',9)
         else:
-            sz = 7 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9
+            sz = E('CD',6) if not agree else 0
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
@@ -78,12 +81,15 @@ def signals(df: pd.DataFrame, BT=80.0, FT=F_TGT_PTS) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz = int(round(sz * 0.5))  # drawdown streak: halve size to survive trailing MLL
+        if hi[idx][where].max() - lo[idx][where].min() < RNG_MIN:
+            sz = sz // 2  # quiet open: weak exhaustion signal, half size
+        eq = np.cumsum([0.0] + hist)
+        if eq[-1] - eq[-DD_W:].max() < DD_TH:
+            sz = int(round(sz * E('DF',0.6)))  # in drawdown vs recent peak: 60% size to survive trailing MLL
         if sz <= 0:
             hist.append(0.0)
             continue
-        stop, tgt = (30.0, BT) if abs(onv) > 200 else (40.0, 80.0)
+        stop, tgt = (E('BS',30.0), 80.0) if abs(onv) > 200 else (E('S',40.0), E('T',80.0))
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
@@ -97,12 +103,12 @@ def signals(df: pd.DataFrame, BT=80.0, FT=F_TGT_PTS) -> np.ndarray:
                     if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        pos, entry, state = -side * (sz + E('FA',2)), cc[k], 3
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if pnl <= -F_STOP_PTS or pnl >= FT:
+                if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)

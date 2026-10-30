@@ -25,12 +25,11 @@ IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
-F_TGT0 = 68.0
-F_STOP_PTS, F_TGT_PTS = 45.0, F_TGT0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
+F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
 LOSS_K, LOSS_TH = 2, -700.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
-def signals(df: pd.DataFrame, HA=10, HD=7, CD=7, NT=80.0, FT=68.0) -> np.ndarray:
+def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
     bv, sv = df.buy_vol.values, df.sell_vol.values
@@ -51,9 +50,9 @@ def signals(df: pd.DataFrame, HA=10, HD=7, CD=7, NT=80.0, FT=68.0) -> np.ndarray
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = HA if agree else HD
+            sz = 10 if agree else 7
         else:
-            sz = CD if not agree else 0  # cold-dis: plateau 6-8, cliff at 9
+            sz = 7 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
@@ -84,7 +83,7 @@ def signals(df: pd.DataFrame, HA=10, HD=7, CD=7, NT=80.0, FT=68.0) -> np.ndarray
         if sz <= 0:
             hist.append(0.0)
             continue
-        stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, NT)
+        stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, 80.0)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
@@ -103,7 +102,7 @@ def signals(df: pd.DataFrame, HA=10, HD=7, CD=7, NT=80.0, FT=68.0) -> np.ndarray
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if pnl <= -F_STOP_PTS or pnl >= FT:
+                if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
