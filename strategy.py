@@ -1,20 +1,24 @@
 """Fade the 8:30-8:35 open move at 8:35, 40/80 stop/target, flat 14:30.
-Two gates, both validated across train halves:
+Gates, validated across train halves:
 1. Overnight (0:00->8:30 CT) move size: moderate drift 50-175 pts is a dead zone.
-2. Agreement of the 8:30-8:35 move with overnight direction: fade works best when
-   the opening push CONTINUES the overnight direction (hot+agree), and even on
-   dead-zone days when the opening push counters the overnight drift (cold+disagree).
-Size: hot+agree 9, hot+disagree 8, cold+disagree 6, cold+agree skipped (0)."""
+2. Agreement of the 8:30-8:35 move with overnight direction (fade the push when it
+   continues the overnight drift, or on dead-zone days when it counters the drift).
+3. Aggressor imbalance along the push: if buy/sell aggressor volume during 8:30-8:35
+   is strongly one-sided IN the push direction (>=0.05), the push is real momentum ->
+   fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
+Sizes: hot+disagree 7, hot+agree 9, cold+disagree 6, cold+agree skipped."""
 import numpy as np
 import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 STOP_PTS, TGT_PTS = 40.0, 80.0
 ON_LO, ON_HI = 50.0, 175.0
+IMB_TH = 0.05
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
+    bv, sv = df.buy_vol.values, df.sell_vol.values
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
@@ -28,9 +32,13 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 9 if agree else 8
+            sz = 9 if agree else 7
         else:
             sz = 6 if not agree else 0
+        imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
+            bv[idx][where].sum() + sv[idx][where].sum(), 1)
+        if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
+            sz = max(1, sz - 2)
         side = -1 if mv >= 0 else 1
         pos, entry, done = 0, 0.0, False
         for k in range(len(idx)):
