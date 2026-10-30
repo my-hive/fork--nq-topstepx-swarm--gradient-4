@@ -27,7 +27,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 70.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 4, -750.0  # gu-1: causal point-contract PnL; K4/K5 exact plateau, K1 fails, K3/K6 slower
+LOSS_K, LOSS_TH = 4, -700.0  # gu-1: causal point-contract PnL; K4/K5 exact plateau, K1 fails, K3/K6 slower
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -69,8 +69,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot and not agree and abs(onv) > 200 and hi[idx][:where[0]].max() - lo[idx][:where[0]].min() < ON_RNG_MIN:
             sz = 0  # big one-way drift in tight overnight range: trend day, don't fade
         md = months[idx[0]] * 100 + mdays[idx[0]]
-        if md >= 1210 or md <= 102:  # start 1210-1212 plateau (h1 1.0); 1215 leaves Dec8-9 windows short
-            sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
