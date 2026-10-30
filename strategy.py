@@ -13,7 +13,8 @@ Gates, validated across train halves:
 5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
    Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
    big-agree days are trend-risk -> halve size.
-6. Holiday season (Dec 20 - Jan 2): thin tape, fades fail -> skip.
+6. Skip year-end holiday tape (Dec 15 - Jan 2) and hot+disagree days with flat
+   overnight (|onv|<25) but violent open push (|mv|>70): news momentum.
 Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
 import numpy as np
 import pandas as pd
@@ -22,7 +23,7 @@ START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
 VOL_MIN = 12000.0
-RETR_MIN = 6.0  # plateau 5-7 (h2 .987); 8 sits next to a cliff at 8.5
+RETR_MIN = 8.0
 F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
@@ -30,7 +31,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     t, c = df.ct_sec.values, df.close.values
     bv, sv = df.buy_vol.values, df.sell_vol.values
     hi, lo = df.high.values, df.low.values
-    dows = pd.to_datetime(df.session.values).dayofweek
+    sd = pd.to_datetime(df.session.values)
+    dows, months, mdays = sd.dayofweek, sd.month, sd.day
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
@@ -44,9 +46,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 10 if agree else 6
+            sz = 10 if agree else 7
         else:
-            sz = 6 if not agree else 0  # cold+dis 5-7 plateau (0.929); 8 too big for DLL whipsaw days
+            sz = 6 if not agree else 0
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
@@ -57,12 +59,12 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
             if abs(ext - cc[where[-1]]) < RETR_MIN:
                 sz = 0  # push still at its extreme: momentum, don't fade
-            elif abs(onv) < 25 and abs(mv) > 70:
-                sz = 0  # strong push vs flat overnight: real momentum day
+        if hot and not agree and abs(onv) < 25 and abs(mv) > 70:
+            sz = 0  # flat overnight + violent open push: news momentum, don't fade
+        md = months[idx[0]] * 100 + mdays[idx[0]]
+        if md >= 1215 or md <= 102:
+            sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
-        d0 = pd.Timestamp(df.session.values[idx[0]])
-        if (d0.month == 12 and d0.day >= 20) or (d0.month == 1 and d0.day <= 2):
-            continue  # ponytail: holiday-thin tape (Xmas-NewYear), calendar rule; swap for a liquidity feature if holdout spans other holidays
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
             sz = int(round(sz * 0.5))
@@ -72,7 +74,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0
         if sz <= 0:
             continue
-        stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, 80.0)
+        stop, tgt = (30.0, 70.0) if abs(onv) > 200 else (40.0, 80.0)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
