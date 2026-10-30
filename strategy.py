@@ -104,7 +104,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if skip_flip or tt[k] >= START + 1800:  # no delayed opening momentum thesis
+                    if skip_flip or tt[k] >= START + 900:  # opening auction momentum horizon
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
