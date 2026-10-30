@@ -1,0 +1,25 @@
+BASE 0.8905                                  score=0.8905 h1=0.885 h2=0.886 days=12.4 pnl=41396 win=0.423 worst=-1012
+== knob polish grid ==
+imb_th 0.02                                  score=0.8906 h1=0.885 h2=0.886 days=12.0 pnl=43580 win=0.433 worst=-1010
+imb_th 0.04                                  score=0.7624 h1=0.756 h2=0.873 days=11.9 pnl=42062 win=0.423 worst=-1012
+imb_th 0.05                                  score=0.7369 h1=0.731 h2=0.873 days=11.5 pnl=42609 win=0.423 worst=-1012
+imb_shrink 1                                 score=0.6600 h1=0.654 h2=0.734 days=11.5 pnl=39260 win=0.409 worst=-1012
+imb_shrink 3                                 score=0.8904 h1=0.885 h2=0.899 days=12.7 pnl=39550 win=0.423 worst=-1012
+zone 40/200                                  score=0.6722 h1=0.667 h2=0.848 days=13.4 pnl=35070 win=0.405 worst=-1012
+zone 50/190                                  score=0.8393 h1=0.833 h2=0.873 days=12.2 pnl=40794 win=0.419 worst=-1012
+zone 50/210                                  score=0.8905 h1=0.885 h2=0.886 days=12.4 pnl=41124 win=0.419 worst=-1012
+zone 60/200                                  score=0.6473 h1=0.641 h2=0.873 days=11.3 pnl=39388 win=0.419 worst=-1012
+zone 50/175                                  score=0.6729 h1=0.667 h2=0.873 days=11.4 pnl=43089 win=0.423 worst=-1012
+big_onv 180                                  score=0.6855 h1=0.679 h2=0.886 days=11.9 pnl=37932 win=0.414 worst=-1012
+big_onv 220                                  score=0.8903 h1=0.885 h2=0.886 days=12.9 pnl=40146 win=0.419 worst=-1012
+big_onv 250                                  score=0.8905 h1=0.885 h2=0.886 days=12.3 pnl=42278 win=0.423 worst=-1010
+vol_min 10000                                score=0.8904 h1=0.885 h2=0.886 days=12.6 pnl=39790 win=0.423 worst=-1012
+vol_min 14000                                score=0.5882 h1=0.667 h2=0.582 days=12.2 pnl=33292 win=0.349 worst=-1012
+retr_min 3.0                                 score=0.8904 h1=0.885 h2=0.886 days=12.8 pnl=39643 win=0.428 worst=-1012
+retr_min 8.0                                 score=0.8906 h1=0.885 h2=0.886 days=12.1 pnl=43000 win=0.405 worst=-1012
+retr_min 12.0                                score=0.7750 h1=0.769 h2=0.987 days=12.7 pnl=41154 win=0.391 worst=-1012
+hd 6                                         score=0.8905 h1=0.885 h2=0.886 days=12.3 pnl=42035 win=0.433 worst=-1012
+hd 8                                         score=0.6857 h1=0.679 h2=0.785 days=11.2 pnl=41236 win=0.414 worst=-1012
+vol_min again 10000                          score=0.8904 h1=0.885 h2=0.886 days=12.6 pnl=39790 win=0.423 worst=-1012
+vol_min again 12000                          score=0.8905 h1=0.885 h2=0.886 days=12.4 pnl=41396 win=0.423 worst=-1012
+vol_min again 14000                          score=0.5882 h1=0.667 h2=0.582 days=12.2 pnl=33292 win=0.349 worst=-1012

@@ -19,9 +19,9 @@ import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
-IMB_TH = 0.03
+IMB_TH = 0.02
 VOL_MIN = 12000.0
-RETR_MIN = 5.0
+RETR_MIN = 8.0
 F_STOP_PTS, F_TGT_PTS = 40.0, 60.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
