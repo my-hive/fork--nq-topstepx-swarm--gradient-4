@@ -1,0 +1,9 @@
+cfa3 (expect 0.8904)                         score=0.8904 h1=0.885 h2=0.886 days=12.5 pnl=39859 win=0.433 worst=-1010
+== cold flip brackets at cfa3 (chain-cap math) ==
+cold flip 20/40                              score=0.8663 h1=0.885 h2=0.861 days=13.2 pnl=36868 win=0.428 worst=-1010
+cold flip 25/50                              score=0.8902 h1=0.885 h2=0.899 days=13.2 pnl=38050 win=0.428 worst=-1010
+cold flip 25/45                              score=0.8664 h1=0.885 h2=0.861 days=13.2 pnl=36898 win=0.428 worst=-1010
+cold flip 30/50                              score=0.8904 h1=0.885 h2=0.886 days=12.7 pnl=39050 win=0.433 worst=-1010
+cold flip 30/55                              score=0.8904 h1=0.885 h2=0.886 days=12.5 pnl=38722 win=0.428 worst=-1010
+cold flip 25/55                              score=0.8903 h1=0.885 h2=0.899 days=12.9 pnl=37722 win=0.423 worst=-1010
+cold flip 20/50                              score=0.8903 h1=0.885 h2=0.899 days=13.1 pnl=39113 win=0.428 worst=-1010

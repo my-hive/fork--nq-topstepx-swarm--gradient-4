@@ -1,0 +1,11 @@
+BASE+retr_hd (expect 0.8666)                 score=0.8666 h1=0.885 h2=0.861 days=12.6 pnl=38534 win=0.437 worst=-1009
+== retrace gate extensions ==
+retr all buckets                             score=0.7619 h1=0.756 h2=0.861 days=13.4 pnl=32670 win=0.377 worst=-1009
+retr + hot+agree                             score=0.8004 h1=0.795 h2=0.861 days=13.4 pnl=35020 win=0.419 worst=-1009
+retr + cold+dis                              score=0.8263 h1=0.821 h2=0.861 days=12.5 pnl=36184 win=0.395 worst=-1009
+== retr_min sweep (hot+dis) ==
+retr_min 3.0                                 score=0.8665 h1=0.885 h2=0.861 days=12.7 pnl=36727 win=0.442 worst=-1009
+retr_min 4.0                                 score=0.8665 h1=0.885 h2=0.861 days=12.7 pnl=38532 win=0.442 worst=-1009
+retr_min 6.0                                 score=0.8666 h1=0.885 h2=0.861 days=12.4 pnl=38516 win=0.433 worst=-1009
+retr_min 8.0                                 score=0.8666 h1=0.885 h2=0.861 days=12.6 pnl=38945 win=0.414 worst=-1009
+retr_min 12.0                                score=0.8260 h1=0.821 h2=1.000 days=13.6 pnl=37216 win=0.400 worst=-1009

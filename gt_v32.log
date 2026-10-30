@@ -1,0 +1,7 @@
+BASE 0.8666                                  score=0.8666 h1=0.885 h2=0.861 days=12.6 pnl=38534 win=0.437 worst=-1009
+== cold flip size add (chain loss cap) ==
+cold_flip_add -2                             score=0.8665 h1=0.885 h2=0.861 days=12.9 pnl=37942 win=0.437 worst=-1009
+cold_flip_add -1                             score=0.8665 h1=0.885 h2=0.861 days=12.7 pnl=38770 win=0.442 worst=-1009
+cold_flip_add 0                              score=0.8666 h1=0.885 h2=0.861 days=12.6 pnl=38534 win=0.437 worst=-1009
+cold_flip_add 1                              score=0.8540 h1=0.885 h2=0.848 days=12.2 pnl=39503 win=0.437 worst=-1009
+cold_flip_add 2                              score=0.8904 h1=0.885 h2=0.886 days=12.6 pnl=38898 win=0.433 worst=-1009

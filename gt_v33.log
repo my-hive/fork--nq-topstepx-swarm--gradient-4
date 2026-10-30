@@ -1,0 +1,13 @@
+BASE 0.8666                                  score=0.8666 h1=0.885 h2=0.861 days=12.6 pnl=38534 win=0.437 worst=-1009
+== cold flip add extended ==
+cold_flip_add 3                              score=0.8904 h1=0.885 h2=0.886 days=12.5 pnl=39859 win=0.433 worst=-1010
+cold_flip_add 4                              score=0.8905 h1=0.885 h2=0.911 days=12.4 pnl=39526 win=0.428 worst=-1011
+cold_flip_add 5                              score=0.8906 h1=0.885 h2=0.924 days=12.2 pnl=40832 win=0.428 worst=-1012
+== hot+dis flip add (global flip_sz_add) on top of cfa2 ==
+cfa2 + global add 0                          score=0.8665 h1=0.885 h2=0.861 days=12.7 pnl=37914 win=0.437 worst=-1009
+cfa2 + global add 1                          score=0.8904 h1=0.885 h2=0.886 days=12.6 pnl=38898 win=0.433 worst=-1009
+cfa2 + global add 2                          score=0.7906 h1=0.885 h2=0.785 days=12.6 pnl=36818 win=0.419 worst=-1011
+== agree-big flip add on top of cfa2 ==
+cfa2 + ab add 0                              score=0.8904 h1=0.885 h2=0.886 days=12.6 pnl=38898 win=0.433 worst=-1009
+cfa2 + ab add 1                              score=0.8791 h1=0.885 h2=0.873 days=12.9 pnl=37865 win=0.428 worst=-1011
+cfa2 + ab add 2                              score=0.8903 h1=0.885 h2=0.886 days=12.8 pnl=38518 win=0.428 worst=-1012

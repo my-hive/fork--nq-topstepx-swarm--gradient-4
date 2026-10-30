@@ -20,7 +20,7 @@ for s in range(NS):
 bounds[NS] = len(SESS)
 
 ONV = np.zeros(NS); MV = np.zeros(NS); IMB = np.zeros(NS); VOL = np.zeros(NS)
-PUSH_EXT = np.zeros(NS); LH_MV = np.zeros(NS); P835 = np.zeros(NS)
+PUSH_EXT = np.zeros(NS); LH_MV = np.zeros(NS); P835 = np.zeros(NS); RETR = np.zeros(NS)
 DOW = pd.DatetimeIndex(pd.to_datetime(df.session.unique())).dayofweek.values.astype(np.int64)
 for s in range(NS):
     i0, i1 = bounds[s], bounds[s + 1]
@@ -36,6 +36,10 @@ for s in range(NS):
     IMB[s] = (bt - st) / max(bt + st, 1)
     VOL[s] = bt + st
     P835[s] = cc[w[-1]]
+    if cc[w[-1]] >= cc[w[0]]:
+        RETR[s] = hh[w].max() - cc[w[-1]]
+    else:
+        RETR[s] = cc[w[-1]] - ll[w].min()
     p_ = np.where(tt < 8*3600+30*60)[0]
     if len(p_) > 0:
         oh, ol = hh[p_].max(), ll[p_].min()
@@ -56,7 +60,8 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
           cd_stop, cd_tgt, cold_flip, sz_hotbig_dis, sz_hotbig_agree,
           f_add_agree_big, vol_min, push_ext, lh_mv, cd_ext_max, cd_lh_max, ab_fstop,
           prev_pnl, loss_boost, dow, thu_ha_skip, mf_ba_half, thu_scope, lh_gate, lh_max,
-          skip_dow_bucket, cd_tstop, cd_prev_loss_skip, dll_cap, ext_pts, p835, ext_skip):
+          skip_dow_bucket, cd_tstop, cd_prev_loss_skip, dll_cap, ext_pts, p835, ext_skip,
+          retr, retr_hd, retr_ha, retr_cd, retr_min, cold_flip_add):
     out = np.zeros(len(c), dtype=np.int64)
     for s in range(len(bounds) - 1):
         o_, m_, im_ = onv[s], mv[s], imb[s]
@@ -83,6 +88,12 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
             continue  # pre-open acceleration with push
         if ext_skip > -1e9 and push_ext[s] > ext_skip:
             continue  # push at/beyond overnight extreme
+        if retr_hd and hot and not agree and retr[s] < retr_min:
+            continue
+        if retr_ha and hot and agree and retr[s] < retr_min:
+            continue
+        if retr_cd and not hot and not agree and retr[s] < retr_min:
+            continue
         if not hot and not agree and np.sign(o_) != 0:
             if cd_ext_max > -1e9 and push_ext[s] > cd_ext_max:
                 continue
@@ -142,7 +153,7 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
                     elif f_conf_pts > 0:
                         pos, anchor, state = 0, c[k], 2   # wait for push confirmation
                     else:
-                        fa = flip_sz_add + (f_add_agree_big if (agree and big) else 0)
+                        fa = flip_sz_add + (f_add_agree_big if (agree and big) else 0) + (cold_flip_add if (not agree and not hot) else 0)
                         pos, entry, state = -side * (sz + fa), c[k], 3
                 elif pnl >= tg:
                     dpnl += pnl * 2 * abs(pos)
@@ -154,7 +165,7 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
             elif state == 2:                              # pending flip: confirm continuation
                 d = -side * (c[k] - anchor)
                 if d >= f_conf_pts:
-                    fa = flip_sz_add + (f_add_agree_big if (agree and big) else 0)
+                    fa = flip_sz_add + (f_add_agree_big if (agree and big) else 0) + (cold_flip_add if (not agree and not hot) else 0)
                     pos, entry, state = -side * (sz + fa), c[k], 3
             elif pos != 0 and state == 3:
                 pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
@@ -241,7 +252,8 @@ def ev(name="BASE", **kw):
              f_add_agree_big=0, cd_ext_max=-1e9, cd_lh_max=-1e9, ab_fstop=0, loss_boost=0,
              thu_ha_skip=True, mf_ba_half=True, thu_scope=0, lh_gate=0, lh_max=200.0,   # BASE = 0.8539
              skip_dow_bucket=np.zeros(20, dtype=np.int64), cd_tstop=0, cd_prev_loss_skip=False, dll_cap=0,
-             ext_pts=0, ext_skip=-1e9)
+             ext_pts=0, ext_skip=-1e9, retr_hd=True, retr_ha=False, retr_cd=False, retr_min=5.0,
+             cold_flip_add=0)   # BASE = 0.8666
     d.update(kw)
     tgt_arr = build(T, C, SESS, bounds, ONV, MV, IMB, VOL, d["start"], d["exit_"],
                     d["sz_hot_dis"], d["sz_hot_agree"], d["sz_cold_dis"], d["sz_cold_agree"],
@@ -255,7 +267,8 @@ def ev(name="BASE", **kw):
                     d["cd_ext_max"], d["cd_lh_max"], d["ab_fstop"], PREV_PNL, d["loss_boost"],
                     DOW, d["thu_ha_skip"], d["mf_ba_half"], d["thu_scope"], d["lh_gate"], d["lh_max"],
                     d["skip_dow_bucket"], d["cd_tstop"], d["cd_prev_loss_skip"], d["dll_cap"],
-                    d["ext_pts"], P835, d["ext_skip"])
+                    d["ext_pts"], P835, d["ext_skip"],
+                    RETR, d["retr_hd"], d["retr_ha"], d["retr_cd"], d["retr_min"], d["cold_flip_add"])
     dp, dm, tr = run_days(SESS, T, O, H, L, C, tgt_arr, NS)
     sc, rates, passed = score(dp, dm)
     print(f"{name:44s} score={sc:.4f} h1={rates[0]:.3f} h2={rates[1]:.3f} "

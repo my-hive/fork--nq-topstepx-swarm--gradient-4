@@ -1,0 +1,10 @@
+cfa3 (expect 0.8904)                         score=0.8904 h1=0.885 h2=0.886 days=12.5 pnl=39859 win=0.433 worst=-1010
+== flip brackets at cfa3 ==
+flip 40/60                                   score=0.8904 h1=0.885 h2=0.886 days=12.5 pnl=39859 win=0.433 worst=-1010
+flip 35/55                                   score=0.7237 h1=0.718 h2=0.886 days=12.7 pnl=35950 win=0.423 worst=-1010
+flip 40/65                                   score=0.8903 h1=0.885 h2=0.924 days=12.8 pnl=39010 win=0.423 worst=-1010
+flip 40/70                                   score=0.8904 h1=0.885 h2=0.924 days=12.7 pnl=39488 win=0.419 worst=-1010
+flip 45/60                                   score=0.7401 h1=0.885 h2=0.734 days=12.2 pnl=40288 win=0.437 worst=-1010
+flip 35/60                                   score=0.7237 h1=0.718 h2=0.899 days=12.6 pnl=37007 win=0.419 worst=-1010
+flip 30/50                                   score=0.8538 h1=0.885 h2=0.848 days=12.8 pnl=36279 win=0.428 worst=-1010
+flip 45/70                                   score=0.7275 h1=0.885 h2=0.722 days=12.2 pnl=40014 win=0.423 worst=-1010
