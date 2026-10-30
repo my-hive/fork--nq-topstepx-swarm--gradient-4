@@ -111,6 +111,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
+                elif pnl >= stop:
+                    pos = side * max(1, sz - 2)  # gu-3: realize two contracts at one native risk unit
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
