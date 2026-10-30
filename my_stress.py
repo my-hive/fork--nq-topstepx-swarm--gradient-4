@@ -12,5 +12,5 @@ for m in sys.argv[1:]:
         dp, dm, _ = f(sess, df.ct_sec.values, df.open.values, df.high.values, df.low.values, df.close.values, tg, sess.max()+1)
         r.append(round(sim.score(dp, dm)[0], 4))
         if slip == 0.25:
-            r += [round(sim.score(dp[k:], dm[k:])[0], 4) for k in (10, 20, 30, 40, 50, 60)]
+            r += [round(sim.score(dp[k:], dm[k:])[0], 4) for k in (10, 20, 30, 40, 50, 60)] + ["|"] + [round(sim.score(dp[:-k], dm[:-k])[0], 4) for k in (20, 40, 60)]
     print(m, 'base,off10,off20,off40,slip2x:', r)

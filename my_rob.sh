@@ -1,0 +1,1 @@
+for v in "$@"; do echo "$v: $(env $v python3 -W ignore my_stress.py s_g 2>&1 | sed 's/np.float64(\([0-9.]*\))/\1/g' | cut -d: -f2 | python3 -c "import sys,ast;l=[x for x in ast.literal_eval(sys.stdin.read().strip()) if x!='|'];print(min(l), l[0], l)")"; done
