@@ -62,7 +62,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot and not agree and abs(onv) < 25 and abs(mv) > 70:
             sz = 0  # flat overnight + violent open push: news momentum, don't fade
         md = months[idx[0]] * 100 + mdays[idx[0]]
-        if md >= 1215 or md <= 102:
+        if md >= 1210 or md <= 102:  # start 1210-1212 plateau (h1 1.0); 1215 leaves Dec8-9 windows short
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200

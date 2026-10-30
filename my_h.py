@@ -10,9 +10,6 @@ dp, dm, tr = sim.run_days(sess, df.ct_sec.values, df.open.values, df.high.values
 sc, rates, _ = sim.score(dp, dm)
 print(sc, rates)
 mid = len(dp) // 2
-for st, (p, d) in enumerate(sim.attempts(dp, dm, 0, mid)):
+for st, (p, d) in list(enumerate(sim.attempts(dp, dm, 0, mid))) + [(mid+i, r) for i, r in enumerate(sim.attempts(dp, dm, mid, len(dp)))]:
     if not p:
         print(st, names[st], d, np.round(dp[st:st+30]).astype(int).tolist())
-for st in range(69,77):
-    w=dp[st:st+30]; b=np.cumsum(w); print(st, int(b[-1]), int(w.max()), int(b.max()))
-print('days 88-106', np.round(dp[88:106]).astype(int).tolist())
