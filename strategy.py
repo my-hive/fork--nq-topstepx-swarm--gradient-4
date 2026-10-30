@@ -90,8 +90,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
             or (dow == 4 and abs(onv) < 50)
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
-        opening_ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
-        skip_flip = skip_flip or abs(opening_ext - cc[where[-1]]) < RETR_MIN
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         for k in range(len(idx)):
@@ -106,7 +104,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if skip_flip:  # opening regime does not support momentum reversal
+                    beyond_open = cc[k] >= hi[idx][where].max() if mv > 0 else cc[k] <= lo[idx][where].min()
+                    if skip_flip or (big_agree and not beyond_open):  # recovery requires opening breakout
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
