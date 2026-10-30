@@ -6,6 +6,7 @@ Gates, validated across train halves:
 3. Aggressor imbalance along the push: if buy/sell aggressor volume during 8:30-8:35
    is one-sided IN the push direction (>=0.02), the push is real momentum ->
    fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
+   Low total volume (<10k) = illiquid noise push -> skip the fade entirely (gu-2).
 4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
    fade still stops out, the push was real momentum -> flip to the push direction
    one contract larger, 40/60 brackets, then done for the day. Big-agree days
@@ -19,8 +20,8 @@ import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
-IMB_TH = 0.03
-VOL_MIN = 12000.0
+IMB_TH = 0.02
+VOL_MIN = 10000.0
 F_STOP_PTS, F_TGT_PTS = 40.0, 60.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
@@ -49,7 +50,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
             sz = max(1, sz - 2)
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
-            sz = 0  # illiquid open push: skip the fade
+            sz = 0  # illiquid open push (gu-2): noise, skip the fade
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
@@ -60,7 +61,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0
         if sz <= 0:
             continue
-        stop, tgt = (30.0, 60.0) if abs(onv) > 200 else (40.0, 80.0)
+        stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, 80.0)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
