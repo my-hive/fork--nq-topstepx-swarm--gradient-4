@@ -9,7 +9,7 @@ Gates, validated across train halves:
 Sizes: hot+disagree 7, hot+agree 8, cold+disagree 6, cold+agree skipped.
 4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
    fade still stops out, the push was real momentum -> flip to the push direction
-   one contract larger, 40/60 brackets, then done for the day."""
+   one contract larger, 30/50 brackets, then done for the day."""
 import numpy as np
 import pandas as pd
 
@@ -17,7 +17,7 @@ START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 STOP_PTS, TGT_PTS, stop, tgt = 40.0, 80.0, 40.0, 80.0
 ON_LO, ON_HI = 50.0, 225.0
 IMB_TH = 0.05
-F_STOP_PTS, F_TGT_PTS = 40.0, 60.0
+F_STOP_PTS, F_TGT_PTS = 30.0, 50.0
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)

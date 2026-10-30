@@ -1,0 +1,39 @@
+== on flip 30/50: fade stop/tgt sweep ==
+fade 30/80                                           score=0.3100 h1=0.397 h2=0.304 days=11.4 pnl=10102 win=0.405 worst=-1009
+fade 35/80                                           score=0.3105 h1=0.500 h2=0.304 days=10.0 pnl=13532 win=0.423 worst=-1009
+fade 40/80                                           score=0.6893 h1=0.744 h2=0.684 days=12.9 pnl=24172 win=0.465 worst=-1009
+fade 45/80                                           score=0.5188 h1=0.513 h2=0.519 days=12.2 pnl=20056 win=0.451 worst=-1009
+fade 40/70                                           score=0.5952 h1=0.590 h2=0.620 days=13.7 pnl=20403 win=0.470 worst=-1009
+fade 40/90                                           score=0.5503 h1=0.641 h2=0.544 days=12.1 pnl=23194 win=0.447 worst=-1009
+fade 35/70                                           score=0.2722 h1=0.474 h2=0.266 days=10.9 pnl=10626 win=0.428 worst=-1009
+fade 30/70                                           score=0.2592 h1=0.346 h2=0.253 days=12.0 pnl=7678 win=0.409 worst=-1009
+fade 40/75                                           score=0.6339 h1=0.628 h2=0.671 days=12.9 pnl=21517 win=0.465 worst=-1009
+fade 45/90                                           score=0.3399 h1=0.333 h2=0.392 days=10.4 pnl=19064 win=0.433 worst=-1009
+== on flip 30/50: big fade brackets (|onv|>200) ==
+big 30/60                                            score=0.6893 h1=0.744 h2=0.684 days=12.9 pnl=24172 win=0.465 worst=-1009
+big 30/50                                            score=0.6891 h1=0.744 h2=0.684 days=13.4 pnl=22173 win=0.465 worst=-1009
+big 30/70                                            score=0.6894 h1=0.744 h2=0.684 days=12.5 pnl=26489 win=0.465 worst=-1009
+big 25/60                                            score=0.6261 h1=0.756 h2=0.620 days=12.4 pnl=22220 win=0.456 worst=-1009
+big 35/60                                            score=0.4237 h1=0.692 h2=0.418 days=12.0 pnl=19566 win=0.451 worst=-1009
+== on flip 30/50: sizes ==
+sz hd7 ha8 cd6                                       score=0.6893 h1=0.744 h2=0.684 days=12.9 pnl=24172 win=0.465 worst=-1009
+sz hd6 ha7 cd5                                       score=0.6378 h1=0.731 h2=0.633 days=15.4 pnl=20746 win=0.470 worst=-1008
+sz hd7 ha8 cd5                                       score=0.6639 h1=0.692 h2=0.658 days=12.9 pnl=23444 win=0.465 worst=-1009
+sz hd8 ha8 cd6                                       score=0.4875 h1=0.538 h2=0.481 days=10.5 pnl=22794 win=0.451 worst=-1009
+sz hd6 ha8 cd6                                       score=0.6765 h1=0.769 h2=0.671 days=13.3 pnl=22208 win=0.465 worst=-1009
+sz hd7 ha9 cd6                                       score=0.5829 h1=0.577 h2=0.696 days=12.0 pnl=25022 win=0.460 worst=-1010
+== on flip 30/50: dead zone ==
+zone 40-225                                          score=0.5879 h1=0.654 h2=0.582 days=13.2 pnl=22616 win=0.447 worst=-1009
+zone 50-225                                          score=0.6893 h1=0.744 h2=0.684 days=12.9 pnl=24172 win=0.465 worst=-1009
+zone 60-225                                          score=0.5062 h1=0.500 h2=0.747 days=11.5 pnl=21601 win=0.470 worst=-1009
+zone 50-200                                          score=0.6007 h1=0.744 h2=0.595 days=12.6 pnl=23748 win=0.470 worst=-1009
+zone 50-250                                          score=0.6636 h1=0.744 h2=0.658 days=13.7 pnl=23466 win=0.456 worst=-1009
+zone 50-175                                          score=0.6012 h1=0.628 h2=0.595 days=11.2 pnl=26914 win=0.488 worst=-1009
+zone 60-200                                          score=0.4935 h1=0.487 h2=0.658 days=10.9 pnl=21176 win=0.474 worst=-1009
+== on flip 30/50: imb ==
+imb th0.05 sh2                                       score=0.6893 h1=0.744 h2=0.684 days=12.9 pnl=24172 win=0.465 worst=-1009
+imb th0.03 sh2                                       score=0.6889 h1=0.718 h2=0.684 days=13.8 pnl=24548 win=0.465 worst=-1009
+imb th0.07 sh2                                       score=0.4936 h1=0.487 h2=0.570 days=10.7 pnl=24374 win=0.465 worst=-1009
+imb th0.05 sh1                                       score=0.5445 h1=0.538 h2=0.684 days=11.8 pnl=25491 win=0.465 worst=-1009
+imb th0.05 sh3                                       score=0.6511 h1=0.756 h2=0.646 days=13.4 pnl=22782 win=0.465 worst=-1009
+imb th0.0 sh0                                        score=0.4875 h1=0.500 h2=0.481 days=10.6 pnl=26008 win=0.460 worst=-1009

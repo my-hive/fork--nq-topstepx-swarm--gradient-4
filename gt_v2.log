@@ -1,0 +1,40 @@
+== flip bracket sweep (f_stop/f_tgt) ==
+flip 30/50                                           score=0.6893 h1=0.744 h2=0.684 days=12.9 pnl=24172 win=0.465 worst=-1009
+flip 30/40                                           score=0.6889 h1=0.718 h2=0.684 days=13.9 pnl=21438 win=0.470 worst=-1009
+flip 35/45                                           score=0.5700 h1=0.564 h2=0.633 days=12.2 pnl=21456 win=0.470 worst=-1009
+flip 25/40                                           score=0.6379 h1=0.667 h2=0.633 days=14.9 pnl=19672 win=0.451 worst=-1009
+flip 30/55                                           score=0.6893 h1=0.782 h2=0.684 days=12.8 pnl=25619 win=0.460 worst=-1009
+flip 40/50                                           score=0.6893 h1=0.756 h2=0.684 days=12.6 pnl=24401 win=0.474 worst=-1009
+flip 45/70                                           score=0.5633 h1=0.679 h2=0.557 days=11.0 pnl=26679 win=0.451 worst=-1009
+flip 35/55                                           score=0.6213 h1=0.615 h2=0.684 days=12.2 pnl=24313 win=0.460 worst=-1009
+flip 30/60                                           score=0.6728 h1=0.667 h2=0.709 days=11.7 pnl=25674 win=0.451 worst=-1009
+flip 40/60                                           score=0.6856 h1=0.679 h2=0.696 days=11.7 pnl=25866 win=0.460 worst=-1009
+flip 50/80                                           score=0.4371 h1=0.615 h2=0.430 days=9.8 pnl=25039 win=0.437 worst=-1009
+== flip size add ==
+flip add 0                                           score=0.6854 h1=0.679 h2=0.684 days=12.1 pnl=24106 win=0.465 worst=-1008
+flip add 1                                           score=0.6856 h1=0.679 h2=0.696 days=11.7 pnl=25866 win=0.460 worst=-1009
+flip add 2                                           score=0.6731 h1=0.667 h2=0.671 days=10.7 pnl=24346 win=0.447 worst=-1010
+flip add 3                                           score=0.4173 h1=0.410 h2=0.494 days=8.8 pnl=22062 win=0.433 worst=-1011
+== mv_min filter ==
+mv_min 3                                             score=0.6643 h1=0.679 h2=0.658 days=11.7 pnl=26844 win=0.451 worst=-1009
+mv_min 5                                             score=0.5125 h1=0.641 h2=0.506 days=11.5 pnl=25244 win=0.442 worst=-1009
+mv_min 8                                             score=0.4743 h1=0.641 h2=0.468 days=12.1 pnl=20588 win=0.409 worst=-1009
+mv_min 12                                            score=0.5369 h1=0.551 h2=0.532 days=14.3 pnl=18088 win=0.381 worst=-1009
+mv_min 20                                            score=0.3593 h1=0.615 h2=0.354 days=15.5 pnl=13830 win=0.326 worst=-1009
+== exit time ==
+exit 11:00                                           score=0.5575 h1=0.551 h2=0.696 days=11.5 pnl=24270 win=0.451 worst=-1009
+exit 12:00                                           score=0.6856 h1=0.679 h2=0.696 days=11.8 pnl=25700 win=0.456 worst=-1009
+exit 13:00                                           score=0.6856 h1=0.679 h2=0.696 days=11.7 pnl=25622 win=0.460 worst=-1009
+exit 13:30                                           score=0.6856 h1=0.679 h2=0.696 days=11.7 pnl=25836 win=0.460 worst=-1009
+exit 14:00                                           score=0.6856 h1=0.679 h2=0.696 days=11.7 pnl=25476 win=0.460 worst=-1009
+exit 14:30                                           score=0.6856 h1=0.679 h2=0.696 days=11.7 pnl=25866 win=0.460 worst=-1009
+== big_onv thresh / big brackets ==
+big_onv 150                                          score=0.5754 h1=0.615 h2=0.570 days=12.6 pnl=20898 win=0.447 worst=-1009
+big_onv 200                                          score=0.6856 h1=0.679 h2=0.696 days=11.7 pnl=25866 win=0.460 worst=-1009
+big_onv 250                                          score=0.6392 h1=0.679 h2=0.633 days=11.0 pnl=28119 win=0.460 worst=-1009
+big_onv 300                                          score=0.6265 h1=0.679 h2=0.620 days=11.4 pnl=24873 win=0.447 worst=-1009
+big 25/50                                            score=0.6264 h1=0.679 h2=0.620 days=11.5 pnl=20524 win=0.451 worst=-1009
+big 30/50                                            score=0.6854 h1=0.679 h2=0.696 days=12.2 pnl=23494 win=0.460 worst=-1009
+big 30/70                                            score=0.6859 h1=0.679 h2=0.696 days=10.8 pnl=28182 win=0.460 worst=-1009
+big 35/60                                            score=0.4366 h1=0.615 h2=0.430 days=11.2 pnl=21888 win=0.451 worst=-1009
+big 25/45                                            score=0.6266 h1=0.679 h2=0.620 days=11.1 pnl=20907 win=0.456 worst=-1009
