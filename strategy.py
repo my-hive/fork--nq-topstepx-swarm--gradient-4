@@ -15,7 +15,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
         if not m.any():
             continue
-        side = 1 if cc[np.where(m)[0][-1]] >= cc[np.where(m)[0][0]] else -1
+        side = -1 if cc[np.where(m)[0][-1]] >= cc[np.where(m)[0][0]] else 1
         pos, entry, done = 0, 0.0, False
         for k in range(len(idx)):
             if tt[k] < START or tt[k] >= EXIT:
