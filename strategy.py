@@ -6,7 +6,7 @@ One-sided opening flow reduces moderate size by3, other sizes by2. Thin volume, 
 flat-overnight news pushes, tight-range big drift and year-end tape are gated.
 Thursday agreement skips; Mon/Fri big-agreement fades halve. Recent losses
 halve size using completed-session next-open, fee-aware PnL only.
-Fade brackets: big overnight30/76pt, small40/84pt, moderate40/80pt.
+Fade brackets: big overnight29.5/76pt, small39.5/84pt, moderate39.5/80pt.
 After stopped fade, skip moderate agreement, Tuesday moderate disagreement,
 Friday small disagreement, and sub200 disagreement with opposing opening
 flow or push<22.5pt. Other reversals use size+2 and45/68pt brackets;
