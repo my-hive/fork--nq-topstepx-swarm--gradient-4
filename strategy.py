@@ -84,7 +84,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sz <= 0:
             hist.append(0.0)
             continue
-        stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (42.0, 84.0) if hot else (42.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
+        stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (39.0, 84.0) if hot else (39.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
@@ -103,7 +103,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        pos, entry, state = -side * (sz + 1), cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
