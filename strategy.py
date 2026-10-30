@@ -27,7 +27,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 2, -80.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+LOSS_K, LOSS_TH = 2, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -82,7 +82,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
-            continue  # gu-1: skipped sessions do not erase completed-trade risk memory
+            hist.append(0.0)
+            continue
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
@@ -119,5 +120,5 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
         oo = df.open.values[idx]
         hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
-                          - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()) / sz)
+                          - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
