@@ -27,7 +27,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 2, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+LOSS_K, LOSS_TH = 5, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -75,8 +75,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
             sz = int(round(sz * 0.5))
-        elif big_agree and dow == 0:                # gu-1: retain original Monday half risk
-            sz = int(round(sz * 0.5))
+        elif big_agree and dow == 0:                # gu-1: Monday retains three-quarter risk
+            sz = int(round(sz * 0.75))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if min((sum(hist[-k:]) for k in range(1, min(LOSS_K, len(hist)) + 1)), default=0.0) < LOSS_TH:
@@ -125,6 +125,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
 
 
 if __name__ == "__main__":
-    for history, expected in (([], False), ([1000, -900], True), ([-900, 1000], False), ([-500, -500], True), ([-800], False)):
+    for history, expected in (([], False), ([1000, -900], True), ([-900, 1000], False), ([-500, -500], True), ([-800], False), ([-900, 0, 0, 0, 0], True), ([-900, 0, 0, 0, 0, 0], False)):
         loss = min((sum(history[-k:]) for k in range(1, min(LOSS_K, len(history)) + 1)), default=0.0)
         assert (loss < LOSS_TH) == expected, (history, loss)
