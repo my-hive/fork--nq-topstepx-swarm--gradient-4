@@ -64,6 +64,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
             if abs(ext - cc[where[-1]]) < RETR_MIN:
                 sz = 0  # push still at its extreme: momentum, don't fade
+        if not agree and abs(mv) >= abs(onv):
+            sz = 0  # gu-4: opposing opening push already erased overnight drift
         if hot and not agree and abs(onv) < 25 and abs(mv) > 70:
             sz = 0  # flat overnight + violent open push: news momentum, don't fade
         if hot and not agree and abs(onv) > 200 and hi[idx][:where[0]].max() - lo[idx][:where[0]].min() < ON_RNG_MIN:
