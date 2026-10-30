@@ -1,0 +1,17 @@
+cold tgt 78                        score=1.0062 h1=1.000 h2=1.000 days=11.4 pnl=62801 worst=-1010
+cold tgt 80                        score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63410 worst=-1010
+cold tgt 82                        score=0.9420 h1=0.936 h2=1.000 days=11.8 pnl=61735 worst=-1010
+cold tgt 82 shift10                score=0.9375 h1=0.932 h2=1.000 days=11.9 pnl=56792 worst=-1010
+cold tgt 82 shift25                score=0.9301 h1=0.924 h2=1.000 days=12.5 pnl=52190 worst=-1010
+cold tgt 82 shift40                score=0.8679 h1=0.862 h2=1.000 days=12.5 pnl=48628 worst=-1010
+cold tgt 84                        score=0.9420 h1=0.936 h2=1.000 days=11.8 pnl=62250 worst=-1010
+cold tgt 84 shift10                score=0.9375 h1=0.932 h2=1.000 days=11.9 pnl=57307 worst=-1010
+cold tgt 84 shift25                score=0.9301 h1=0.924 h2=1.000 days=12.5 pnl=52574 worst=-1010
+cold tgt 84 shift40                score=0.8679 h1=0.862 h2=1.000 days=12.5 pnl=48902 worst=-1010
+cold tgt 86                        score=0.9418 h1=0.936 h2=1.000 days=12.2 pnl=60795 worst=-1010
+cold tgt 86 shift10                score=0.9374 h1=0.932 h2=1.000 days=12.3 pnl=55852 worst=-1010
+cold tgt 86 shift25                score=0.9299 h1=0.924 h2=1.000 days=13.0 pnl=51118 worst=-1010
+cold tgt 86 shift40                score=0.8677 h1=0.862 h2=1.000 days=13.0 pnl=47418 worst=-1010
+cold tgt 88                        score=0.9419 h1=0.936 h2=1.000 days=12.1 pnl=61463 worst=-1010
+cold tgt 90                        score=0.9419 h1=0.936 h2=1.000 days=12.1 pnl=61816 worst=-1010
+cold tgt 94                        score=0.9419 h1=0.936 h2=1.000 days=12.1 pnl=61772 worst=-1010

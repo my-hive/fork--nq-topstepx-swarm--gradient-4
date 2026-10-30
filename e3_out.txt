@@ -1,0 +1,5 @@
+W post-win +1                                score=0.9557 h1=0.962 h2=0.949 days=11.0 pnl=63420 worst=-1011
+cold tgt 84                                  score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63410 worst=-1010
+imb shrink -1                                score=0.7111 h1=0.705 h2=0.987 days=12.0 pnl=55836 worst=-1011
+HA stop 38                                   score=1.0061 h1=1.000 h2=1.000 days=11.7 pnl=59998 worst=-1010
+trail +40 lock 40                            score=1.0060 h1=1.000 h2=1.000 days=12.0 pnl=59849 worst=-1010
