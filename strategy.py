@@ -38,12 +38,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     sd = pd.to_datetime(df.session.values)
     dows, months, mdays = sd.dayofweek, sd.month, sd.day
     hist = []  # per-session gross PnL (pts * contracts), past sessions only
-    prev_week = None
+    defensive = False
     for _, idx in df.groupby("session", sort=False).indices.items():
-        week = sd[idx[0]].to_period("W")
-        if week != prev_week:
-            hist.clear()
-        prev_week = week
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
         if not m.any():
@@ -84,7 +80,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
+        if hist and hist[-1] > 0:
+            defensive = False
         if sum(hist[-LOSS_K:]) < LOSS_TH:
+            defensive = True
+        if defensive:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
             hist.append(0.0)
