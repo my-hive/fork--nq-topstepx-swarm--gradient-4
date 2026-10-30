@@ -1,70 +1,69 @@
-"""exp11: on top of 0.5382 shrink-3 — (a) counter-flow boost, (b) push-direction asymmetry, (c) total-volume gate."""
+"""Day-loss throttle + time-gated flip on 0.6018 base. MLL breaches = 100% of fails;
+DLL days are double-stop days. Throttle flattens day before -1008 lock."""
+import sys
 import numpy as np, pandas as pd
-from harness import DF, SESS, score_signals
+sys.path.insert(0, "eval")
+import sim
+from harness import score_signals, DF, SESS
 
 START, EXIT = 8*3600+35*60, 14*3600+30*60
 STOP_PTS, TGT_PTS = 40.0, 80.0
 ON_LO, ON_HI = 50.0, 175.0
-IMB_TH, IMB_SH = 0.05, 3
+IMB_TH = 0.05
+F_STOP, F_TGT = 40.0, 60.0
 
-def make(imb_sh=3, counter_boost=0, counter_th=-0.05, skip_up=False, skip_down=False,
-         vol_pct=None, vol_delta=0):
-    """vol_pct: skip trades when 8:30-8:35 total aggressor vol below quantile vol_pct.
-    vol_delta: size change when below quantile (negative shrink)."""
-    def signals(df):
-        out = np.zeros(len(df), dtype=np.int64)
-        t, c = df.ct_sec.values, df.close.values
-        bv, sv = df.buy_vol.values, df.sell_vol.values
-        vols = []
-        sess_idx = list(df.groupby("session", sort=False).indices.items())
-        for _, idx in sess_idx:
-            tt = t[idx]
-            m = (tt >= 8*3600+30*60) & (tt < START)
-            if m.any():
-                w = np.where(m)[0]
-                vols.append(bv[idx][w].sum() + sv[idx][w].sum())
-            else:
-                vols.append(np.nan)
-        thr = np.nanquantile(vols, vol_pct) if vol_pct is not None else None
-        for i, (_, idx) in enumerate(sess_idx):
-            tt, cc = t[idx], c[idx]
-            m = (tt >= 8*3600+30*60) & (tt < START)
-            if not m.any(): continue
-            w = np.where(m)[0]
-            onv = cc[w[0]] - cc[0]
-            mv = cc[w[-1]] - cc[w[0]]
-            if mv == 0: continue
-            hot = not (ON_LO <= abs(onv) <= ON_HI)
-            agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
-            sz = (9 if agree else 7) if hot else (6 if not agree else 0)
-            BV, SV = bv[idx][w].sum(), sv[idx][w].sum()
-            ia = (BV - SV) / max(BV + SV, 1) * np.sign(mv)
-            if sz > 0 and ia >= IMB_TH:
-                sz = max(1, sz - imb_sh)
-            if counter_boost and sz > 0 and ia <= counter_th:
-                sz = min(50, sz + counter_boost)
-            if skip_up and mv > 0: sz = 0
-            if skip_down and mv < 0: sz = 0
-            if thr is not None and vols[i] < thr and sz > 0:
-                sz = 0 if vol_delta == 0 else max(1, sz + vol_delta)
-            side = -1 if mv >= 0 else 1
-            pos, entry, done = 0, 0.0, False
-            for k in range(len(idx)):
-                if tt[k] < START or tt[k] >= EXIT: pos = 0
-                elif pos == 0 and not done: pos, entry, done = side*sz, cc[k], True
-                elif pos != 0:
-                    pnl = (cc[k]-entry) * np.sign(pos)
-                    if pnl <= -STOP_PTS or pnl >= TGT_PTS: pos = 0
-                out[idx[k]] = pos
-        return out
-    return signals
+def build(day_stop=None, flip_before=None, flip_after=None):
+    t, c = DF.ct_sec.values, DF.close.values
+    bv, sv = DF.buy_vol.values, DF.sell_vol.values
+    out = np.zeros(len(DF), dtype=np.int64)
+    for _, idx in DF.groupby("session", sort=False).indices.items():
+        tt, cc = t[idx], c[idx]
+        m = (tt >= 8*3600+30*60) & (tt < START)
+        if not m.any(): continue
+        where = np.where(m)[0]
+        onv = cc[where[0]] - cc[0]
+        mv = cc[where[-1]] - cc[where[0]]
+        if mv == 0: continue
+        hot = not (ON_LO <= abs(onv) <= ON_HI)
+        agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
+        if hot: sz = 9 if agree else 7
+        else:   sz = 6 if not agree else 0
+        imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(bv[idx][where].sum() + sv[idx][where].sum(), 1)
+        if sz > 0 and imb * np.sign(mv) >= IMB_TH: sz = max(1, sz - 2)
+        side = -1 if mv >= 0 else 1
+        pos, entry, state, realized = 0, 0.0, 0, 0.0
+        for k in range(len(idx)):
+            if tt[k] < START or tt[k] >= EXIT:
+                pos = 0
+            elif state == 0:
+                pos, entry, state = side * sz, cc[k], 1
+            elif pos != 0:
+                pnl = (cc[k] - entry) * np.sign(pos)
+                hit_stop = pnl <= -STOP_PTS if state == 1 else pnl <= -F_STOP
+                hit_tgt = pnl >= TGT_PTS if state == 1 else pnl >= F_TGT
+                if state == 1 and hit_stop:
+                    if agree:
+                        pos, state = 0, 4
+                    elif flip_before is not None and tt[k] >= flip_before:
+                        pos, state = 0, 4
+                    elif flip_after is not None and tt[k] < flip_after:
+                        pos, state = 0, 4
+                    else:
+                        realized += pos * (cc[k] - entry) * 2.0
+                        pos, entry, state = -side * (sz + 1), cc[k], 3
+                elif hit_tgt or (state == 3 and hit_stop):
+                    realized += pos * (cc[k] - entry) * 2.0
+                    pos, state = 0, 4
+                elif day_stop is not None and realized + pos * (cc[k] - entry) * 2.0 <= -day_stop:
+                    realized += pos * (cc[k] - entry) * 2.0
+                    pos, state = 0, 4
+            out[idx[k]] = pos
+    return out
 
 if __name__ == "__main__":
-    score_signals(make(), "base shrink-3 (expect .5382)")
-    score_signals(make(counter_boost=2), "counter-boost +2 th-.05")
-    score_signals(make(counter_boost=3), "counter-boost +3 th-.05")
-    score_signals(make(counter_boost=2, counter_th=-0.03), "counter-boost +2 th-.03")
-    score_signals(make(skip_up=True), "skip up-push fades")
-    score_signals(make(skip_down=True), "skip down-push fades")
-    score_signals(make(vol_pct=0.25, vol_delta=-2), "low-vol(25%) shrink2")
-    score_signals(make(vol_pct=0.25, vol_delta=0), "low-vol(25%) skip")
+    for ds in (None, 900, 800, 700, 600, 500):
+        score_signals(lambda df, ds=ds: build(day_stop=ds), f"day_stop={ds}")
+    for fb in (9*3600+30*60, 10*3600, 11*3600, 12*3600):
+        score_signals(lambda df, fb=fb: build(flip_before=fb), f"flip only before {fb//3600}:{(fb%3600)//60:02d}")
+    for fa in (9*3600, 10*3600):
+        score_signals(lambda df, fa=fa: build(flip_after=fa), f"flip only after {fa//3600}:{(fa%3600)//60:02d}")
