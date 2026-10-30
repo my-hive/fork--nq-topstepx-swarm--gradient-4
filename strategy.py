@@ -19,7 +19,7 @@ Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
 import numpy as np
 import pandas as pd
 
-START, EXIT = 8 * 3600 + 35 * 60, 13 * 3600 + 30 * 60
+START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 15 * 60
 ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.021
 VOL_MIN = 12750.0
@@ -84,7 +84,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sz <= 0:
             hist.append(0.0)
             continue
-        stop, tgt = (29.5, 76.5) if abs(onv) > 200 else (39.5, 84.5) if hot else (39.5, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
+        stop, tgt = (29.5, 76.5) if abs(onv) > 200 else (39.5, 84.5) if hot else (39.5, 79.5)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
