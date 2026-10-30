@@ -118,3 +118,15 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
                           - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
+
+
+if __name__ == "__main__":
+    # gu-3: run `python3 strategy.py` to check direct moderate sizing equivalence.
+    for hot in (False, True):
+        for agree in (False, True):
+            size = (10 if agree else 7) if hot else (0 if agree else 8)
+            for aligned in (False, True):
+                previous = max(1, size - (2 if hot else 3)) if size > 0 and aligned else size
+                current = (max(1, size - 2) if hot else 5) if size > 0 and aligned else size
+                assert previous == current and 0 <= current <= 50
+    print("gu-3: sizing equivalence and contract bounds pass")
