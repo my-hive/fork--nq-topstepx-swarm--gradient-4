@@ -113,7 +113,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if pnl <= -(stop if big_agree else F_STOP_PTS) or pnl >= F_TGT_PTS:
+                if pnl <= -(F_STOP_PTS if big_agree else stop) or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
