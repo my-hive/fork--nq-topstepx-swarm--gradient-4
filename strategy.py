@@ -46,7 +46,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot:
             sz = 10 if agree else 6
         else:
-            sz = 8 if not agree else 0
+            sz = 6 if not agree else 0  # cold+dis 5-7 plateau (0.929); 8 too big for DLL whipsaw days
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
