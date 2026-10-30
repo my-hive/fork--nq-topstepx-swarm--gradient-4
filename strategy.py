@@ -11,7 +11,7 @@ Gates, validated across train halves:
    one contract larger, 40/60 brackets, then done for the day. Big-agree days
    (|onv|>200, push continues overnight) flip too: reversal overshoot.
 5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
-   Fridays): Thursday hot+agree fades lose in both halves -> skip. Friday
+   Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
    big-agree days are trend-risk -> halve size.
 6. Skip year-end holiday tape (Dec 15 - Jan 2) and hot+disagree days with flat
    overnight (|onv|<25) but violent open push (|mv|>70): news momentum.
@@ -25,7 +25,7 @@ IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
-F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
+F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
 LOSS_K, LOSS_TH = 2, -700.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
@@ -52,7 +52,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot:
             sz = 10 if agree else 7
         else:
-            sz = 7 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9
+            sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
@@ -72,7 +72,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
-        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve (Monday rule ablated: no effect)
+        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
+            sz = int(round(sz * 0.5))
+        elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
