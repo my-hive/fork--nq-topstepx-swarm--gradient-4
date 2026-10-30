@@ -117,7 +117,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
-                elif not trimmed and pnl >= F_TGT_PTS / 2 and abs(pos) > 1:
+                elif not trimmed and pnl >= F_TGT_PTS * 0.8 and abs(pos) > 1:
                     pos -= int(np.sign(pos))
                     trimmed = True
             out[idx[k]] = pos
