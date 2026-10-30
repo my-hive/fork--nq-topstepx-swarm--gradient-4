@@ -1,21 +1,18 @@
-"""Fade the 8:30-8:35 open move at 8:35, 40/80 stop/target, flat 14:30.
-Gates, validated across train halves:
-1. Overnight (0:00->8:30 CT) move size: moderate drift 50-200 pts is a dead zone.
-2. Agreement of the 8:30-8:35 move with overnight direction: fade the push when it
-   continues the overnight drift, or on dead-zone days when it counters the drift.
-3. Aggressor imbalance along the push: if buy/sell aggressor volume during 8:30-8:35
-   is one-sided IN the push direction (>=0.02), the push is real momentum ->
-   fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
-4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
-   fade still stops out, the push was real momentum -> flip to the push direction
-   one contract larger, 40/60 brackets, then done for the day. Big-agree days
-   (|onv|>200, push continues overnight) flip too: reversal overshoot.
-5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
-   Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
-   big-agree days are trend-risk -> halve size.
-6. Skip year-end holiday tape (Dec 15 - Jan 2) and hot+disagree days with flat
-   overnight (|onv|<25) but violent open push (|mv|>70): news momentum.
-Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
+"""gu-3: causal opening fade with one conditional momentum reversal.
+Use 8:30-8:35 CT move, overnight drift and opening aggressor flow at 8:35.
+Moderate overnight drift (50-200pt) trades disagreement only; other days fade
+agreement/disagreement at base sizes10/7, versus8 for moderate disagreement.
+One-sided opening flow reduces size by2; thin volume, poor retracement,
+flat-overnight news pushes, tight-range big drift and year-end tape are gated.
+Thursday agreement skips; Mon/Fri big-agreement fades halve. Recent losses
+halve size using completed-session next-open, fee-aware PnL only.
+Fade brackets: big overnight30/76pt, small40/84pt, moderate40/80pt.
+After stopped fade, skip moderate agreement, Tuesday moderate disagreement,
+Friday small disagreement, and sub200 disagreement with opposing opening
+flow or push<22.5pt. Other reversals use size+2 and45/68pt brackets;
+Monday moderate reversals halve. All brackets use observed next-open slipped
+fill basis, close triggers, next-row execution, and14:30 CT flat.
+"""
 import numpy as np
 import pandas as pd
 
@@ -37,7 +34,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     hi, lo = df.high.values, df.low.values
     sd = pd.to_datetime(df.session.values)
     dows, months, mdays = sd.dayofweek, sd.month, sd.day
-    hist = []  # per-session gross PnL (pts * contracts), past sessions only
+    hist = []  # completed-session net PnL in point-contracts
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
