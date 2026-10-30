@@ -22,7 +22,7 @@ IMB_TH = 0.02
 VOL_MIN = 12575.0
 RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
-F_STOP_PTS, F_TGT_PTS = 45.0, 69.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
+F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
 LOSS_K, LOSS_TH = 2, -800.0  # completed-session net point-contract PnL
 
