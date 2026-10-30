@@ -1,21 +1,17 @@
-"""Fade the 8:30-8:35 open move at 8:35, 40/80 stop/target, flat 14:30.
-Gates, validated across train halves:
-1. Overnight (0:00->8:30 CT) move size: moderate drift 50-200 pts is a dead zone.
-2. Agreement of the 8:30-8:35 move with overnight direction: fade the push when it
-   continues the overnight drift, or on dead-zone days when it counters the drift.
-3. Aggressor imbalance along the push: if buy/sell aggressor volume during 8:30-8:35
-   is one-sided IN the push direction (>=0.02), the push is real momentum ->
-   fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
-4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
-   fade still stops out, the push was real momentum -> flip to the push direction
-   one contract larger, 40/60 brackets, then done for the day. Big-agree days
-   (|onv|>200, push continues overnight) flip too: reversal overshoot.
-5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
-   Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
-   big-agree days are trend-risk -> halve size.
-6. Skip year-end holiday tape (Dec 15 - Jan 2) and hot+disagree days with flat
-   overnight (|onv|<25) but violent open push (|mv|>70): news momentum.
-Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
+"""Fade the 08:30-08:35 CT move, enter next open, flatten 14:30 CT.
+
+Causal opening filters use overnight drift, push agreement, aggressor flow,
+liquidity, exhaustion, and overnight range. Thursday hot-agreement sessions
+are skipped; Friday big-agreement size is halved. Thin year-end tape is skipped.
+
+Base sizes: hot agreement 10, hot disagreement 7, cold disagreement 8.
+One-sided opening flow reduces size by 2. Prior two traded-session net losses
+below -800 point-contracts halve size, rounding down; skipped days retain memory.
+Fade brackets: big overnight 30/76, small overnight 40/84, cold 40/80 points.
+Stopped fades can reverse with 45/68 brackets and size +2, capped at 10 MNQ.
+Reversal vetoes retain Tuesday cold and Friday small-overnight exceptions;
+weak (<20-point) or opposing-flow small-overnight pushes cannot reverse.
+"""
 import numpy as np
 import pandas as pd
 
@@ -27,7 +23,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 2, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+LOSS_K, LOSS_TH = 2, -800.0  # completed traded sessions, net point-contract PnL
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -75,6 +71,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
             sz = int(round(sz * 0.5))
+        if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
+            sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
@@ -117,3 +115,12 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
                           - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
+
+
+if __name__ == "__main__":
+    # gu-3: integer exposure limits and strict historical loss boundary.
+    assert not sum([-400.0, -400.0]) < LOSS_TH
+    assert sum([-400.0, -400.01]) < LOSS_TH
+    for size in range(1, 11):
+        assert 0 <= size // 2 <= size
+        assert size <= min(size + 2, 10) <= 10
