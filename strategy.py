@@ -74,6 +74,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
+        if not hot and dow == 4 and imb * np.sign(mv) >= IMB_TH:
+            sz = max(0, sz - 1)
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
