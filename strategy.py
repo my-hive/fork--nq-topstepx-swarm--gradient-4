@@ -111,11 +111,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif state == 2:
-                if (cc[k] - entry) * -side > 0:
-                    pos, state = -side * (sz + 2), 3
-                    pending_entry = True
-                else:
-                    state = 4
+                pos, state = -side * (sz + 2), 3
+                pending_entry = True
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
