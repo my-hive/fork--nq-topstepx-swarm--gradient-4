@@ -120,6 +120,4 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         oo = df.open.values[idx]
         hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
                           - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
-        if hist[-1] > 0:
-            hist.clear()
     return out
