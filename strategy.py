@@ -13,7 +13,7 @@ import pandas as pd
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 STOP_PTS, TGT_PTS = 40.0, 80.0
 ON_LO, ON_HI = 50.0, 175.0
-IMB_TH = 0.05
+IMB_TH, IMB_SH = 0.05, 3
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
