@@ -80,7 +80,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(min(pnl, 0.0) for pnl in hist[-LOSS_K:]) < LOSS_TH:
-            sz //= 4  # gu-1: round reduced risk down
+            sz = 0  # gu-1: pause after recent downside budget breach
         if sz <= 0:
             hist.append(0.0)
             continue
