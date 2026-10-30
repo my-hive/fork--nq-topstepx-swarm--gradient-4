@@ -43,7 +43,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 10 if agree else (7 if abs(onv) > ON_HI else 6)
+            sz = 10 if agree else 6
         else:
             sz = 8 if not agree else 0
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
