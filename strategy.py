@@ -107,8 +107,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        # gu-1: causal realized fade loss leaves room for reversal stop risk.
-                        flip_sz = max(0, min(sz + 2, int((750.0 + pnl * sz - 0.5 * sz) / (F_STOP_PTS + 0.5))))
+                        # gu-1: cap combined observed loss and nominal reversal risk at trailing drawdown.
+                        flip_sz = max(0, min(sz + 2, int((1000.0 + pnl * sz - 0.5 * sz) / (F_STOP_PTS + 0.5))))
                         pos, entry, state = -side * flip_sz, cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
