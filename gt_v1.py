@@ -253,7 +253,7 @@ def ev(name="BASE", **kw):
              thu_ha_skip=True, mf_ba_half=True, thu_scope=0, lh_gate=0, lh_max=200.0,   # BASE = 0.8539
              skip_dow_bucket=np.zeros(20, dtype=np.int64), cd_tstop=0, cd_prev_loss_skip=False, dll_cap=0,
              ext_pts=0, ext_skip=-1e9, retr_hd=True, retr_ha=False, retr_cd=False, retr_min=5.0,
-             cold_flip_add=0)   # BASE = 0.8666
+             cold_flip_add=3)   # BASE = 0.8904
     d.update(kw)
     tgt_arr = build(T, C, SESS, bounds, ONV, MV, IMB, VOL, d["start"], d["exit_"],
                     d["sz_hot_dis"], d["sz_hot_agree"], d["sz_cold_dis"], d["sz_cold_agree"],

@@ -1,0 +1,7 @@
+BASE 0.8904                                  score=0.8904 h1=0.885 h2=0.886 days=12.5 pnl=39859 win=0.433 worst=-1010
+== their axes on my base ==
+ha 10                                        score=0.8904 h1=0.885 h2=0.886 days=12.6 pnl=41175 win=0.428 worst=-1011
+big tgt 70                                   score=0.8906 h1=0.885 h2=0.886 days=12.1 pnl=41648 win=0.433 worst=-1010
+ha10 + big70                                 score=0.8905 h1=0.885 h2=0.886 days=12.3 pnl=43108 win=0.428 worst=-1011
+global flip add 2                            score=0.7907 h1=0.885 h2=0.785 days=12.3 pnl=36484 win=0.414 worst=-1011
+ha10+big70+flip2                             score=0.8036 h1=0.885 h2=0.797 days=11.6 pnl=41418 win=0.414 worst=-1012
