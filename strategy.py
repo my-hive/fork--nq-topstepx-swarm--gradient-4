@@ -83,7 +83,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sz <= 0:
             hist.append(0.0)
             continue
-        stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 80.0)  # gu-1: target plateau 74-85; preserve stop widths
+        stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 88.0)  # gu-1: target plateau 74-85; preserve stop widths
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         for k in range(len(idx)):
