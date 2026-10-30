@@ -1,0 +1,9 @@
+their 0.8539 base                            score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=34993 win=0.451 worst=-1009
++ thu_scope2                                 score=0.8539 h1=0.885 h2=0.848 days=12.5 pnl=37269 win=0.433 worst=-1009
++ cold_flip off                              score=0.8536 h1=0.885 h2=0.848 days=13.6 pnl=31903 win=0.391 worst=-1009
++ both                                       score=0.8535 h1=0.885 h2=0.848 days=13.7 pnl=34179 win=0.372 worst=-1009
++ flip 30/56                                 score=0.8540 h1=0.885 h2=0.848 days=12.4 pnl=34058 win=0.442 worst=-1009
++ big 30/70                                  score=0.8541 h1=0.885 h2=0.848 days=12.1 pnl=37072 win=0.451 worst=-1009
++ hotbig d6a8                                score=0.8538 h1=0.885 h2=0.848 days=13.0 pnl=33848 win=0.451 worst=-1009
++ zone 50-225                                score=0.8538 h1=0.885 h2=0.848 days=12.9 pnl=34920 win=0.447 worst=-1009
++ all mine                                   score=0.8533 h1=0.885 h2=0.848 days=14.3 pnl=32062 win=0.353 worst=-1009
