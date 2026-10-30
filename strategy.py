@@ -27,7 +27,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 70.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 5, -700.0  # gu-1: prior-session point-contract PnL; K5 threshold -600..-800 full-speed plateau
+LOSS_K, LOSS_TH = 4, -700.0  # gu-1: prior-session point-contract PnL; K5 threshold -600..-800 full-speed plateau
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
