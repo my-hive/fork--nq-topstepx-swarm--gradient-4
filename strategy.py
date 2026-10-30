@@ -84,7 +84,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sz <= 0:
             hist.append(0.0)
             continue
-        stop, tgt = (30.0, 77.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # bigON 76 (74-78), small-ON 84 (83-84), cold 80 (79-81; 82 breaks h1)
+        stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # bigON 76 (74-78), small-ON 84 (83-84), cold 80 (79-81; 82 breaks h1)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
