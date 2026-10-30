@@ -109,7 +109,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
-                        flip_deadline = min(EXIT, tt[k] + 3600)
+                        flip_deadline = min(EXIT, tt[k] + 2 * 3600)
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
