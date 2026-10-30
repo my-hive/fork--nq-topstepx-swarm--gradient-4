@@ -85,7 +85,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             (dow == 1 and not hot)
             or (dow == 4 and abs(onv) < 50)
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 22.5))))
-        flip_size = max(1, (sz + 2) // 2) if dow == 0 and not hot else sz + 2
+        flip_size = max(1, (sz + 1) // 2) if dow == 0 and not hot else sz + 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         for k in range(len(idx)):
