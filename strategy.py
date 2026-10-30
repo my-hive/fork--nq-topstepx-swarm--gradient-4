@@ -88,6 +88,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
+        stop_breach = False
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
@@ -99,7 +100,10 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pending_entry = True
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if pnl <= -stop:
+                breach = pnl <= -stop
+                confirmed = breach and stop_breach
+                stop_breach = breach
+                if confirmed:
                     if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
