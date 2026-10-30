@@ -1,0 +1,7 @@
+sz=3 40.0/80.0 gate=all: n=73 mean_day=17 win=0.37 tot_extra=1266
+sz=4 40.0/80.0 gate=all: n=73 mean_day=23 win=0.37 tot_extra=1688
+sz=5 40.0/80.0 gate=all: n=73 mean_day=29 win=0.37 tot_extra=2110
+sz=4 40.0/80.0 gate=<lambda>: n=33 mean_day=-76 win=0.27 tot_extra=-2504
+sz=4 40.0/80.0 gate=<lambda>: n=40 mean_day=105 win=0.45 tot_extra=4192
+sz=4 30.0/60.0 gate=all: n=73 mean_day=-27 win=0.32 tot_extra=-1936
+sz=4 40.0/60.0 gate=all: n=73 mean_day=11 win=0.42 tot_extra=786
