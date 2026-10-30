@@ -1,0 +1,10 @@
+BASE                                         score=0.7872 h1=0.782 h2=0.835 days=14.5 pnl=29400 win=0.381 worst=-1009
+== entry delay ==
+delay 1m                                     score=0.3965 h1=0.397 h2=0.392 days=17.8 pnl=3654 win=0.302 worst=-1009
+delay 2m                                     score=0.4365 h1=0.590 h2=0.430 days=11.5 pnl=8802 win=0.326 worst=-1009
+delay 3m                                     score=0.6011 h1=0.679 h2=0.595 days=11.6 pnl=23546 win=0.353 worst=-1009
+delay 5m                                     score=0.4410 h1=0.436 h2=0.582 days=14.6 pnl=20694 win=0.353 worst=-1009
+== exit earlier (unresolved cut) ==
+exit 13:30                                   score=0.7872 h1=0.782 h2=0.835 days=14.5 pnl=29400 win=0.381 worst=-1009
+exit 13:00                                   score=0.7872 h1=0.782 h2=0.835 days=14.5 pnl=29400 win=0.381 worst=-1009
+exit 12:30                                   score=0.7872 h1=0.782 h2=0.835 days=14.5 pnl=29400 win=0.381 worst=-1009

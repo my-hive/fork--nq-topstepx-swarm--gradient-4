@@ -20,9 +20,11 @@ for s in range(NS):
 bounds[NS] = len(SESS)
 
 ONV = np.zeros(NS); MV = np.zeros(NS); IMB = np.zeros(NS); VOL = np.zeros(NS)
+PUSH_EXT = np.zeros(NS); LH_MV = np.zeros(NS)
 for s in range(NS):
     i0, i1 = bounds[s], bounds[s + 1]
     tt, cc = T[i0:i1], C[i0:i1]
+    hh, ll = H[i0:i1], L[i0:i1]
     m = (tt >= 8 * 3600 + 30 * 60) & (tt < 8 * 3600 + 35 * 60)
     if not m.any():
         continue
@@ -32,6 +34,13 @@ for s in range(NS):
     bt, st = BV[i0:i1][w].sum(), SV[i0:i1][w].sum()
     IMB[s] = (bt - st) / max(bt + st, 1)
     VOL[s] = bt + st
+    p_ = np.where(tt < 8*3600+30*60)[0]
+    if len(p_) > 0:
+        oh, ol = hh[p_].max(), ll[p_].min()
+        c830, c835 = cc[w[0]], cc[w[-1]]
+        PUSH_EXT[s] = (c835 - oh) if cc[w[-1]] > cc[w[0]] else (ol - c835)
+        lh = tt >= 7*3600+30*60
+        LH_MV[s] = cc[lh][-1] - cc[lh][0] if lh.any() else 0.0
 
 @njit(cache=True)
 def build(t, c, sess, bounds, onv, mv, imb, vol,
@@ -43,7 +52,8 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
           mv_min, mv_max, hot_flip, big_agree_flip, agree_small_flip,
           cam_sz, max_re, f_stop_cold, f_tgt_cold, f_be, f_conf_pts,
           cd_stop, cd_tgt, cold_flip, sz_hotbig_dis, sz_hotbig_agree,
-          f_add_agree_big, vol_min):
+          f_add_agree_big, vol_min, push_ext, lh_mv, cd_ext_max, cd_lh_max, ab_fstop,
+          prev_pnl, loss_boost):
     out = np.zeros(len(c), dtype=np.int64)
     for s in range(len(bounds) - 1):
         o_, m_, im_ = onv[s], mv[s], imb[s]
@@ -53,6 +63,11 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
             continue
         hot = not (on_lo <= abs(o_) <= on_hi)
         agree = np.sign(m_) == np.sign(o_) if o_ != 0 else True
+        if not hot and not agree and np.sign(o_) != 0:
+            if cd_ext_max > -1e9 and push_ext[s] > cd_ext_max:
+                continue
+            if cd_lh_max > -1e9 and lh_mv[s] * np.sign(m_) > cd_lh_max:
+                continue
         mom = (not hot) and agree and cam_sz > 0     # cold+agree: momentum-follow push
         if mom:
             sz = cam_sz
@@ -67,6 +82,8 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
             sz = max(1, sz - imb_shrink)
         if sz <= 0:
             continue
+        if loss_boost > 0 and s > 0 and prev_pnl[s - 1] < 0:
+            sz = sz + loss_boost
         big = abs(o_) > big_onv
         stp, tg = (big_stop, big_tgt) if big else (stop_pts, tgt_pts)
         if not hot and not agree and cd_stop > 0:
@@ -108,23 +125,80 @@ def build(t, c, sess, bounds, onv, mv, imb, vol,
                 pnl = (c[k] - entry) * (1.0 if pos > 0 else -1.0)
                 if f_be > 0 and pnl >= f_be:
                     be_on = True
-                if pnl <= (0.0 if be_on else -f_stp) or pnl >= f_tg:
+                if pnl <= (0.0 if be_on else (-(ab_fstop if (agree and big and ab_fstop > 0) else f_stp))) or pnl >= f_tg:
                     pos, state = 0, 4
             elif state == 4:
                 break
             out[k] = pos
     return out
 
+def prev_pnl_replay():
+    """Approx close-based day pnl per session with BASE params (no slippage/fees)."""
+    pp = np.zeros(NS)
+    for s in range(NS):
+        o_, m_ = ONV[s], MV[s]
+        if m_ == 0 or VOL[s] < 10000:
+            continue
+        hot = not (50 <= abs(o_) <= 225)
+        agree = np.sign(m_) == np.sign(o_) if o_ != 0 else True
+        mom = False
+        if hot:
+            sz = 8 if agree else (6 if abs(o_) > 225 else 7)
+        else:
+            sz = 6 if not agree else 0
+        if sz > 0 and IMB[s] * np.sign(m_) >= 0.05:
+            sz = max(1, sz - 2)
+        if sz <= 0:
+            continue
+        big = abs(o_) > 200
+        stp, tg = (30.0, 70.0) if big else (40.0, 80.0)
+        side = -1 if m_ >= 0 else 1
+        i0, i1 = bounds[s], bounds[s + 1]
+        tt, cc = T[i0:i1], C[i0:i1]
+        pos, entry, state, pnl = 0, 0.0, 0, 0.0
+        for k in range(len(tt)):
+            if tt[k] < 8*3600+35*60 or tt[k] >= 14*3600+30*60:
+                if pos != 0 and state in (1, 3):
+                    pnl += (cc[k] - entry) * (1 if pos > 0 else -1) * 2 * abs(pos)
+                pos = 0
+                if state in (1, 3) and tt[k] >= 14*3600+30*60:
+                    break
+            elif state == 0:
+                pos, entry, state = side * sz, cc[k], 1
+            elif pos != 0 and state == 1:
+                p_ = (cc[k] - entry) * (1 if pos > 0 else -1)
+                if p_ <= -stp:
+                    if (agree and not big) or (not agree and not hot):
+                        pnl += -stp * 2 * abs(pos); pos, state = 0, 4
+                    else:
+                        pnl += -stp * 2 * abs(pos)
+                        pos, entry, state = -side * (sz + 1), cc[k], 3
+                elif p_ >= tg:
+                    pnl += tg * 2 * abs(pos); pos, state = 0, 4
+            elif pos != 0 and state == 3:
+                p_ = (cc[k] - entry) * (1 if pos > 0 else -1)
+                if p_ <= -30:
+                    pnl += -30 * 2 * abs(pos); pos, state = 0, 4
+                elif p_ >= 56:
+                    pnl += 56 * 2 * abs(pos); pos, state = 0, 4
+            elif state == 4:
+                break
+        pp[s] = pnl
+    return pp
+
+PREV_PNL = prev_pnl_replay()
+
 def ev(name="BASE", **kw):
     d = dict(start=8*3600+35*60, exit_=14*3600+30*60,
              sz_hot_dis=7, sz_hot_agree=8, sz_cold_dis=6, sz_cold_agree=0,
              on_lo=50.0, on_hi=225.0, imb_th=0.05, imb_shrink=2,
-             stop_pts=40.0, tgt_pts=80.0, big_onv=200.0, big_stop=30.0, big_tgt=60.0,
-             f_stop=30.0, f_tgt=50.0, flip_sz_add=1,   # BASE = 0.7229 (cold_flip=False default)
+             stop_pts=40.0, tgt_pts=80.0, big_onv=200.0,
+             f_stop=30.0, f_tgt=56.0, flip_sz_add=1,   # BASE = 0.7872
+             big_stop=30.0, big_tgt=70.0, sz_hotbig_dis=6, sz_hotbig_agree=8, vol_min=10000.0,
              mv_min=0.0, mv_max=0.0, hot_flip=True, big_agree_flip=True, agree_small_flip=False,
              cam_sz=0, max_re=0, f_stop_cold=0.0, f_tgt_cold=0.0, f_be=0.0, f_conf_pts=0.0,
-             cd_stop=0.0, cd_tgt=0.0, cold_flip=False, sz_hotbig_dis=0, sz_hotbig_agree=0,
-             f_add_agree_big=0, vol_min=0)
+             cd_stop=0.0, cd_tgt=0.0, cold_flip=False,
+             f_add_agree_big=0, cd_ext_max=-1e9, cd_lh_max=-1e9, ab_fstop=0, loss_boost=0)
     d.update(kw)
     tgt_arr = build(T, C, SESS, bounds, ONV, MV, IMB, VOL, d["start"], d["exit_"],
                     d["sz_hot_dis"], d["sz_hot_agree"], d["sz_cold_dis"], d["sz_cold_agree"],
@@ -134,7 +208,8 @@ def ev(name="BASE", **kw):
                     d["mv_min"], d["mv_max"], d["hot_flip"], d["big_agree_flip"], d["agree_small_flip"],
                     d["cam_sz"], d["max_re"], d["f_stop_cold"], d["f_tgt_cold"], d["f_be"], d["f_conf_pts"],
                     d["cd_stop"], d["cd_tgt"], d["cold_flip"], d["sz_hotbig_dis"], d["sz_hotbig_agree"],
-                    d["f_add_agree_big"], d["vol_min"])
+                    d["f_add_agree_big"], d["vol_min"], PUSH_EXT, LH_MV,
+                    d["cd_ext_max"], d["cd_lh_max"], d["ab_fstop"], PREV_PNL, d["loss_boost"])
     dp, dm, tr = run_days(SESS, T, O, H, L, C, tgt_arr, NS)
     sc, rates, passed = score(dp, dm)
     print(f"{name:44s} score={sc:.4f} h1={rates[0]:.3f} h2={rates[1]:.3f} "

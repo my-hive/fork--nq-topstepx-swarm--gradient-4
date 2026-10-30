@@ -1,0 +1,17 @@
+BASE                                         score=0.7872 h1=0.782 h2=0.835 days=14.5 pnl=29400 win=0.381 worst=-1009
+== cold+dis push_ext gate (skip when push within X of overnight extreme) ==
+cd_ext_max -60.0                             score=0.5821 h1=0.577 h2=0.835 days=14.3 pnl=29884 win=0.349 worst=-1009
+cd_ext_max -40.0                             score=0.5823 h1=0.577 h2=0.835 days=13.9 pnl=30802 win=0.363 worst=-1009
+cd_ext_max -25.0                             score=0.5822 h1=0.577 h2=0.835 days=14.1 pnl=30266 win=0.367 worst=-1009
+cd_ext_max -10.0                             score=0.6334 h1=0.628 h2=0.835 days=14.5 pnl=29722 win=0.372 worst=-1009
+cd_ext_max 0.0                               score=0.6334 h1=0.628 h2=0.835 days=14.5 pnl=29722 win=0.372 worst=-1009
+== cold+dis last-hour gate (skip when lh_mv*push_dir > X) ==
+cd_lh_max -250.0                             score=0.6463 h1=0.641 h2=0.797 days=14.2 pnl=30666 win=0.321 worst=-1009
+cd_lh_max -150.0                             score=0.6078 h1=0.603 h2=0.797 days=14.2 pnl=31234 win=0.330 worst=-1009
+cd_lh_max -100.0                             score=0.5436 h1=0.538 h2=0.797 days=14.6 pnl=28966 win=0.330 worst=-1009
+cd_lh_max -50.0                              score=0.5821 h1=0.577 h2=0.835 days=14.4 pnl=30218 win=0.349 worst=-1009
+cd_lh_max 0.0                                score=0.5824 h1=0.577 h2=0.835 days=13.7 pnl=29768 win=0.353 worst=-1009
+== agree-big flip stop override ==
+ab_fstop 15.0                                score=0.7643 h1=0.782 h2=0.759 days=15.5 pnl=26194 win=0.367 worst=-1008
+ab_fstop 20.0                                score=0.7870 h1=0.782 h2=0.835 days=15.2 pnl=28610 win=0.377 worst=-1008
+ab_fstop 25.0                                score=0.7872 h1=0.782 h2=0.835 days=14.5 pnl=29426 win=0.381 worst=-1009

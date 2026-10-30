@@ -2,12 +2,12 @@
 import gt_v1 as g, numpy as np, collections
 from eval.sim import run_days, attempts, WINDOW, score
 
-P = dict(sz_hotbig_dis=6, sz_hotbig_agree=8, big_stop=30.0, big_tgt=70.0, f_stop=30.0, f_tgt=56.0)
-tgt_arr = g.build(g.T, g.C, g.SESS, g.bounds, g.ONV, g.MV, g.IMB,
+P = dict(sz_hotbig_dis=6, sz_hotbig_agree=8, big_stop=30.0, big_tgt=70.0, f_stop=30.0, f_tgt=56.0, vol_min=10000.0)
+tgt_arr = g.build(g.T, g.C, g.SESS, g.bounds, g.ONV, g.MV, g.IMB, g.VOL,
                  8*3600+35*60, 14*3600+30*60, 7, 8, 6, 0, 50.0, 225.0, 0.05, 2,
                  40.0, 80.0, 200.0, P["big_stop"], P["big_tgt"], P["f_stop"], P["f_tgt"], 1,
                  0.0, 0.0, True, True, False, 0, 0, 0.0, 0.0, 0.0, 0.0,
-                 0.0, 0.0, False, P["sz_hotbig_dis"], P["sz_hotbig_agree"])
+                 0.0, 0.0, False, P["sz_hotbig_dis"], P["sz_hotbig_agree"], 0, P["vol_min"])
 dp, dm, tr = run_days(g.SESS, g.T, g.O, g.H, g.L, g.C, tgt_arr, g.NS)
 sc, rates, passed = score(dp, dm)
 print(f"score={sc:.4f} h1={rates[0]:.3f} h2={rates[1]:.3f} days={np.mean(passed):.1f}")

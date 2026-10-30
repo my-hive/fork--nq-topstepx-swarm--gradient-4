@@ -1,0 +1,7 @@
+BASE                                         score=0.7872 h1=0.782 h2=0.835 days=14.5 pnl=29400 win=0.381 worst=-1009
+== size boost after prior losing session ==
+loss_boost 1                                 score=0.7107 h1=0.705 h2=0.835 days=13.3 pnl=31480 win=0.381 worst=-1010
+loss_boost 2                                 score=0.7238 h1=0.718 h2=0.785 days=12.5 pnl=32323 win=0.377 worst=-1011
+loss_boost 3                                 score=0.6855 h1=0.679 h2=0.785 days=11.9 pnl=34450 win=0.377 worst=-1012
+== bigger base sizes with boost (win days +100 +boost tradeoffs) ==
+all sz +1 w/ lb1                             score=0.5066 h1=0.500 h2=0.671 days=10.1 pnl=32034 win=0.367 worst=-1010
