@@ -56,7 +56,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
-        if sz > 0 and abs(imb) >= IMB_TH:  # one-sided push volume: shrink fade
+        if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
             sz = max(1, sz - 2)
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
@@ -89,7 +89,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
             or (dow == 4 and abs(onv) < 50)
-            or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
+            or ((abs(onv) < 200 and imb * np.sign(mv) < 0) or abs(mv) < 20)))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         for k in range(len(idx)):
