@@ -98,7 +98,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pending_entry = False
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
-            elif state == 0:
+            elif state == 0 and tt[k] >= START + 1:
                 pos, entry, state = side * sz, cc[k], 1
                 pending_entry = True
             elif pos != 0 and state == 1:
