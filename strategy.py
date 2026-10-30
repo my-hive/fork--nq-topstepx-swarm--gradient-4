@@ -22,16 +22,17 @@ import pandas as pd
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
-VOL_MIN = 12000.0
+VOL_MIN = 14000.0
 RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
-F_STOP_PTS, F_TGT_PTS = 50.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
+F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
 LOSS_K, LOSS_TH = 2, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
+    opens = df.open.values
     bv, sv = df.buy_vol.values, df.sell_vol.values
     hi, lo = df.high.values, df.low.values
     sd = pd.to_datetime(df.session.values)
@@ -86,11 +87,16 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
+        pending_entry = False
         for k in range(len(idx)):
+            if pending_entry:
+                entry = opens[idx[k]] + 0.25 * np.sign(pos)
+                pending_entry = False
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
             elif state == 0:
                 pos, entry, state = side * sz, cc[k], 1
+                pending_entry = True
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
@@ -98,6 +104,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
+                        pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
