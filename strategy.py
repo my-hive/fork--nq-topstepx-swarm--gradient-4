@@ -79,7 +79,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if sum(hist[-LOSS_K:]) < LOSS_TH:
+        if sum(pnl * 0.5 ** age for age, pnl in enumerate(reversed(hist))) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
             hist.append(0.0)
@@ -122,3 +122,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
                           - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
+
+
+if __name__ == "__main__":
+    assert sum(pnl * 0.5 ** age for age, pnl in enumerate(reversed([-1000, 100]))) == -400
+    assert sum(pnl * 0.5 ** age for age, pnl in enumerate(reversed([100, -1000]))) == -950
