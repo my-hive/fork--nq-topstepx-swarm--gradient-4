@@ -1,40 +1,30 @@
-"""NQ strategy for the TopstepX 50K combine. This is the only file you edit.
-
-signals(df) returns one integer per row: target position in MNQ contracts (-50..50, + long, - short; $2/pt).
-The decision on row i is filled at row i+1's open (plus slippage). Use only data at or before row i.
-The eval re-runs signals() on truncated data and rejects any lookahead.
-
-df columns (1-second bars, front-month NQ prices, which MNQ tracks; one row per second that traded):
-  session (date, CME day 17:00-16:00 CT), symbol, open, high, low, close, volume,
-  buy_vol, sell_vol (aggressor-side volume), ct_sec (seconds since midnight, Chicago time)
-"""
+"""One trade/day at 8:35 CT, direction = sign of 8:30-8:35 move continuation; fixed $ stop / target, flat by 14:30."""
 import numpy as np
 import pandas as pd
 
-CONTRACTS = 10  # 10 MNQ = 1 NQ of risk
-OR_START, OR_END, EXIT = 8 * 3600 + 30 * 60, 8 * 3600 + 45 * 60, 14 * 3600 + 30 * 60  # CT
+N = 5
+START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
+STOP_PTS, TGT_PTS = 40.0, 80.0
 
 
 def signals(df: pd.DataFrame) -> np.ndarray:
-    """Baseline: 15-min opening range breakout, one trade per session, stop at the other side."""
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
-        rng = (tt >= OR_START) & (tt < OR_END)
-        if not rng.any():
+        m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
+        if not m.any():
             continue
-        hi, lo = cc[rng].max(), cc[rng].min()
-        pos, done = 0, False
+        side = 1 if cc[np.where(m)[0][-1]] >= cc[np.where(m)[0][0]] else -1
+        pos, entry, done = 0, 0.0, False
         for k in range(len(idx)):
-            if tt[k] < OR_END or tt[k] >= EXIT:
+            if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
             elif pos == 0 and not done:
-                if cc[k] > hi:
-                    pos, done = CONTRACTS, True
-                elif cc[k] < lo:
-                    pos, done = -CONTRACTS, True
-            elif (pos > 0 and cc[k] < lo) or (pos < 0 and cc[k] > hi):
-                pos = 0
+                pos, entry, done = side * N, cc[k], True
+            elif pos != 0:
+                pnl = (cc[k] - entry) * np.sign(pos)
+                if pnl <= -STOP_PTS or pnl >= TGT_PTS:
+                    pos = 0
             out[idx[k]] = pos
     return out
