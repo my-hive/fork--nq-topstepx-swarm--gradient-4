@@ -19,7 +19,7 @@ Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
 import numpy as np
 import pandas as pd
 
-START, EXIT = 8 * 3600 + 35 * 60, 13 * 3600 + 45 * 60
+START, EXIT = 8 * 3600 + 35 * 60, 13 * 3600 + 15 * 60
 ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.021
 VOL_MIN = 12750.0
