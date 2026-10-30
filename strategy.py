@@ -104,7 +104,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if skip_flip or (mv > 0 and cc[k] <= hi[idx][where].max()) or (mv < 0 and cc[k] >= lo[idx][where].min()):  # require completed opening-range breakout
+                    if skip_flip or (cc[k] - (hi[idx][where].max() + lo[idx][where].min()) / 2) * np.sign(mv) <= 0:  # require push-side opening-range location
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
