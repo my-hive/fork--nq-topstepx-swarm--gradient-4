@@ -1,0 +1,24 @@
+2025-12-04 dow=3 cold+dis   onv=    51 push= 136 imb= 0.03 vol=  21271 retr=   6 sz= 6 flip=1 pnl=   957 min=   -63
+2025-12-05 dow=4 hot+agree  onv=    42 push=  78 imb= 0.03 vol=  19255 retr=  17 sz= 8 flip=0 pnl=  1336 min=  -240
+2025-12-08 dow=0 hot+agree  onv=    30 push=  48 imb= 0.04 vol=  18162 retr=  30 sz= 8 flip=0 pnl=  1260 min=  -100
+2025-12-09 dow=1 cold+agree onv=   -99 push=  36 imb= 0.03 vol=  16819 retr=  20 sz= 0 flip=0 pnl=     0 min=     0
+2025-12-10 dow=2 hot+agree  onv=   -36 push=  30 imb= 0.03 vol=  14475 retr=   7 sz=10 flip=0 pnl=  -825 min=  -825
+2025-12-11 dow=3 cold+agree onv=  -128 push=  73 imb=-0.01 vol=  22957 retr=  10 sz= 0 flip=0 pnl=     0 min=     0
+2025-12-12 dow=4 cold+dis   onv=  -156 push=  24 imb=-0.03 vol=  21375 retr=  13 sz= 6 flip=1 pnl= -1008 min= -1313
+2025-12-15 dow=0 lowvol     onv=   179 push=  86 imb= 0.05 vol=   9430 retr=   2 sz= 0 flip=0 pnl=     0 min=     0
+2025-12-16 dow=1 cold+dis   onv=  -131 push=  60 imb=-0.04 vol=  19656 retr=  36 sz= 6 flip=1 pnl= -1008 min= -1049
+2025-12-17 dow=2 cold+dis   onv=    68 push=  12 imb= 0.01 vol=  16752 retr=   7 sz= 6 flip=1 pnl=   516 min=  -636
+2025-12-18 dow=3 hot+dis    onv=   287 push=   6 imb= 0.02 vol=  20913 retr=  14 sz= 7 flip=1 pnl=   644 min=  -469
+2025-12-19 dow=4 cold+agree onv=   118 push=  94 imb= 0.02 vol=  22172 retr=   8 sz= 0 flip=0 pnl=     0 min=     0
+2025-12-22 dow=0 cold+dis   onv=   132 push=  72 imb= 0.04 vol=  19985 retr=  12 sz= 4 flip=1 pnl=  -833 min=  -833
+2025-12-23 dow=1 cold+dis   onv=   -60 push=  63 imb=-0.00 vol=  18890 retr=  32 sz= 6 flip=1 pnl= -1008 min= -1008
+2025-12-24 dow=2 lowvol     onv=   -19 push=  34 imb= 0.02 vol=   9400 retr=   8 sz= 0 flip=0 pnl=     0 min=     0
+2025-12-26 dow=4 lowvol     onv=    12 push=   5 imb=-0.03 vol=   9927 retr=  12 sz= 0 flip=0 pnl=     0 min=     0
+2025-12-29 dow=0 cold+dis   onv=  -178 push=  23 imb= 0.03 vol=  12914 retr=   5 sz= 6 flip=1 pnl= -1008 min= -1038
+2025-12-30 dow=1 lowvol     onv=   -50 push=  26 imb= 0.06 vol=  10671 retr=  13 sz= 0 flip=0 pnl=     0 min=     0
+2025-12-31 dow=2 lowvol     onv=    -9 push=   4 imb=-0.01 vol=   9296 retr=  15 sz= 0 flip=0 pnl=     0 min=     0
+2026-01-02 dow=4 hot+dis    onv=   204 push=   2 imb=-0.01 vol=  18244 retr=  24 sz= 7 flip=1 pnl= -1009 min= -1010
+2026-01-05 dow=0 hot+dis    onv=   202 push=  50 imb= 0.06 vol=  25541 retr=   7 sz= 5 flip=1 pnl=  -866 min=  -888
+2026-01-06 dow=1 cold+agree onv=    50 push=  12 imb=-0.01 vol=  17815 retr=  28 sz= 0 flip=0 pnl=     0 min=     0
+2026-01-07 dow=2 retr-skip  onv=   -40 push=  30 imb= 0.06 vol=  16464 retr=   1 sz= 0 flip=0 pnl=     0 min=     0
+2026-01-08 dow=3 cold+agree onv=   -54 push=  84 imb= 0.05 vol=  23048 retr=  14 sz= 0 flip=0 pnl=     0 min=     0

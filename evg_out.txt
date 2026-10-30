@@ -1,0 +1,20 @@
+== EVG (8:30 vs prior close) ==
+evg -500--200                    n= 17 mean=    685 win=0.88 tot=  11650
+evg -200--50                     n= 26 mean=    219 win=0.69 tot=   5693
+evg -50-50                       n= 37 mean=    398 win=0.65 tot=  14718
+evg 50-200                       n= 28 mean=    340 win=0.71 tot=   9516
+evg 200-500                      n= 21 mean=    -75 win=0.52 tot=  -1584
+== EVG sign vs onv sign agreement ==
+evg~onv same                     n=122 mean=    288 win=0.68 tot=  35112
+evg~onv diff                     n= 11 mean=    571 win=0.73 tot=   6283
+== PIR (8:30 pos in overnight range) ==
+pir 0.0-0.2                      n= 22 mean=    400 win=0.77 tot=   8806
+pir 0.2-0.4                      n= 21 mean=    385 win=0.67 tot=   8080
+pir 0.4-0.6                      n= 24 mean=    503 win=0.79 tot=  12064
+pir 0.6-0.8                      n= 29 mean=    143 win=0.55 tot=   4154
+pir 0.8-1.0                      n= 28 mean=    163 win=0.64 tot=   4567
+== PIR extreme + push direction ==
+pir>0.8 push-up (fade short)     n= 11 mean=    325 win=0.73 tot=   3572
+pir<0.2 push-dn (fade long)      n= 11 mean=    472 win=0.73 tot=   5195
+pir>0.8 push-dn                  n= 23 mean=     92 win=0.61 tot=   2114
+pir<0.2 push-up                  n= 14 mean=    444 win=0.86 tot=   6217
