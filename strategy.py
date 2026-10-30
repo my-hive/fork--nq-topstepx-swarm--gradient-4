@@ -101,7 +101,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 mfe = max(mfe, ((hi[idx[k]] if pos > 0 else lo[idx[k]]) - entry) * np.sign(pos))
-                if tt[k] >= START + 15 * 60 and mfe < 30.0:
+                if tt[k] >= START + 15 * 60 and mfe < 15.0:
                     pos, state = 0, 4
                 elif pnl <= -stop:
                     if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
