@@ -54,7 +54,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if agree:                   # trend day: stand aside after stop
+                    if agree and abs(onv) <= 200:  # big+agree: flip too (reversal overshoot)                   # trend day: stand aside after stop
                         pos, state = 0, 4
                     else:                       # counters drift + stopped: real momentum
                         pos, entry, state = -side * (sz + 1), cc[k], 3
