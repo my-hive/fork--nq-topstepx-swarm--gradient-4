@@ -1,21 +1,14 @@
-"""Fade the 8:30-8:35 open move at 8:35, 40/80 stop/target, flat 14:30.
-Gates, validated across train halves:
-1. Overnight (0:00->8:30 CT) move size: moderate drift 50-200 pts is a dead zone.
-2. Agreement of the 8:30-8:35 move with overnight direction: fade the push when it
-   continues the overnight drift, or on dead-zone days when it counters the drift.
-3. Aggressor imbalance along the push: if buy/sell aggressor volume during 8:30-8:35
-   is one-sided IN the push direction (>=0.02), the push is real momentum ->
-   fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
-4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
-   fade still stops out, the push was real momentum -> flip to the push direction
-   one contract larger, 40/60 brackets, then done for the day. Big-agree days
-   (|onv|>200, push continues overnight) flip too: reversal overshoot.
-5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
-   Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
-   big-agree days are trend-risk -> halve size.
-6. Skip year-end holiday tape (Dec 15 - Jan 2) and hot+disagree days with flat
-   overnight (|onv|<25) but violent open push (|mv|>70): news momentum.
-Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
+"""Opening five-minute fade with optional stop-triggered momentum recovery.
+
+Signals use completed rows; simulator fills next-row opens. Initial exposure is
+10/7 contracts for hot agreement/disagreement, 8 for cold disagreement, zero for
+cold agreement. Existing liquidity, retracement, overnight, weekday and holiday
+filters restrict admission; opening aggressor imbalance discounts size by two.
+Fade brackets are 30/76 points for large overnight moves, otherwise 40/84 hot
+or 40/80 cold. Eligible stopped fades reverse at size + 2 with 45/68 brackets.
+Prior two-session net point-contract proxy below -800 halves initial size.
+Positions flatten at 14:30 CT; Dec 10 through Jan 2 are excluded.
+"""
 import numpy as np
 import pandas as pd
 
@@ -37,7 +30,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     hi, lo = df.high.values, df.low.values
     sd = pd.to_datetime(df.session.values)
     dows, months, mdays = sd.dayofweek, sd.month, sd.day
-    hist = []  # per-session gross PnL (pts * contracts), past sessions only
+    hist = []  # per-session net proxy (pts * contracts), past sessions only
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
