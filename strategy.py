@@ -100,10 +100,12 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if (agree and abs(onv) <= 200) or (not agree and dow == 0 and abs(onv) < 200) or (not hot and not agree and dow == 1) or (not agree and dow == 4 and abs(onv) < 50):  # weekday-regime flip risk
+                    if agree and abs(onv) <= 200:
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        reduced_flip = (not agree and dow == 0 and abs(onv) < 200) or (not hot and not agree and dow == 1) or (not agree and dow == 4 and abs(onv) < 50)
+                        flip_sz = max(1, (sz + 2) // 2) if reduced_flip else sz + 2
+                        pos, entry, state = -side * flip_sz, cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
