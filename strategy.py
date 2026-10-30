@@ -107,7 +107,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        pos, entry, state = -side * sz, cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
@@ -115,6 +115,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
+                elif pnl >= F_STOP_PTS:
+                    pos = -side * (sz + 2)  # gu-3: add premium only after one risk unit confirmation
             out[idx[k]] = pos
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
