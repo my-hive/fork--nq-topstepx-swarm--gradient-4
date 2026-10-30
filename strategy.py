@@ -93,14 +93,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         flip_tgt = F_TGT_PTS
-        overnight_hi = hi[idx][:where[0]].max()
-        overnight_lo = lo[idx][:where[0]].min()
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
                 if state == 3:
-                    objective = (overnight_hi - entry) if pos > 0 else (entry - overnight_lo)
-                    flip_tgt = min(F_TGT_PTS, objective) if objective > 0 else F_TGT_PTS
+                    flip_tgt = max(F_TGT_PTS, (cc[where[0]] - entry) * np.sign(pos))
                 pending_entry = False
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
