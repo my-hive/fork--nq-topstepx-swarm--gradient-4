@@ -51,7 +51,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = (11 if abs(onv) > 200 else 10) if agree else 7
+            sz = 10 if agree else 7
         else:
             sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
