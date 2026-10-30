@@ -100,7 +100,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if (agree and abs(onv) <= 200) or (not agree and dow == 0):  # moderate agree / Monday disagree: no flip
+                    if (agree and abs(onv) <= 200) or (not agree and dow == 0 and abs(onv) < 200):  # moderate agree / Monday small/cold-dis: no flip
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
