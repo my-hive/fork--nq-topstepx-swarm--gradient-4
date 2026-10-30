@@ -27,7 +27,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 70.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 4, -650.0  # gu-1: causal point-contract PnL; K4/K5 exact plateau, K1 fails, K3/K6 slower
+LOSS_K, LOSS_TH = 4, -750.0  # gu-1: causal point-contract PnL; K4/K5 exact plateau, K1 fails, K3/K6 slower
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
