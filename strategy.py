@@ -50,11 +50,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot:
             sz = 10 if agree else 7
         else:
-            sz = 7 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
+            sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
-            sz = max(1, sz - (1 if not hot else 2))
+            sz = max(1, sz - (3 if not hot else 2))
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
         if hot and not agree and sz > 0:            # hot disagree: require retrace
