@@ -24,8 +24,9 @@ ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
-ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
+ON_RNG_MIN = 380.0  # plateau 350-420
+RNG_MIN = 62.0  # 8:30-35 high-low; plateau 60-66, 55 & 70 fall off
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -67,6 +68,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         md = months[idx[0]] * 100 + mdays[idx[0]]
         if md >= 1210 or md <= 102:  # start 1210-1212 plateau (h1 1.0); 1215 leaves Dec8-9 windows short
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
+        if hi[idx][where].max() - lo[idx][where].min() < RNG_MIN:
+            sz = sz // 2  # quiet open: weak exhaustion signal, half size
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
@@ -91,7 +94,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if agree and abs(onv) <= 200:   # moderate agree: stand aside after stop
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        fsz = sz + 2 if hot else sz  # cold-dis flip unsized (sz-1..sz plateau; +1 drops h2)
+                        pos, entry, state = -side * fsz, cc[k], 3
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
