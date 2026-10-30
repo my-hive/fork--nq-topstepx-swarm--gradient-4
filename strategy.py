@@ -21,13 +21,13 @@ import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 15 * 60
 ON_LO, ON_HI = 50.0, 200.0
-IMB_TH = 0.021
+IMB_TH = 0.0205
 VOL_MIN = 12750.0
 RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 44.5, 68.5  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 2, -900.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+LOSS_K, LOSS_TH = 2, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
