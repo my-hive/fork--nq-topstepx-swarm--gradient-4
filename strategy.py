@@ -38,7 +38,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     sd = pd.to_datetime(df.session.values)
     dows, months, mdays = sd.dayofweek, sd.month, sd.day
     hist = []  # per-session gross PnL (pts * contracts), past sessions only
-    defensive = False
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
@@ -80,10 +79,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if hist and hist[-1] > 0:
-            defensive = False
-        if sum(hist[-LOSS_K:]) < LOSS_TH:
-            defensive = True
+        defensive = sum(hist[-LOSS_K:]) < LOSS_TH
         if defensive:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
@@ -112,7 +108,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        pos, entry, state = -side * (sz + (1 if defensive else 2)), cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
