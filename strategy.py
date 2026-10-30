@@ -121,8 +121,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
-            # gu-1: native consistency boundary, net of planned liquidation costs.
-            if equity - 0.5 * abs(held) >= 750.0:
+            # gu-1: mirror native daily loss lock in point-contract units.
+            if equity - 0.5 * abs(held) <= -500.0:
                 pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
