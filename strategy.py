@@ -32,6 +32,7 @@ LOSS_K, LOSS_TH = 2, -800.0  # prior sessions' pts*ct PnL; plateau -800..-900 (f
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
     t, c = df.ct_sec.values, df.close.values
+    opens = df.open.values
     bv, sv = df.buy_vol.values, df.sell_vol.values
     hi, lo = df.high.values, df.low.values
     sd = pd.to_datetime(df.session.values)
@@ -86,11 +87,16 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # bigON 76 (74-78), small-ON 84 (83-84), cold 80 (79-81; 82 breaks h1)
         side = -1 if mv >= 0 else 1
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
+        pending_entry = False
         for k in range(len(idx)):
+            if pending_entry:
+                entry = opens[idx[k]] + 0.25 * np.sign(pos)
+                pending_entry = False
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
             elif state == 0:
                 pos, entry, state = side * sz, cc[k], 1
+                pending_entry = True
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
@@ -98,6 +104,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
+                        pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
