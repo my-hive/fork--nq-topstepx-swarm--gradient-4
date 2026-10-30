@@ -45,7 +45,7 @@ for s in range(NS):
 @njit(cache=True)
 def build(t, c, i0, i1, SIDE, SZ, HOT, AGRE, SHRUNK,
           flip_agree, flip_dis, flip_shrunk_only, flip_unshrunk_only,
-          flip_dsz, flip_stop, flip_tgt, stop, tgt):
+          flip_dsz, flip_stop, flip_tgt, stop, tgt, flip_cold=0):
     out = np.zeros(len(c), dtype=np.int64)
     for s in range(len(i0)):
         sz = SZ[s]
@@ -53,7 +53,7 @@ def build(t, c, i0, i1, SIDE, SZ, HOT, AGRE, SHRUNK,
             continue
         side = SIDE[s]
         do_flip = False
-        if HOT[s] == 1:
+        if HOT[s] == 1 or (flip_cold == 1 and AGRE[s] == 0):
             if flip_shrunk_only and SHRUNK[s] == 1:
                 do_flip = True
             elif flip_unshrunk_only and SHRUNK[s] == 0:
