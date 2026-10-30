@@ -106,7 +106,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl >= stop:
                     fade_protected = True
-                if pnl <= (0.0 if fade_protected else -stop):
+                if pnl <= (-stop / 2 if fade_protected else -stop):
                     if skip_flip or fade_protected:  # only actual stop loss supports momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
