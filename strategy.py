@@ -8,14 +8,14 @@ Gates, validated across train halves:
    fade it 2 contracts smaller. Balanced volume = churn/exhaustion -> full fade size.
 4. Disagree-day momentum flip: when the push COUNTERS the overnight drift and the
    fade still stops out, the push was real momentum -> flip to the push direction
-   one contract larger, 40/60 brackets, then done for the day. Big-agree days
+   two contracts larger, 45/68 brackets, then done for the day. Big-agree days
    (|onv|>200, push continues overnight) flip too: reversal overshoot.
 5. Day-of-week conditioning (jobless-claims Thursday, weekend-adjacent Mondays/
    Fridays): Thursday hot+agree fades lose in both halves -> skip. Monday/Friday
    big-agree days are trend-risk -> halve size.
 6. Skip year-end holiday tape (Dec 15 - Jan 2) and hot+disagree days with flat
    overnight (|onv|<25) but violent open push (|mv|>70): news momentum.
-Sizes: hot+agree 9, hot+disagree 7, cold+disagree 6, cold+agree skipped."""
+Sizes before discounts: hot+agree 10, hot+disagree 7, cold+disagree 8, cold+agree skipped."""
 import numpy as np
 import pandas as pd
 
