@@ -60,7 +60,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = max(1, sz - 2)
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
-        if hot and not agree and sz > 0:            # hot disagree: require retrace
+        if hot and not agree and sz > 0 and imb * np.sign(mv) >= 0:  # opposing flow already confirms exhaustion
             ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
             if abs(ext - cc[where[-1]]) < RETR_MIN:
                 sz = 0  # push still at its extreme: momentum, don't fade
