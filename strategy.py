@@ -56,6 +56,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
             if abs(ext - cc[where[-1]]) < RETR_MIN:
                 sz = 0  # push still at its extreme: momentum, don't fade
+            elif abs(onv) < 25 and abs(mv) > 70:
+                sz = 0  # strong push vs flat overnight: real momentum day
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
