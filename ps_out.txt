@@ -1,0 +1,8 @@
+|mv|>=40 sz+1                      score=0.7754 h1=0.769 h2=0.848 days=11.4 pnl=57278 worst=-1011
+|mv|>=50 sz+1                      score=0.8542 h1=0.962 h2=0.848 days=11.6 pnl=58396 worst=-1011
+|mv|>=50 sz+1 shift10              score=0.9115 h1=0.959 h2=0.905 days=11.8 pnl=53453 worst=-1011
+|mv|>=50 sz+1 shift25              score=0.9149 h1=0.955 h2=0.909 days=12.5 pnl=48550 worst=-1011
+|mv|>=50 sz+1 shift40              score=0.9041 h1=0.948 h2=0.898 days=12.7 pnl=44479 worst=-1011
+|mv|>=60 sz+1                      score=0.8545 h1=0.962 h2=0.848 days=10.8 pnl=61008 worst=-1011
+|mv|<30 sz-2                       score=1.0061 h1=1.000 h2=1.000 days=11.7 pnl=56864 worst=-1010
+|mv|<40 sz-2                       score=1.0060 h1=1.000 h2=1.000 days=11.9 pnl=54789 worst=-1008

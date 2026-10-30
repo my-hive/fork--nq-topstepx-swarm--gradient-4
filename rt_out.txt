@@ -1,0 +1,17 @@
+K=1 TH=-500                        score=1.0062 h1=1.000 h2=1.000 days=11.4 pnl=62472 worst=-1010
+K=2 TH=-500                        score=0.9421 h1=0.936 h2=1.000 days=11.4 pnl=61026 worst=-1010
+K=3 TH=-500                        score=1.0060 h1=1.000 h2=1.000 days=11.9 pnl=59606 worst=-1010
+K=1 TH=-600                        score=1.0062 h1=1.000 h2=1.000 days=11.4 pnl=63098 worst=-1010
+K=2 TH=-600                        score=0.9421 h1=0.936 h2=1.000 days=11.3 pnl=61826 worst=-1010
+K=3 TH=-600                        score=1.0061 h1=1.000 h2=1.000 days=11.7 pnl=61058 worst=-1010
+K=1 TH=-800                        score=0.9936 h1=1.000 h2=0.987 days=11.2 pnl=63646 worst=-1010
+K=2 TH=-800                        score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63546 worst=-1010
+K=3 TH=-800                        score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63546 worst=-1010
+K=1 TH=-900                        score=0.9936 h1=1.000 h2=0.987 days=11.1 pnl=63824 worst=-1010
+K=2 TH=-900                        score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63546 worst=-1010
+K=3 TH=-900                        score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63546 worst=-1010
+flip 40/68                         score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=62049 worst=-1010
+flip 45/70                         score=1.0062 h1=1.000 h2=1.000 days=11.3 pnl=62510 worst=-1010
+flip 45/66                         score=1.0062 h1=1.000 h2=1.000 days=11.3 pnl=62855 worst=-1010
+flip 50/68                         score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63410 worst=-1010
+flip 45/72                         score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63030 worst=-1010

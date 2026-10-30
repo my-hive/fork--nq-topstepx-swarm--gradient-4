@@ -1,0 +1,5 @@
+BASE 13582df                                 score=1.0063 h1=1.000 h2=1.000 days=11.2 FULLrate=0.946 FULLdays=11.7 dll=15 pnl=63410
+flip stop 35                                 score=0.8141 h1=0.808 h2=0.924 days=10.8 FULLrate=0.823 FULLdays=11.2 dll=13 pnl=59256
+flip sz (no +2)                              score=1.0060 h1=1.000 h2=1.000 days=12.1 FULLrate=0.952 FULLdays=12.5 dll=12 pnl=58375
+skip flip if fade loss>=$600                 score=0.9304 h1=1.000 h2=0.924 days=11.0 FULLrate=0.914 FULLdays=11.5 dll=13 pnl=62412
+flip stop adaptive $950 day cap              score=0.8140 h1=0.808 h2=1.000 days=11.0 FULLrate=0.866 FULLdays=11.5 dll=11 pnl=62168

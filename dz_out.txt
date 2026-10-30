@@ -1,0 +1,10 @@
+cold-agr sz 2                      score=1.0061 h1=1.000 h2=1.000 days=11.7 pnl=62124 worst=-1010
+cold-agr sz 3                      score=0.8908 h1=0.885 h2=1.000 days=11.5 pnl=61035 worst=-1010
+cold-agr sz 3 shift10              score=0.8829 h1=0.877 h2=1.000 days=11.5 pnl=57100 worst=-1010
+cold-agr sz 3 shift25              score=0.8696 h1=0.864 h2=1.000 days=12.1 pnl=52376 worst=-1010
+cold-agr sz 3 shift40              score=0.9543 h1=0.948 h2=1.000 days=12.0 pnl=49270 worst=-1010
+cold-agr sz 4                      score=0.7756 h1=0.769 h2=1.000 days=11.0 pnl=60614 worst=-1010
+cold-agr sz 5                      score=0.7628 h1=0.756 h2=0.949 days=10.8 pnl=59701 worst=-1010
+cold-agr sz 6                      score=0.5965 h1=0.590 h2=0.873 days=9.8 pnl=59526 worst=-1010
+cold-agr sz 3 30/60                score=1.0062 h1=1.000 h2=1.000 days=11.5 pnl=61796 worst=-1010
+cold-agr sz 4 30/60                score=1.0061 h1=1.000 h2=1.000 days=11.7 pnl=61432 worst=-1010

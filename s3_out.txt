@@ -1,0 +1,14 @@
+big-ON tgt 82                      score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63826 worst=-1010
+big-ON tgt 84                      score=1.0062 h1=1.000 h2=1.000 days=11.3 pnl=64364 worst=-1010
+big-ON tgt 86                      score=1.0062 h1=1.000 h2=1.000 days=11.3 pnl=64554 worst=-1010
+big-ON stop 28                     score=0.9176 h1=1.000 h2=0.911 days=11.5 pnl=60365 worst=-1010
+big-ON stop 32                     score=0.8542 h1=1.000 h2=0.848 days=11.7 pnl=57812 worst=-1010
+big-ON stop 34                     score=0.7783 h1=1.000 h2=0.772 days=11.5 pnl=54314 worst=-1010
+small-ON stop 38                   score=0.8523 h1=0.846 h2=1.000 days=11.5 pnl=57680 worst=-1010
+small-ON stop 42                   score=0.7756 h1=0.769 h2=0.987 days=11.0 pnl=61428 worst=-1010
+START 34m                          score=0.4097 h1=0.577 h2=0.405 days=16.2 pnl=16892 worst=-1010
+START 36m                          score=0.0450 h1=0.474 h2=0.038 days=9.1 pnl=9178 worst=-1010
+day cap 600                        score=0.0083 h1=0.000 h2=0.013 days=5.0 pnl=16799 worst=-1010
+day cap 700                        score=0.0083 h1=0.000 h2=0.013 days=5.0 pnl=16799 worst=-1010
+day cap 800                        score=0.0083 h1=0.000 h2=0.013 days=5.0 pnl=16799 worst=-1010
+day cap 1000                       score=0.0083 h1=0.000 h2=0.013 days=5.0 pnl=16799 worst=-1010

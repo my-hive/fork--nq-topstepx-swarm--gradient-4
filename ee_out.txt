@@ -1,0 +1,9 @@
+ext 3 timeout 8:50                 score=0.6135 h1=0.808 h2=0.608 days=12.2 pnl=41034 worst=-1010
+ext 5 timeout 8:50                 score=0.6135 h1=0.744 h2=0.608 days=12.2 pnl=39626 worst=-1010
+ext 5 shift10                      score=0.6003 h1=0.836 h2=0.595 days=12.8 pnl=36284 worst=-1010
+ext 5 shift25                      score=0.6570 h1=0.939 h2=0.652 days=13.5 pnl=37696 worst=-1010
+ext 5 shift40                      score=0.7175 h1=0.931 h2=0.712 days=13.0 pnl=34179 worst=-1010
+ext 8 timeout 8:50                 score=0.5502 h1=0.744 h2=0.544 days=12.4 pnl=37860 worst=-1010
+ext 12 timeout 8:50                score=0.4871 h1=0.577 h2=0.481 days=11.7 pnl=31230 worst=-1010
+ext 3 miss-if-no-ext               score=0.6379 h1=0.859 h2=0.633 days=15.1 pnl=38928 worst=-1010
+ext 5 miss-if-no-ext               score=0.6377 h1=0.667 h2=0.633 days=15.5 pnl=36572 worst=-1010

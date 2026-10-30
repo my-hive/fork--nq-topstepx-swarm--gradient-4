@@ -1,0 +1,8 @@
+bigON+smallON-agr 11               score=0.9163 h1=0.910 h2=0.924 days=11.8 pnl=58758 worst=-1011
+bigON-agr 11                       score=0.9300 h1=1.000 h2=0.924 days=12.1 pnl=57574 worst=-1011
+bigON-agr 11 shift10               score=0.9924 h1=1.000 h2=0.986 days=12.3 pnl=52467 worst=-1011
+bigON-agr 11 shift25               score=1.0057 h1=1.000 h2=1.000 days=12.9 pnl=47890 worst=-1011
+bigON-agr 11 shift40               score=0.9540 h1=0.948 h2=1.000 days=12.8 pnl=44228 worst=-1011
+bigON-agr 12                       score=0.9301 h1=1.000 h2=0.924 days=11.9 pnl=58471 worst=-1012
+cold-dis Mon skip                  score=0.9678 h1=0.962 h2=1.000 days=11.2 pnl=63816 worst=-1010
+cold-dis Mon halve                 score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=64222 worst=-1010

@@ -1,0 +1,7 @@
+attempts with target hit: 157 passed: 145
+mean first-target day: 11.04 mean pass day: 11.19
+Traceback (most recent call last):
+  File "/home/shawn/PycharmProjects/gradient-test/swarm/nq-topstepx-swarm/gu-4/gu4_cons.py", line 42, in <module>
+    print("consistency-delayed attempts:", (dds > d1s).sum(), "mean extra days:", (dds - d1s)[dds > d1s].mean().round(2) if (dds > d1s).any() else 0)
+                                            ^^^^^^^^^
+ValueError: operands could not be broadcast together with shapes (145,) (157,) 

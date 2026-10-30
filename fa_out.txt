@@ -1,0 +1,12 @@
+BASE 13582df                             score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63410 worst=-1010
+fee-aware hist                           score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63410 worst=-1010
+fee-aware shift10                        score=1.0062 h1=1.000 h2=1.000 days=11.3 pnl=58467 worst=-1010
+fee-aware shift25                        score=1.0061 h1=1.000 h2=1.000 days=11.8 pnl=53890 worst=-1010
+fee-aware shift40                        score=0.9544 h1=0.948 h2=1.000 days=11.6 pnl=50328 worst=-1010
+fee-aware TH-500 round                   score=0.9421 h1=0.936 h2=1.000 days=11.4 pnl=60848 worst=-1010
+fee-aware TH-500 floor                   score=0.9421 h1=0.936 h2=1.000 days=11.4 pnl=60510 worst=-1010
+fee-aware TH-700 round                   score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63410 worst=-1010
+fee-aware TH-700 floor                   score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63410 worst=-1010
+fee-aware TH-800 round                   score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63546 worst=-1010
+fee-aware TH-800 floor                   score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=63546 worst=-1010
+fee-aware + bigON76                      score=1.0063 h1=1.000 h2=1.000 days=11.2 pnl=62643 worst=-1010
