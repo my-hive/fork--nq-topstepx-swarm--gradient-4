@@ -44,7 +44,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if not m.any():
             continue
         where = np.where(m)[0]
-        onv = cc[where[0]] - cc[0]                 # overnight move (signed)
+        onv = cc[max(0, where[0] - 1)] - cc[0]                 # overnight move (signed)
         mv = cc[where[-1]] - cc[where[0]]          # 8:30->8:35 move (signed)
         if mv == 0:
             continue
