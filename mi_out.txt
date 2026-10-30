@@ -1,0 +1,6 @@
+START +-2s                               score=0.6598557 h1=0.654 h2=0.684 days=11.971 pnl=41334
+START +-1s                               score=0.6729235 h1=0.667 h2=0.722 days=11.229 pnl=43234
+START +1s                                score=0.7749428 h1=0.769 h2=0.823 days=12.864 pnl=44256
+START +2s                                score=0.5006110 h1=0.641 h2=0.494 days=9.180 pnl=35310
+push window to 8:34                      score=0.8000531 h1=0.795 h2=0.797 days=14.456 pnl=37459
+push window from 8:31                    score=0.2700003 h1=0.718 h2=0.266 days=17.468 pnl=24300

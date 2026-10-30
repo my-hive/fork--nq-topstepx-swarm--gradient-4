@@ -1,0 +1,4 @@
+flip trail after +30 (stop=pnl-35)           score=1.0062909 h1=1.000 h2=1.000 days=11.127 pnl=62780
+flip partial take at +35                     score=1.0058790 h1=1.000 h2=1.000 days=12.363 pnl=55941
+flip BE stop after +25                       score=1.0062909 h1=1.000 h2=1.000 days=11.127 pnl=62780
+fade BE stop after +40                       score=1.0062909 h1=1.000 h2=1.000 days=11.127 pnl=62780
