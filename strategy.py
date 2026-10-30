@@ -24,6 +24,7 @@ ON_LO, ON_HI = 50.0, 200.0
 IMB_TH = 0.02
 VOL_MIN = 12000.0
 RETR_MIN = 8.0
+RNG_MIN = 62.0  # 8:30-35 high-low; plateau 60-66 (gu-1 e57831a)
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 60.0
 
@@ -78,6 +79,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
+        if hi[idx][where].max() - lo[idx][where].min() < RNG_MIN:
+            sz = sz // 2  # quiet open: weak exhaustion signal, half size
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz = int(round(sz * 0.5))  # drawdown streak: halve size to survive trailing MLL
         if sz <= 0:
