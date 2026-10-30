@@ -56,7 +56,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
-        if sz > 0 and not (agree and abs(onv) > 200) and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
+        if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
             sz = max(1, sz - 2)
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
@@ -73,9 +73,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
-        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
-            sz = int(round(sz * 0.5))
-        elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
+        if big_agree and dow in (0, 4):
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
