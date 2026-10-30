@@ -1,11 +1,13 @@
 """Fade the 8:30-8:35 open move at 8:35, 40/80 stop/target, flat 14:30.
-Size by overnight (0:00->8:30 CT) move size: moderate overnight drift (50-175 pts)
-is a dead zone for the fade -> small size (4 MNQ); quiet or big overnight moves
-carry the edge -> full size (10 MNQ). Edge validated in both train halves."""
+Two gates, both validated across train halves:
+1. Overnight (0:00->8:30 CT) move size: moderate drift 50-175 pts is a dead zone.
+2. Agreement of the 8:30-8:35 move with overnight direction: fade works best when
+   the opening push CONTINUES the overnight direction (hot+agree), and even on
+   dead-zone days when the opening push counters the overnight drift (cold+disagree).
+Size: hot+agree 10, hot+disagree 8, cold+disagree 6, cold+agree 2."""
 import numpy as np
 import pandas as pd
 
-N_HOT, N_COLD = 10, 4
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 STOP_PTS, TGT_PTS = 40.0, 80.0
 ON_LO, ON_HI = 50.0, 175.0
@@ -19,9 +21,17 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if not m.any():
             continue
         where = np.where(m)[0]
-        on = abs(cc[where[0]] - cc[0])
-        sz = N_COLD if ON_LO <= on <= ON_HI else N_HOT
-        side = -1 if cc[where[-1]] >= cc[where[0]] else 1
+        onv = cc[where[0]] - cc[0]                 # overnight move (signed)
+        mv = cc[where[-1]] - cc[where[0]]          # 8:30->8:35 move (signed)
+        if mv == 0:
+            continue
+        hot = not (ON_LO <= abs(onv) <= ON_HI)
+        agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
+        if hot:
+            sz = 10 if agree else 8
+        else:
+            sz = 6 if not agree else 2
+        side = -1 if mv >= 0 else 1
         pos, entry, done = 0, 0.0, False
         for k in range(len(idx)):
             if tt[k] < START or tt[k] >= EXIT:
