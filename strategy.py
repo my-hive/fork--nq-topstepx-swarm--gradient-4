@@ -57,7 +57,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
-            sz = max(1, sz - 2)
+            sz = max(1, sz - 1)
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
         if hot and not agree and sz > 0:            # hot disagree: require retrace
