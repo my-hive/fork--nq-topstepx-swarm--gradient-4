@@ -92,7 +92,15 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
+        cash, held = 0.0, 0
         for k in range(len(idx)):
+            # gu-2: causal next-open ledger, in point-contracts; costs include exit.
+            delta = pos - held
+            cash -= delta * opens[idx[k]] + 0.5 * abs(delta)
+            held = pos
+            if held and cash + held * cc[k] - 0.5 * abs(held) >= 500.0:
+                pos, state = 0, 4
+                pending_entry = False
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
                 pending_entry = False
