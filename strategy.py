@@ -21,7 +21,7 @@ import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
-IMB_TH = 0.023  # gu-1: composed recovery/equity score 1.006847133758
+IMB_TH = 0.024  # gu-1: composed recovery/equity score 1.006847133758
 EXIT_IMB = 0.035
 VOL_MIN = 12750.0
 RETR_MIN = 8.0
@@ -109,7 +109,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + (3 if sum(hist[-2:]) > 1000 else 2)), cc[k], 3  # gu-4: equity-momentum flip sizing
                         pending_entry = True
-                elif pnl > tgt and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((hi[idx[k]] - hi[idx[k - 1]]) if pos >= 0 else (lo[idx[k - 1]] - lo[idx[k]])) >= 0 and k > 1 and (hi[idx[k - 1]] + lo[idx[k - 1]] - hi[idx[k - 2]] - lo[idx[k - 2]]) * np.sign(pos) > 0 and ((lo[idx[k - 1]] - lo[idx[k - 2]]) if pos > 0 else (hi[idx[k - 2]] - hi[idx[k - 1]])) > 0 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos > 0 else (hi[idx[k - 1]] - hi[idx[k]])) > 0 and (cc[k] - (hi[idx[k]] + lo[idx[k]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos > 0 else hi[idx[k - 1]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) > 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.035 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0.035 * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
+                elif pnl > tgt and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((hi[idx[k]] - hi[idx[k - 1]]) if pos >= 0 else (lo[idx[k - 1]] - lo[idx[k]])) > 0 and k > 1 and (hi[idx[k - 1]] + lo[idx[k - 1]] - hi[idx[k - 2]] - lo[idx[k - 2]]) * np.sign(pos) > 0 and ((lo[idx[k - 1]] - lo[idx[k - 2]]) if pos > 0 else (hi[idx[k - 2]] - hi[idx[k - 1]])) > 0 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos > 0 else (hi[idx[k - 1]] - hi[idx[k]])) > 0 and (cc[k] - (hi[idx[k]] + lo[idx[k]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos > 0 else hi[idx[k - 1]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) > 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.035 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0.035 * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
