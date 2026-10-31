@@ -74,7 +74,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4 and sum(hist[-3:]) <= 1600:  # Friday big-agree: halve (not on strong stretches)
-            sz = sz // 2
+            sz = int(round(sz * 0.6))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
@@ -104,7 +104,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + (3 if sum(hist[-3:]) > 1800 else 2)), cc[k], 3  # gu-4: equity-momentum flip, rare
+                        pos, entry, state = -side * (sz + 2), cc[k], 3  # gu-4: equity-momentum flip, rare
                         pending_entry = True
                 elif pnl > tgt and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((hi[idx[k]] - hi[idx[k - 1]]) if pos >= 0 else (lo[idx[k - 1]] - lo[idx[k]])) >= 0 and k > 1 and (hi[idx[k - 1]] + lo[idx[k - 1]] - hi[idx[k - 2]] - lo[idx[k - 2]]) * np.sign(pos) > 0 and ((lo[idx[k - 1]] - lo[idx[k - 2]]) if pos > 0 else (hi[idx[k - 2]] - hi[idx[k - 1]])) > 0 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos > 0 else (hi[idx[k - 1]] - hi[idx[k]])) > 0 and (cc[k] - (hi[idx[k]] + lo[idx[k]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos >= 0 else hi[idx[k - 1]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) >= 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.035 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0.035 * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
                     pos, state = 0, 4
