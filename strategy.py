@@ -91,7 +91,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
-        auction_mid = (hi[idx][where].max() + lo[idx][where].min()) / 2
+        auction_mid = (opens[idx[where[0]]] + hi[idx][where].max() + lo[idx][where].min() + cc[where[-1]]) / 4
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
