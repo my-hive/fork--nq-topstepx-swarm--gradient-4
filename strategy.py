@@ -85,6 +85,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             hist.append(0.0)
             continue
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
+        opening_volume = bv[idx][where] + sv[idx][where]
+        auction_value = np.average(cc[where], weights=opening_volume)
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
@@ -109,7 +111,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl >= tgt:
+                elif pnl >= tgt and (cc[k] - auction_value) * side >= 0:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
