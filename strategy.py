@@ -51,7 +51,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
-            sz = 10 if agree else 7
+            sz = 10 if agree else (8 if sum(hist[-3:]) > 1800 else 7)
         else:
             sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
@@ -73,15 +73,15 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
-        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
-            sz = int(round(sz * 0.6))   # gu-2: 0.5->0.6 plateau .58-.65, cliff .66; Monday halve deleted (neutral)
+        if big_agree and dow == 4 and sum(hist[-3:]) <= 1800:  # Friday big-agree: halve (not on strong stretches)
+            sz = int(round(sz * 0.6))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz = max(1, int(round(sz * 0.25)))  # gu-2: //2 -> 0.25, plateau .15-.35; sz=0 collapses h2 to 0.000
         if sz <= 0:
             continue
-        stop, tgt = (30.0, 84.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # gu-2: small-ON tgt 76->84, +1099 pnl at identical score/days
+        stop, tgt = (30.0, 84.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # gu-2: small-ON tgt 76->84, +2.1k pnl at same score
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
@@ -104,13 +104,13 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        pos, entry, state = -side * (sz + (3 if sum(hist[-3:]) > 1800 else 2)), cc[k], 3  # gu-4: equity-momentum flip, rare
                         pending_entry = True
-                elif pnl > tgt and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((hi[idx[k]] - hi[idx[k - 1]]) if pos >= 0 else (lo[idx[k - 1]] - lo[idx[k]])) >= 0 and k > 1 and (hi[idx[k - 1]] + lo[idx[k - 1]] - hi[idx[k - 2]] - lo[idx[k - 2]]) * np.sign(pos) > 0 and ((lo[idx[k - 1]] - lo[idx[k - 2]]) if pos > 0 else (hi[idx[k - 2]] - hi[idx[k - 1]])) > 0 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos > 0 else (hi[idx[k - 1]] - hi[idx[k]])) > 0 and (cc[k] - (hi[idx[k]] + lo[idx[k]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos > 0 else hi[idx[k - 1]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) > 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.035 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0.035 * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
+                elif pnl > tgt and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((hi[idx[k]] - hi[idx[k - 1]]) if pos >= 0 else (lo[idx[k - 1]] - lo[idx[k]])) >= 0 and k > 1 and (hi[idx[k - 1]] + lo[idx[k - 1]] - hi[idx[k - 2]] - lo[idx[k - 2]]) * np.sign(pos) > 0 and ((lo[idx[k - 1]] - lo[idx[k - 2]]) if pos > 0 else (hi[idx[k - 2]] - hi[idx[k - 1]])) > 0 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos > 0 else (hi[idx[k - 1]] - hi[idx[k]])) > 0 and (cc[k] - (hi[idx[k]] + lo[idx[k]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos >= 0 else hi[idx[k - 1]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) >= 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.035 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0.035 * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (((lo[idx[k]] if pos > 0 else hi[idx[k]]) - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and k > 1 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos >= 0 else (hi[idx[k - 1]] - hi[idx[k]])) >= 0 and (cc[k - 1] - opens[idx[k - 1]]) * np.sign(pos) > 0 and ((hi[idx[k - 1]] + lo[idx[k - 1]]) / 2 - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.14 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k]] - sv[idx[k]] - bv[idx[k - 1]] + sv[idx[k - 1]]) * np.sign(pos) < 0):
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (((lo[idx[k]] if pos > 0 else hi[idx[k]]) - entry) * np.sign(pos) - 0.75 >= (72.0 if sum(hist[-3:]) > 1800 else F_TGT_PTS) and k > 1 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos >= 0 else (hi[idx[k - 1]] - hi[idx[k]])) >= 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((hi[idx[k - 1]] + lo[idx[k - 1]]) / 2 - entry) * np.sign(pos) - 0.75 >= (72.0 if sum(hist[-3:]) > 1800 else F_TGT_PTS) and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.14 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k]] - sv[idx[k]] - bv[idx[k - 1]] + sv[idx[k - 1]]) * np.sign(pos) < 0):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
