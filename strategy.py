@@ -80,13 +80,13 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz = max(1, int(round(sz * 0.25)))  # gu-2: //2 -> 0.25, plateau .15-.40; sz=0 collapses h2 to 0.000
+            sz = max(1, sz // 5)  # gu-2: divisor 5, plateau with 0.25; sz=0 collapses h2 to 0.000  # gu-2: //2 -> 0.25, plateau .15-.40; sz=0 collapses h2 to 0.000
         if sz <= 0:
             continue
         stop, tgt = (30.0, 84.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # gu-2: small-ON tgt 76->84; +2062 pnl, positive in BOTH train halves (7/7 h1, 7/7 h2 wins)
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
-            (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
+            (dow == 1 and not hot)  # gu-2: Monday clause deleted, +797 pnl h1 / 0 h2
             or (dow == 4 and abs(onv) < 50)
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
@@ -112,7 +112,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (((lo[idx[k]] if pos > 0 else hi[idx[k]]) - entry) * np.sign(pos) - 0.75 >= (72.0 if sum(hist[-3:]) > 1800 else F_TGT_PTS) and k > 1 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos >= 0 else (hi[idx[k - 1]] - hi[idx[k]])) >= 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((hi[idx[k - 1]] + lo[idx[k - 1]]) / 2 - entry) * np.sign(pos) - 0.75 >= (72.0 if sum(hist[-3:]) > 1800 else F_TGT_PTS) and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.14 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k]] - sv[idx[k]] - bv[idx[k - 1]] + sv[idx[k - 1]]) * np.sign(pos) < 0):
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (((lo[idx[k]] if pos > 0 else hi[idx[k]]) - entry) * np.sign(pos) - 0.75 >= (74.0 if sum(hist[-3:]) > 1800 else F_TGT_PTS) and k > 1 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos >= 0 else (hi[idx[k - 1]] - hi[idx[k]])) >= 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((hi[idx[k - 1]] + lo[idx[k - 1]]) / 2 - entry) * np.sign(pos) - 0.75 >= (74.0 if sum(hist[-3:]) > 1800 else F_TGT_PTS) and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.14 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k]] - sv[idx[k]] - bv[idx[k - 1]] + sv[idx[k - 1]]) * np.sign(pos) < 0):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
