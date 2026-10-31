@@ -92,7 +92,19 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
+        cash, filled, locked = 0.0, 0, False
         for k in range(len(idx)):
+            # gu-1: mirror published fills and daily loss lock for causal risk memory.
+            if pos != filled:
+                delta = pos - filled
+                cash -= delta * (opens[idx[k]] + 0.25 * np.sign(delta)) * 2 + abs(delta) * 0.5
+                filled = pos
+            worst = cash + filled * (lo[idx[k]] if filled > 0 else hi[idx[k]]) * 2
+            if worst <= -1000 and not locked:
+                cash, filled, locked = -1000.0 - abs(filled), 0, True
+            if locked:
+                pos, state, pending_entry = 0, 4, False
+                continue
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
                 pending_entry = False
@@ -119,6 +131,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
         oo = df.open.values[idx]
-        hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
+        hist.append(cash / 2 if locked else float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
                           - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
