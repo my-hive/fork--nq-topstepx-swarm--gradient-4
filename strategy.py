@@ -49,8 +49,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if mv == 0:
             continue
         hot = not (ON_LO <= abs(onv) <= ON_HI)
-        hist = histories[hot]
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
+        hist = histories[agree]
         if hot:
             sz = 10 if agree else 7
         else:
