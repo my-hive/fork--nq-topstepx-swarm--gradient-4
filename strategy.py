@@ -77,7 +77,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
             sz = int(round(sz * 0.5))
-        if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
+        if hot and agree and dow == 3 and imb * np.sign(mv) >= IMB_TH:  # gu-3: claims-day directional-flow veto
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
@@ -113,7 +113,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (pnl - 0.75 >= F_TGT_PTS and ((opens[idx[k]] + cc[k]) / 2 - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS):
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
