@@ -92,7 +92,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         fade_flow, recovery_flow = 0.0, 0.0
-        auction_mid = (lo[idx][where].min() + hi[idx][where].max()) / 2
+        auction_low, auction_high = lo[idx][where].min(), hi[idx][where].max()
+        auction_mid = (auction_low + auction_high) / 2
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
@@ -116,7 +117,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 3:
                 recovery_flow += bv[idx[k]] - sv[idx[k]]
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) - 0.75 <= -F_STOP_PTS or (pnl - 0.75 >= F_TGT_PTS and recovery_flow * np.sign(pos) >= 0):
+                adverse = lo[idx[k]] if pos > 0 else hi[idx[k]]
+                outside = adverse <= auction_low if pos > 0 else adverse >= auction_high
+                if (outside and (adverse - entry) * np.sign(pos) - 0.75 <= -F_STOP_PTS) or (pnl - 0.75 >= F_TGT_PTS and recovery_flow * np.sign(pos) >= 0):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
