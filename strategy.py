@@ -37,6 +37,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     hi, lo = df.high.values, df.low.values
     sd = pd.to_datetime(df.session.values)
     dows, months, mdays = sd.dayofweek, sd.month, sd.day
+    previous_hot = None
     hist = []  # per-session gross PnL (pts * contracts), past sessions only
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
@@ -49,6 +50,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if mv == 0:
             continue
         hot = not (ON_LO <= abs(onv) <= ON_HI)
+        if previous_hot is not None and hot != previous_hot:
+            hist.clear()  # gu-1: reset loss memory when overnight regime changes
+        previous_hot = hot
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
         if hot:
             sz = 10 if agree else 7
@@ -119,5 +123,5 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
         oo = df.open.values[idx]
         hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
-                          - 0.75 * np.abs(np.diff(np.r_[0.0, p])).sum()))
+                          - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
