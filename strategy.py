@@ -99,8 +99,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pending_entry = False
             direction = np.sign(pos)
             prior = max(0, k - 1)
-            flow_ok = ((bv[idx[k]] - sv[idx[k]]) * direction >= 0
-                       and (bv[idx[prior]] - sv[idx[prior]]) * direction >= 0)
+            flow_ok = ((bv[idx[k]] - sv[idx[k]]) * direction > 0
+                       and (bv[idx[prior]] - sv[idx[prior]]) * direction > 0)
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
             elif state == 0:
