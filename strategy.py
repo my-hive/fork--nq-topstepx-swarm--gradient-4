@@ -81,7 +81,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz //= 5  # gu-1: loss memory divisor
         if sz <= 0:
             continue
-        stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
+        stop, tgt = (30.0, 78.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 1 and not hot)
