@@ -76,12 +76,10 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4 and not strong:   # Friday big-agree: trend risk, halve
             sz = int(round(sz * 0.6))
-        elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
-            sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz //= 2  # gu-1: round reduced risk down
+            sz = int(round(sz * 0.25))
         if sz <= 0:
             continue
         stop, tgt = (30.0, 84.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
