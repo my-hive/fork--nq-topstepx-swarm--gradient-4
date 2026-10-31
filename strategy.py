@@ -120,7 +120,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                body_pnl = min((opens[idx[k]] - entry) * direction, pnl)
+                body_pnl = (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]])
                 prior_pnl = (cc[prior] - entry) * direction
                 if ((lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS
                     or (min(body_pnl, prior_pnl) - 0.75 >= F_TGT_PTS and flow_ok)):
