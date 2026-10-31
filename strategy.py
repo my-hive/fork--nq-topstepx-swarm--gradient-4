@@ -103,7 +103,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pending_entry = True
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if pnl <= -stop:
+                bar_mean = (opens[idx[k]] + hi[idx[k]] + lo[idx[k]] + cc[k]) / 4
+                if (bar_mean - entry) * np.sign(pos) <= -stop:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
@@ -113,9 +114,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                bar_mean = (opens[idx[k]] + hi[idx[k]] + lo[idx[k]] + cc[k]) / 4
-                reward_accepted = (bar_mean - entry) * np.sign(pos) >= F_TGT_PTS
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (pnl >= F_TGT_PTS and reward_accepted):
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
