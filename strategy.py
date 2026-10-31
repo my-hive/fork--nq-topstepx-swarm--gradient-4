@@ -90,9 +90,10 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
             or (dow == 4 and abs(onv) < 50)
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
-        # gu-4: causal regular-session fair value, anchored to opening push.
+        # gu-4: causal opening-session value objective for recovery.
         vv = df.volume.values[idx] * (tt >= 8 * 3600 + 30 * 60)
         vwap = np.cumsum(cc * vv) / np.maximum(np.cumsum(vv), 1)
+        recovery_target = F_TGT_PTS
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         for k in range(len(idx)):
@@ -111,12 +112,14 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
+                        value_reward = (vwap[k] - cc[k]) * np.sign(pos)
+                        recovery_target = min(F_TGT_PTS, value_reward) if value_reward > 0 else F_TGT_PTS
                         pending_entry = True
-                elif pnl >= tgt or (pnl > 0 and (cc[k] - vwap[k]) * side >= 0):
+                elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= F_TGT_PTS:
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= recovery_target:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
