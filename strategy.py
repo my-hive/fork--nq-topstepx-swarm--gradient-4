@@ -92,6 +92,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         fade_flow, recovery_flow = 0.0, 0.0
+        auction_mid = (lo[idx][where].min() + hi[idx][where].max()) / 2
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
@@ -110,7 +111,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl - 0.75 >= tgt and fade_flow * np.sign(pos) >= 0:
+                elif pnl - 0.75 >= tgt and fade_flow * np.sign(pos) >= 0 and (cc[k] - auction_mid) * np.sign(pos) >= 0:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 recovery_flow += bv[idx[k]] - sv[idx[k]]
