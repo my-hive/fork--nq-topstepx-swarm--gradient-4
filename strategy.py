@@ -107,7 +107,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        # gu-4: add recovery risk only when current aggressor flow confirms reversal.
+                        extra = 2 if (bv[idx[k]] - sv[idx[k]]) * -side > 0 else 0
+                        pos, entry, state = -side * (sz + extra), cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
