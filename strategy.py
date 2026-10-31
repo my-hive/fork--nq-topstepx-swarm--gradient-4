@@ -111,7 +111,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl > tgt and (cc[k - 1] - oo[k - 1]) * np.sign(pos) > 0 and (cc[k] - oo[k]) * np.sign(pos) > 0 and ((ll[k] if pos > 0 else hh[k]) - source_mid) * np.sign(pos) > 0 and k > 0 and (bb[k] - ss[k]) * np.sign(pos) > IMB_TH * max(bb[k] + ss[k], 1) and (bb[k - 1] - ss[k - 1]) * np.sign(pos) > IMB_TH * max(bb[k - 1] + ss[k - 1], 1):
+                elif pnl > tgt and (cc[k] - oo[k]) * np.sign(pos) > 0 and ((ll[k] if pos > 0 else hh[k]) - source_mid) * np.sign(pos) > 0 and k > 0 and (bb[k] - ss[k]) * np.sign(pos) > IMB_TH * max(bb[k] + ss[k], 1) and (bb[k - 1] - ss[k - 1]) * np.sign(pos) > IMB_TH * max(bb[k - 1] + ss[k - 1], 1):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 if (ll[k] - entry if pos > 0 else entry - hh[k]) - 0.75 <= -F_STOP_PTS or (((ll[k] if pos > 0 else hh[k]) - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and k > 0 and ((hh[k - 1] + ll[k - 1]) / 2 - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and (bb[k] - ss[k]) * np.sign(pos) > IMB_TH * max(bb[k] + ss[k], 1) and (bb[k - 1] - ss[k - 1]) * np.sign(pos) > IMB_TH * max(bb[k - 1] + ss[k - 1], 1)):
