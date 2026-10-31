@@ -92,10 +92,13 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
+        fade_entry = None
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
                 pending_entry = False
+                if state == 1:
+                    fade_entry = entry
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
             elif state == 0:
@@ -113,7 +116,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= F_TGT_PTS:
+                if ((cc[k] - fade_entry) * np.sign(pos) <= 0
+                        or (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS
+                        or pnl >= F_TGT_PTS):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
