@@ -21,7 +21,7 @@ import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
-IMB_TH = 0.024
+IMB_TH = 0.024  # gu-1: composed recovery/equity score 1.006847133758
 EXIT_IMB = 0.035
 VOL_MIN = 12750.0
 RETR_MIN = 8.0
