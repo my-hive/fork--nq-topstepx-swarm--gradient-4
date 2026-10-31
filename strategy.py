@@ -40,8 +40,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     hist = []  # per-session gross PnL (pts * contracts), past sessions only
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
-        weights = df.volume.values[idx] * (tt >= 8 * 3600 + 30 * 60)
-        vwap = np.cumsum(cc * weights) / np.maximum(np.cumsum(weights), 1)
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
         if not m.any():
             continue
@@ -111,7 +109,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl >= tgt and (cc[k] - vwap[k]) * np.sign(pos) >= 0:
+                elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
