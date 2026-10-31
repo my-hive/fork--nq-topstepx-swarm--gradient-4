@@ -66,6 +66,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 sz = 0  # push still at its extreme: momentum, don't fade
         if hot and not agree and abs(onv) < 25 and abs(mv) > 70:
             sz = 0  # flat overnight + violent open push: news momentum, don't fade
+        if hot and not agree and abs(onv) > 200 and hi[idx][:where[0]].max() - lo[idx][:where[0]].min() < ON_RNG_MIN:
+            sz = 0  # big one-way drift in tight overnight range: trend day, don't fade
         md = months[idx[0]] * 100 + mdays[idx[0]]
         if md >= 1210 or md <= 102:  # start 1210-1212 plateau (h1 1.0); 1215 leaves Dec8-9 windows short
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
@@ -102,7 +104,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if skip_flip:  # opening regime does not support momentum reversal
+                    if skip_flip or imb * np.sign(mv) < 0:  # gu-4: reversal needs opening flow agreement
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
