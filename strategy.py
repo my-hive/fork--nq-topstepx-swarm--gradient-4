@@ -44,7 +44,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if not m.any():
             continue
         where = np.where(m)[0]
-        onv = cc[where[0]] - opens[idx[0]]                 # overnight move (signed)
+        onv = cc[where[0]] - cc[0]                 # overnight move (signed)
         mv = cc[where[-1]] - cc[where[0]]          # 8:30->8:35 move (signed)
         if mv == 0:
             continue
@@ -107,7 +107,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
+                        pos, entry, state = -side * (sz + (2 if (bv[idx[k]] - sv[idx[k]]) * -side > 0 else 0)), cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
