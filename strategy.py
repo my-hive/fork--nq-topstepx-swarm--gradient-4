@@ -117,8 +117,13 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
-        # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
-        oo = df.open.values[idx]
-        hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
-                          - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
+        # gu-3: completed-session realized risk includes simulator daily-loss liquidation.
+        q = np.r_[0.0, p[:-1]]
+        delta = np.diff(np.r_[0.0, q])
+        cash = np.cumsum(-delta * opens[idx] - 0.5 * np.abs(delta))
+        worst = cash + q * np.where(q > 0, lo[idx], hi[idx])
+        breaches = np.flatnonzero(worst <= -500.0)
+        realized = (-500.0 - 0.5 * abs(q[breaches[0]]) if len(breaches)
+                    else cash[-1] + q[-1] * cc[-1] - 0.5 * abs(q[-1]))
+        hist.append(float(realized))
     return out
