@@ -102,7 +102,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pending_entry = True
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos) - 0.75
-                if pnl <= -stop:
+                if ((lo[idx[k]] if pos > 0 else hi[idx[k]]) - entry) * np.sign(pos) - 0.75 <= -stop:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
