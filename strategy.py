@@ -40,6 +40,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     hist = []  # per-session gross PnL (pts * contracts), past sessions only
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
+        oo, hh, ll, bb, ss = opens[idx], hi[idx], lo[idx], bv[idx], sv[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
         if not m.any():
             continue
@@ -94,7 +95,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         source_mid = (hi[idx][where].max() + lo[idx][where].min()) / 2
         for k in range(len(idx)):
             if pending_entry:
-                entry = opens[idx[k]] + 0.25 * np.sign(pos)
+                entry = oo[k] + 0.25 * np.sign(pos)
                 pending_entry = False
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
@@ -109,16 +110,15 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl > tgt and (cc[k - 1] - opens[idx[k - 1]]) * np.sign(pos) > 0 and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((lo[idx[k]] if pos > 0 else hi[idx[k]]) - source_mid) * np.sign(pos) > 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > IMB_TH * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > IMB_TH * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
+                elif pnl > tgt and (cc[k - 1] - oo[k - 1]) * np.sign(pos) > 0 and (cc[k] - oo[k]) * np.sign(pos) > 0 and ((ll[k] if pos > 0 else hh[k]) - source_mid) * np.sign(pos) > 0 and k > 0 and (bb[k] - ss[k]) * np.sign(pos) > IMB_TH * max(bb[k] + ss[k], 1) and (bb[k - 1] - ss[k - 1]) * np.sign(pos) > IMB_TH * max(bb[k - 1] + ss[k - 1], 1):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (((lo[idx[k]] if pos > 0 else hi[idx[k]]) - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and k > 0 and ((hi[idx[k - 1]] + lo[idx[k - 1]]) / 2 - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > IMB_TH * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > IMB_TH * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1)):
+                if (ll[k] - entry if pos > 0 else entry - hh[k]) <= -F_STOP_PTS or (((ll[k] if pos > 0 else hh[k]) - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and k > 0 and ((hh[k - 1] + ll[k - 1]) / 2 - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and (bb[k] - ss[k]) * np.sign(pos) > IMB_TH * max(bb[k] + ss[k], 1) and (bb[k - 1] - ss[k - 1]) * np.sign(pos) > IMB_TH * max(bb[k - 1] + ss[k - 1], 1)):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
-        oo = df.open.values[idx]
         hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
                           - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
     return out
