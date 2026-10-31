@@ -90,6 +90,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
             or (dow == 4 and abs(onv) < 50)
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
+        # gu-4: causal regular-session fair value, anchored to opening push.
+        vv = df.volume.values[idx] * (tt >= 8 * 3600 + 30 * 60)
+        vwap = np.cumsum(cc * vv) / np.maximum(np.cumsum(vv), 1)
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         for k in range(len(idx)):
@@ -109,7 +112,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl >= tgt:
+                elif pnl >= tgt or (pnl > 0 and (cc[k] - vwap[k]) * side >= 0):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
