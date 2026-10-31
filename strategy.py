@@ -96,6 +96,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
                 pending_entry = False
+                best_close = entry
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
             elif state == 0:
@@ -113,7 +114,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= F_TGT_PTS:
+                adverse = lo[idx[k]] - best_close if pos > 0 else best_close - hi[idx[k]]
+                best_close = max(best_close, cc[k]) if pos > 0 else min(best_close, cc[k])
+                if adverse <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
