@@ -117,8 +117,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 traded_value += cc[k] * volume
                 traded_volume += volume
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if ((lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS
-                        and (cc[k] * traded_volume - traded_value) * np.sign(pos) <= 0) or pnl >= F_TGT_PTS:
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (pnl >= F_TGT_PTS and traded_volume > 0
+                        and (cc[k] - traded_value / traded_volume) * np.sign(pos) >= abs(mv)):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
