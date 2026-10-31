@@ -92,7 +92,13 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
+        actual, realized_cash = 0, 0.0
         for k in range(len(idx)):
+            change = pos - actual
+            realized_cash -= change * (opens[idx[k]] + 0.25 * np.sign(change)) * 2.0 + abs(change) * 0.5
+            actual = pos
+            if realized_cash + actual * cc[k] * 2.0 - abs(actual) >= 1500.0:
+                pos, state = 0, 4
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
                 pending_entry = False
