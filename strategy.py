@@ -83,7 +83,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sz <= 0:
             continue
         stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (38.5, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
-        flip_tgt = 74.0 if sum(hist[-3:]) > 1700 else F_TGT_PTS
+        flip_tgt = 74.0 if sum(hist[-3:]) > 1500 else F_TGT_PTS
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 1 and not hot)
