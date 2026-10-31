@@ -118,6 +118,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
         oo = df.open.values[idx]
-        hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
-                          - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
+        held = np.r_[0.0, p[:-1]]
+        changes = np.diff(np.r_[0.0, held])
+        cash = np.cumsum(-changes * oo - 0.5 * np.abs(changes))
+        adverse = np.where(held > 0, lo[idx], hi[idx])
+        hist.append(float(np.minimum(cash + held * adverse, 0.0).min()))
     return out
