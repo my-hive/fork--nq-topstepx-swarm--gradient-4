@@ -79,7 +79,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if sum(hist[-LOSS_K:]) < LOSS_TH:
+        if sum(hist) - max(0.0, float(np.max(np.cumsum(hist), initial=0.0))) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
             continue  # gu-1: skipped sessions do not reset realized trading-loss memory
