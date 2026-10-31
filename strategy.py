@@ -37,7 +37,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
     hi, lo = df.high.values, df.low.values
     sd = pd.to_datetime(df.session.values)
     dows, months, mdays = sd.dayofweek, sd.month, sd.day
-    hist = []  # per-session gross PnL (pts * contracts), past sessions only
+    histories = {-1: [], 1: []}  # per-session gross PnL (pts * contracts), past sessions only
     for _, idx in df.groupby("session", sort=False).indices.items():
         tt, cc = t[idx], c[idx]
         m = (tt >= 8 * 3600 + 30 * 60) & (tt < START)
@@ -50,6 +50,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             continue
         hot = not (ON_LO <= abs(onv) <= ON_HI)
         agree = np.sign(mv) == np.sign(onv) if onv != 0 else True
+        hist = histories[-1 if mv >= 0 else 1]
         if hot:
             sz = 10 if agree else 7
         else:
