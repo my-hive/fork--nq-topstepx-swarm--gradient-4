@@ -99,9 +99,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             if tt[k] < START or tt[k] >= EXIT:
                 pos = 0
             elif state == 0:
-                if k > 0 and (cc[k] - cc[k - 1]) * side > 0:
-                    pos, entry, state = side * sz, cc[k], 1
-                    pending_entry = True
+                pos, entry, state = side * sz, cc[k], 1
+                pending_entry = True
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
