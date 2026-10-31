@@ -54,10 +54,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 10 if agree else (8 if sum(hist[-3:]) > 1800 else 7)
         else:
             sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
+        strong = sum(hist[-3:]) > 1800
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
-            sz = max(1, sz - 2)
+            sz = max(1, sz - (1 if strong and hot and not agree else 2))  # gu-2: shrink 1 not 2 on strong stretches; h1 +174 (1/1 win), h2 0
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
         if hot and not agree and sz > 0:            # hot disagree: require retrace
@@ -80,7 +81,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz = max(1, sz // 5)  # gu-2: divisor 5, plateau with 0.25; sz=0 collapses h2 to 0.000  # gu-2: //2 -> 0.25, plateau .15-.40; sz=0 collapses h2 to 0.000
+            sz = max(1, sz // 5)  # gu-2: //2 -> //5, plateau .15-.40; sz=0 collapses h2 to 0.000
         if sz <= 0:
             continue
         stop, tgt = (30.0, 84.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # gu-2: small-ON tgt 76->84; +2062 pnl, positive in BOTH train halves (7/7 h1, 7/7 h2 wins)
