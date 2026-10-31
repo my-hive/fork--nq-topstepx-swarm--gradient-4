@@ -117,8 +117,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 recovery_value += cc[k] * volume
                 recovery_volume += volume
                 pnl = (cc[k] - entry) * np.sign(pos)
-                accepted = recovery_volume > 0 and (recovery_value - entry * recovery_volume) * np.sign(pos) > 0
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (pnl >= F_TGT_PTS and accepted):
+                inventory_loss = recovery_volume > 0 and (recovery_value - entry * recovery_volume) * np.sign(pos) < 0
+                if ((lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS and inventory_loss) or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
