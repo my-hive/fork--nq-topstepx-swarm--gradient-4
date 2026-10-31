@@ -104,12 +104,12 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             elif pos != 0 and state == 1:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
-                    if skip_flip or (cc[k] - cc[k - 1]) * (-side) <= 0:  # gu-1: reversal needs continuing price momentum
+                    if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl >= tgt:
+                elif pnl >= tgt and bv[idx[k]] + sv[idx[k]] > 0:  # gu-1: require traded-price reward acceptance
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
