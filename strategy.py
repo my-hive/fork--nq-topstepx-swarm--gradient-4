@@ -79,7 +79,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if sum(hist[-LOSS_K:]) < LOSS_TH:
+        if sum(min(value, 0.0) for value in hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
             continue  # gu-1: inactive sessions do not erase realized risk memory
@@ -120,6 +120,4 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         oo = df.open.values[idx]
         hist.append(float((p[:-2] * np.diff(oo[1:])).sum() + p[-2] * (cc[-1] - oo[-1])
                           - 0.5 * np.abs(np.diff(np.r_[0.0, p])).sum()))
-        if hist[-1] > 0:
-            hist.clear()  # gu-1: completed profit ends consecutive realized-loss sequence
     return out
