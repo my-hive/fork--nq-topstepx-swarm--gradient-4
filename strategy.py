@@ -109,11 +109,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl >= tgt and ((opens[idx[k]] + cc[k]) / 2 - entry) * np.sign(pos) >= tgt:  # gu-1: traded-body reward acceptance
+                elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= F_TGT_PTS:
+                if (min(opens[idx[k]], cc[k]) - entry if pos > 0 else entry - max(opens[idx[k]], cc[k])) <= -F_STOP_PTS or pnl >= F_TGT_PTS:  # gu-1: adverse traded-body risk
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
