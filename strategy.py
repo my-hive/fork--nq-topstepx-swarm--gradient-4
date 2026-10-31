@@ -58,7 +58,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
             bv[idx][where].sum() + sv[idx][where].sum(), 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
-            sz = max(1, sz - (1 if strong and hot and not agree else 2))
+            sz = max(1, sz - (1 if sum(hist[-3:]) > 1600 and hot and not agree else 2))
         if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
         if hot and not agree and sz > 0:            # hot disagree: require retrace
@@ -83,7 +83,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sz <= 0:
             continue
         stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
-        flip_tgt = 76.0 if strong else F_TGT_PTS
+        flip_tgt = 74.0 if strong else F_TGT_PTS
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 1 and not hot)
