@@ -73,12 +73,6 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
-        if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
-            sz = int(round(sz * 0.5))
-        elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
-            sz = int(round(sz * 0.5))
-        if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
-            sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
@@ -86,10 +80,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             continue
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
+        # gu-3: retain causal market gates without single-year weekday conditioning.
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
-            (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
-            or (dow == 4 and abs(onv) < 50)
-            or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
+            abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20)))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         for k in range(len(idx)):
