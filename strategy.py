@@ -108,7 +108,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl > tgt and ((hi[idx[k]] + lo[idx[k]]) / 2 - cc[k - 1]) * np.sign(pos) > 0 and (cc[k] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - opens[idx[k - 1]]) * np.sign(pos) > 0 and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos > 0 else hi[idx[k - 1]]) - (hi[idx][where].max() + lo[idx][where].min()) / 2) * np.sign(pos) > 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0 and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0:
+                elif pnl > tgt and ((hi[idx[k]] + lo[idx[k]]) / 2 - cc[k - 1]) * np.sign(pos) > 0 and (cc[k] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - opens[idx[k - 1]]) * np.sign(pos) > 0 and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx][where].max() + lo[idx][where].min()) / 2) * np.sign(pos) > 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0 and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
