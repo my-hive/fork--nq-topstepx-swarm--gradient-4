@@ -109,18 +109,15 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                        pending_trail = True
+                        breakeven = False
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if pending_trail:
-                    trail = entry
-                    pending_trail = False
-                adverse = (lo[idx[k]] - trail if pos > 0 else trail - hi[idx[k]])
-                trail = max(trail, cc[k]) if pos > 0 else min(trail, cc[k])
-                if adverse <= -F_STOP_PTS or pnl >= F_TGT_PTS:
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= (0.0 if breakeven else -F_STOP_PTS) or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
+                elif pnl >= F_STOP_PTS:
+                    breakeven = True
             out[idx[k]] = pos
         p = out[idx].astype(float)
         # gu-1: completed-session proxy uses next-open fills and round-trip costs, in point-contracts.
