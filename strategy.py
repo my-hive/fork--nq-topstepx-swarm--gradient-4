@@ -102,7 +102,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pos, entry, state = side * sz, cc[k], 1
                 pending_entry = True
             elif pos != 0 and state == 1:
-                pnl = (cc[k] - entry) * np.sign(pos)
+                pnl = (cc[k] - entry) * np.sign(pos) - 0.75
                 if pnl <= -stop:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
