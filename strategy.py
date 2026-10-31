@@ -74,19 +74,19 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 0  # ponytail: year-end holiday tape (thin, trendless); seen in 1 Dec only, revisit w/ more years
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
-        if big_agree and dow == 4 and not strong:   # Friday big-agree: trend risk, halve
+        if big_agree and dow == 4 and sum(hist[-3:]) <= 1600: # Friday big-agree: trend risk, halve
             sz = int(round(sz * 0.6))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz = int(round(sz * 0.25))
+            sz = int(round(sz * 0.20))
         if sz <= 0:
             continue
         stop, tgt = (30.0, 80.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         flip_tgt = 74.0 if strong else F_TGT_PTS
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
-            (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
+            (dow == 1 and not hot)
             or (dow == 4 and abs(onv) < 50)
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
