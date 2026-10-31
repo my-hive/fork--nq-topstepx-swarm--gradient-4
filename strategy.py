@@ -21,7 +21,7 @@ import pandas as pd
 
 START, EXIT = 8 * 3600 + 35 * 60, 14 * 3600 + 30 * 60
 ON_LO, ON_HI = 50.0, 200.0
-IMB_TH = 0.02
+IMB_TH = 0.024
 VOL_MIN = 12750.0
 RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
@@ -74,11 +74,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         dow = dows[idx[0]]
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4:                  # Friday big-agree: trend risk, halve
-            sz = int(round(sz * 0.6))   # gu-2: 0.5->0.6, plateau .58-.65, cliff .66
+            sz = int(round(sz * 0.6))   # gu-2: 0.5->0.6 plateau .58-.65, cliff .66; Monday halve deleted (neutral)
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz = max(1, int(round(sz * 0.3)))  # gu-2: 0.5->0.3, plateau .2-.3 x TH -750..-800; sz=0 collapses h2
+            sz = max(1, int(round(sz * 0.25)))  # gu-2: //2 -> 0.25, plateau .15-.35; sz=0 collapses h2 to 0.000
         if sz <= 0:
             continue
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
@@ -106,11 +106,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl > tgt and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((hi[idx[k]] - hi[idx[k - 1]]) if pos >= 0 else (lo[idx[k - 1]] - lo[idx[k]])) >= 0 and k > 1 and ((lo[idx[k - 1]] - lo[idx[k - 2]]) if pos > 0 else (hi[idx[k - 2]] - hi[idx[k - 1]])) > 0 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos > 0 else (hi[idx[k - 1]] - hi[idx[k]])) > 0 and (cc[k] - (hi[idx[k]] + lo[idx[k]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos > 0 else hi[idx[k - 1]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) > 0 and (cc[k - 1] - opens[idx[k - 1]]) * np.sign(pos) > 0 and ((lo[idx[k]] if pos > 0 else hi[idx[k]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) > 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.03 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0.03 * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
+                elif pnl > tgt and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((hi[idx[k]] - hi[idx[k - 1]]) if pos >= 0 else (lo[idx[k - 1]] - lo[idx[k]])) >= 0 and k > 1 and (hi[idx[k - 1]] + lo[idx[k - 1]] - hi[idx[k - 2]] - lo[idx[k - 2]]) * np.sign(pos) > 0 and ((lo[idx[k - 1]] - lo[idx[k - 2]]) if pos > 0 else (hi[idx[k - 2]] - hi[idx[k - 1]])) > 0 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos > 0 else (hi[idx[k - 1]] - hi[idx[k]])) > 0 and (cc[k] - (hi[idx[k]] + lo[idx[k]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos > 0 else hi[idx[k - 1]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) > 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.035 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0.035 * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (((lo[idx[k]] if pos > 0 else hi[idx[k]]) - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and ((lo[idx[k]] - lo[idx[k - 1]]) if pos >= 0 else (hi[idx[k - 1]] - hi[idx[k]])) >= 0 and (cc[k - 1] - opens[idx[k - 1]]) * np.sign(pos) > 0 and ((hi[idx[k - 1]] + lo[idx[k - 1]]) / 2 - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > IMB_TH * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k]] - sv[idx[k]] - bv[idx[k - 1]] + sv[idx[k - 1]]) * np.sign(pos) < 0):
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (((lo[idx[k]] if pos > 0 else hi[idx[k]]) - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and k > 1 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos >= 0 else (hi[idx[k - 1]] - hi[idx[k]])) >= 0 and (cc[k - 1] - opens[idx[k - 1]]) * np.sign(pos) > 0 and ((hi[idx[k - 1]] + lo[idx[k - 1]]) / 2 - entry) * np.sign(pos) - 0.75 >= F_TGT_PTS and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.14 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k]] - sv[idx[k]] - bv[idx[k - 1]] + sv[idx[k - 1]]) * np.sign(pos) < 0):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
