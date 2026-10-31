@@ -117,7 +117,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                       and (cc[k] - opens[idx[k]]) * direction > 0
                       and (cc[prior] - opens[idx[prior]]) * direction > 0
                       and min((cc[k] - auction_mid) * direction,
-                              (cc[prior] - auction_mid) * direction) >= 0):
+                              (cc[prior] - auction_mid) * direction) > 0):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
