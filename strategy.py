@@ -107,8 +107,11 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        pos, entry, state = -side * (sz + 2), cc[k], 3
-                        pending_entry = True
+                        # gu-3: reserve native daily loss allowance for both legs and exit costs.
+                        remaining = max(0.0, 1000.0 + 2.0 * sz * (pnl - 0.75))
+                        recovery_sz = min(sz + 2, int(remaining // (2.0 * (F_STOP_PTS + 1.0))))
+                        pos, entry, state = -side * recovery_sz, cc[k], 3 if recovery_sz else 4
+                        pending_entry = bool(recovery_sz)
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
