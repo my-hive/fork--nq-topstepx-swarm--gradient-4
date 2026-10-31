@@ -44,8 +44,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if not m.any():
             continue
         where = np.where(m)[0]
-        onv = cc[where[0]] - cc[0]                 # overnight move (signed)
-        mv = cc[where[-1]] - cc[where[0]]          # 8:30->8:35 move (signed)
+        origin = opens[idx[where[0]]]
+        onv = origin - cc[0]                     # overnight ends at opening print
+        mv = cc[where[-1]] - origin               # complete 8:30->8:35 displacement
         if mv == 0:
             continue
         hot = not (ON_LO <= abs(onv) <= ON_HI)
