@@ -115,13 +115,13 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                         pending_entry = True
                 elif (pnl - 0.75 >= tgt and flow_ok
                       and (cc[k] - opens[idx[k]]) * direction >= 0
-                      and min(((lo[idx[k]] if pos > 0 else hi[idx[k]]) - auction_mid) * direction,
+                      and min((cc[k] - auction_mid) * direction,
                               (cc[prior] - auction_mid) * direction) >= 0):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
                 body_pnl = (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]])
-                prior_pnl = (cc[prior] - entry) * direction
+                prior_pnl = ((lo[idx[prior]] if pos > 0 else hi[idx[prior]]) - entry) * direction
                 if ((lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS
                     or (min(body_pnl, prior_pnl) - 0.75 >= F_TGT_PTS and flow_ok)):
                     pos, state = 0, 4
