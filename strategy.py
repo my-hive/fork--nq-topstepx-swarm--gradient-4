@@ -55,19 +55,20 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = 10 if agree else 7
         else:
             sz = 8 if not agree else 0  # cold-dis: plateau 6-8, cliff at 9 (8 = edge; 7 safer)
-        imb = (bv[idx][where].sum() - sv[idx][where].sum()) / max(
-            bv[idx][where].sum() + sv[idx][where].sum(), 1)
+        buy_sum, sell_sum = bb[where].sum(), ss[where].sum()
+        source_high, source_low = hh[where].max(), ll[where].min()
+        imb = (buy_sum - sell_sum) / max(buy_sum + sell_sum, 1)
         if sz > 0 and imb * np.sign(mv) >= IMB_TH:  # one-sided push volume: shrink fade
             sz = max(1, sz - 2)
-        if sz > 0 and (bv[idx][where].sum() + sv[idx][where].sum()) < VOL_MIN:
+        if sz > 0 and (buy_sum + sell_sum) < VOL_MIN:
             sz = 0  # illiquid open push: skip the fade
         if hot and not agree and sz > 0:            # hot disagree: require retrace
-            ext = hi[idx][where].max() if mv > 0 else lo[idx][where].min()
+            ext = source_high if mv > 0 else source_low
             if abs(ext - cc[where[-1]]) < RETR_MIN:
                 sz = 0  # push still at its extreme: momentum, don't fade
         if hot and not agree and abs(onv) < 25 and abs(mv) > 70:
             sz = 0  # flat overnight + violent open push: news momentum, don't fade
-        if hot and not agree and abs(onv) > 200 and hi[idx][:where[0]].max() - lo[idx][:where[0]].min() < ON_RNG_MIN:
+        if hot and not agree and abs(onv) > 200 and hh[:where[0]].max() - ll[:where[0]].min() < ON_RNG_MIN:
             sz = 0  # big one-way drift in tight overnight range: trend day, don't fade
         md = months[idx[0]] * 100 + mdays[idx[0]]
         if md >= 1210 or md <= 102:  # start 1210-1212 plateau (h1 1.0); 1215 leaves Dec8-9 windows short
@@ -92,7 +93,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
-        source_mid = (hi[idx][where].max() + lo[idx][where].min()) / 2
+        source_mid = (source_high + source_low) / 2
         for k in range(len(idx)):
             if pending_entry:
                 entry = oo[k] + 0.25 * np.sign(pos)
