@@ -92,6 +92,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
         fade_flow, recovery_flow = 0.0, 0.0
+        fade_volume, recovery_volume = 0.0, 0.0
         auction_mid = (lo[idx][where].min() + hi[idx][where].max()) / 2
         for k in range(len(idx)):
             if pending_entry:
@@ -104,6 +105,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pending_entry = True
             elif pos != 0 and state == 1:
                 fade_flow += bv[idx[k]] - sv[idx[k]]
+                fade_volume += bv[idx[k]] + sv[idx[k]]
                 pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl - 0.75 <= -stop:
                     if skip_flip:  # opening regime does not support momentum reversal
@@ -111,12 +113,13 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif pnl - 0.75 >= tgt and fade_flow * np.sign(pos) >= 0 and (cc[k] - auction_mid) * np.sign(pos) >= 0:
+                elif pnl - 0.75 >= tgt and fade_flow * np.sign(pos) >= IMB_TH * fade_volume and (cc[k] - auction_mid) * np.sign(pos) >= 0:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 recovery_flow += bv[idx[k]] - sv[idx[k]]
+                recovery_volume += bv[idx[k]] + sv[idx[k]]
                 pnl = (cc[k] - entry) * np.sign(pos)
-                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) - 0.75 <= -F_STOP_PTS or (pnl - 0.75 >= F_TGT_PTS and recovery_flow * np.sign(pos) >= 0):
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) - 0.75 <= -F_STOP_PTS or (pnl - 0.75 >= F_TGT_PTS and recovery_flow * np.sign(pos) >= IMB_TH * recovery_volume):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
