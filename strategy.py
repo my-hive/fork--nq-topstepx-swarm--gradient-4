@@ -75,7 +75,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4 and sum(hist[-3:]) <= 1800:  # Friday big-agree: halve (not on strong stretches)
             sz = int(round(sz * 0.6))
-        if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
+        if hot and agree and dow == 3 and sum(hist[-3:]) <= 1800:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 4  # gu-1: quarter risk after recent losses
