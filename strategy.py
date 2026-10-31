@@ -27,7 +27,7 @@ RETR_MIN = 8.0
 ON_RNG_MIN = 380.0  # plateau 350-420 (gu-?, a315d7d)
 F_STOP_PTS, F_TGT_PTS = 45.0, 68.0  # plateau 66-72 (and 55); cliff at 75 (h2 .924)
 
-LOSS_K, LOSS_TH = 2, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
+LOSS_K, LOSS_TH = 3, -800.0  # prior 2 sessions' pts*ct PnL; plateau TH -300..-700, K 1-3, halve 0-0.6
 
 def signals(df: pd.DataFrame) -> np.ndarray:
     out = np.zeros(len(df), dtype=np.int64)
@@ -106,7 +106,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + (3 if sum(hist[-3:]) > 1800 else 2)), cc[k], 3  # gu-4: equity-momentum flip, rare
                         pending_entry = True
-                elif pnl > tgt and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and k > 1 and (hi[idx[k - 1]] + lo[idx[k - 1]] - hi[idx[k - 2]] - lo[idx[k - 2]]) * np.sign(pos) > 0 and ((lo[idx[k - 1]] - lo[idx[k - 2]]) if pos > 0 else (hi[idx[k - 2]] - hi[idx[k - 1]])) > 0 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos > 0 else (hi[idx[k - 1]] - hi[idx[k]])) > 0 and (cc[k] - (hi[idx[k]] + lo[idx[k]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos >= 0 else hi[idx[k - 1]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) >= 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.035 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0.035 * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
+                elif pnl > tgt and (cc[k] - opens[idx[k]]) * np.sign(pos) > 0 and ((hi[idx[k]] - hi[idx[k - 1]]) if pos >= 0 else (lo[idx[k - 1]] - lo[idx[k]])) >= 0 and k > 1 and (hi[idx[k - 1]] + lo[idx[k - 1]] - hi[idx[k - 2]] - lo[idx[k - 2]]) * np.sign(pos) > 0 and ((lo[idx[k - 1]] - lo[idx[k - 2]]) if pos > 0 else (hi[idx[k - 2]] - hi[idx[k - 1]])) > 0 and ((lo[idx[k]] - lo[idx[k - 1]]) if pos > 0 else (hi[idx[k - 1]] - hi[idx[k]])) > 0 and (cc[k] - (hi[idx[k]] + lo[idx[k]]) / 2) * np.sign(pos) > 0 and (cc[k - 1] - (hi[idx[k - 1]] + lo[idx[k - 1]]) / 2) * np.sign(pos) > 0 and ((lo[idx[k - 1]] if pos >= 0 else hi[idx[k - 1]]) - ((hi[idx[where]].max() + lo[idx[where]].min()) / 2)) * np.sign(pos) >= 0 and k > 0 and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) > 0.035 * max(bv[idx[k]] + sv[idx[k]], 1) and (bv[idx[k - 1]] - sv[idx[k - 1]]) * np.sign(pos) > 0.035 * max(bv[idx[k - 1]] + sv[idx[k - 1]], 1):
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
