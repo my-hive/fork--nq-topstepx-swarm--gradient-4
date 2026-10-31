@@ -112,7 +112,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
-                pnl = (cc[k] - entry) * np.sign(pos)
+                # gu-4: require completed-bar midpoint to confirm recovery profit.
+                pnl = ((hi[idx[k]] + lo[idx[k]]) * 0.5 - entry) * np.sign(pos)
                 if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or pnl >= F_TGT_PTS:
                     pos, state = 0, 4
             out[idx[k]] = pos
