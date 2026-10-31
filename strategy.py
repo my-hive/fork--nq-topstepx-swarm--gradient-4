@@ -107,9 +107,9 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
-                        # gu-4: require material flow evidence before adding recovery contracts.
-                        flow = (bv[idx[k]] - sv[idx[k]]) * -side / max(bv[idx[k]] + sv[idx[k]], 1)
-                        pos, entry, state = -side * (sz + (2 if flow >= IMB_TH else 0)), cc[k], 3
+                        # gu-4: escalate reversal risk only after clearing opening inventory.
+                        extra = 2 if (cc[k] - cc[where[-1]]) * -side > 0 else 0
+                        pos, entry, state = -side * (sz + extra), cc[k], 3
                         pending_entry = True
                 elif pnl >= tgt:
                     pos, state = 0, 4
