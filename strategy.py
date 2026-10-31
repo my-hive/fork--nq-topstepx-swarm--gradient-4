@@ -82,6 +82,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         if sum(hist[-LOSS_K:]) < LOSS_TH:
             sz //= 2  # gu-1: round reduced risk down
         if sz <= 0:
+            hist.append(0.0)
             continue
         stop, tgt = (30.0, 76.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # small-ON tgt 84: 1.0063, days 11.2 (plateau 82-84, cliff 86)
         side = -1 if mv >= 0 else 1
@@ -91,9 +92,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             or (abs(onv) < 200 and (imb * np.sign(mv) < 0 or abs(mv) < 20))))
         pos, entry, state = 0, 0.0, 0          # 0=wait,1=fade leg,3=flip leg,4=done
         pending_entry = False
-        fade_flow = 0.0
-        auction_high, auction_low = hi[idx][where].max(), lo[idx][where].min()
-        auction_mid = (auction_high + auction_low) / 2
+        recovery_value, recovery_volume = 0.0, 0.0
         for k in range(len(idx)):
             if pending_entry:
                 entry = opens[idx[k]] + 0.25 * np.sign(pos)
@@ -104,29 +103,22 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                 pos, entry, state = side * sz, cc[k], 1
                 pending_entry = True
             elif pos != 0 and state == 1:
-                fade_flow += bv[idx[k]] - sv[idx[k]]
-                # Remaining exit slippage plus both commissions, in MNQ points.
-                pnl = (cc[k] - entry) * np.sign(pos) - 0.75
+                pnl = (cc[k] - entry) * np.sign(pos)
                 if pnl <= -stop:
                     if skip_flip:  # opening regime does not support momentum reversal
                         pos, state = 0, 4
                     else:                           # counters drift / big agree: real momentum
                         pos, entry, state = -side * (sz + 2), cc[k], 3
                         pending_entry = True
-                elif (pnl >= tgt and fade_flow * side > 0
-                      and (bv[idx[k]] - sv[idx[k]]) * side >= 0
-                      and (cc[k] - auction_mid) * side >= 0
-                      and (cc[k] - opens[idx[k]]) * side >= 0):
+                elif pnl >= tgt:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
-                pnl = (cc[k] - entry) * np.sign(pos) - 0.75
-                auction_failed = cc[k] < auction_low if pos > 0 else cc[k] > auction_high
-                risk_hit = ((lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]])
-                            <= -F_STOP_PTS + 0.75 and auction_failed)
-                reward_hit = (pnl >= F_TGT_PTS
-                              and (bv[idx[k]] - sv[idx[k]]) * np.sign(pos) >= 0
-                              and (cc[k] - opens[idx[k]]) * np.sign(pos) >= 0)
-                if risk_hit or reward_hit:
+                volume = bv[idx[k]] + sv[idx[k]]
+                recovery_value += cc[k] * volume
+                recovery_volume += volume
+                pnl = (cc[k] - entry) * np.sign(pos)
+                accepted = recovery_volume > 0 and (recovery_value - entry * recovery_volume) * np.sign(pos) > 0
+                if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or (pnl >= F_TGT_PTS and accepted):
                     pos, state = 0, 4
             out[idx[k]] = pos
         p = out[idx].astype(float)
