@@ -115,8 +115,8 @@ def signals(df: pd.DataFrame) -> np.ndarray:
                     pos, state = 0, 4
             elif pos != 0 and state == 3:
                 pnl = (cc[k] - entry) * np.sign(pos)
-                # gu-2: reward requires sustained completed-body net acceptance.
-                reward = min(pnl, (opens[idx[k]] - entry) * np.sign(pos),
+                # gu-2: reward requires entire completed auction net acceptance.
+                reward = min(pnl, ((lo[idx[k]] if pos > 0 else hi[idx[k]]) - entry) * np.sign(pos),
                              (cc[k - 1] - entry) * np.sign(pos)) - 0.75
                 if (lo[idx[k]] - entry if pos > 0 else entry - hi[idx[k]]) <= -F_STOP_PTS or reward >= F_TGT_PTS:
                     pos, state = 0, 4
