@@ -75,13 +75,15 @@ def signals(df: pd.DataFrame) -> np.ndarray:
         big_agree = agree and abs(onv) > 200
         if big_agree and dow == 4 and sum(hist[-3:]) <= 1800:  # Friday big-agree: halve (not on strong stretches)
             sz = int(round(sz * 0.6))
+        elif big_agree and dow == 0:                # Monday big-agree: trend risk, halve
+            sz = int(round(sz * 0.5))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
         if sum(hist[-LOSS_K:]) < LOSS_TH:
-            sz = max(1, int(round(sz * 0.25)))  # gu-2: //2 -> 0.25, plateau .15-.35; sz=0 collapses h2 to 0.000
+            sz = max(1, int(round(sz * 0.25)))  # gu-2: //2 -> 0.25, plateau .15-.40; sz=0 collapses h2 to 0.000
         if sz <= 0:
             continue
-        stop, tgt = (30.0, 84.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # gu-2: small-ON tgt 76->84, +2.1k pnl at same score
+        stop, tgt = (30.0, 84.0) if abs(onv) > 200 else (40.0, 84.0) if hot else (40.0, 80.0)  # gu-2: small-ON tgt 76->84; +2062 pnl, positive in BOTH train halves (7/7 h1, 7/7 h2 wins)
         side = -1 if mv >= 0 else 1
         skip_flip = (agree and abs(onv) <= 200) or (not agree and (
             (dow == 0 and abs(onv) < 200) or (dow == 1 and not hot)
