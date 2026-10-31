@@ -78,7 +78,7 @@ def signals(df: pd.DataFrame) -> np.ndarray:
             sz = int(round(sz * 0.6))
         if hot and agree and dow == 3:              # Thursday hot+agree: claims-day, skip
             sz = 0
-        if sum(hist[-LOSS_K:]) < LOSS_TH:
+        if sum(hist[-LOSS_K:]) < LOSS_TH and not strong:
             sz = int(round(sz * 0.25))
         if sz <= 0:
             continue
